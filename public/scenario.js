@@ -5,9 +5,9 @@
   else root.CleanApproachScenario = api;
 })(globalThis, function () {
   const PLANS = Object.freeze([
-    { id: "shared-tool", label: "A · Same tool", summary: "Tool T1 is used at both targets." },
-    { id: "separate-tool", label: "B · Separate tool", summary: "T2 is used at B; glove contacts at B remain." },
-    { id: "omit-glove-contact", label: "C · What if this contact could be avoided?", summary: "Counterfactual: omit the assumed G1 → T2 contact at B." }
+    { id: "shared-tool", label: "Reuse the tool", summary: "Use tool T1 at A and B." },
+    { id: "separate-tool", label: "Use a separate tool", summary: "Use T1 at A and T2 at B; the modeled glove contact remains." },
+    { id: "omit-glove-contact", label: "What if this contact is avoided?", summary: "Counterfactual: omit the modeled G1 → T2 contact at B." }
   ]);
 
   const fallbackPlaces = {

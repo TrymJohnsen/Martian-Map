@@ -7,7 +7,15 @@ const pctx = profile.getContext("2d");
 const loading = $("#scene-loading");
 const errorBox = $("#scene-error");
 const initialCamera = { yaw: -0.55, pitch: 0.82, zoom: 1 };
-const state = { layer: "ortho", plan: "shared-tool", eventIndex: 0, verticalScale: 1, ...initialCamera, dragging: false, tour: false, focusedPlace: "prep" };
+const state = { layer: "ortho", plan: "shared-tool", eventIndex: 8, verticalScale: 1, ...initialCamera, dragging: false, guidePlaying: false, guideIndex: -1, guideTimer: null, focusedPlace: "B" };
+const guideSteps = [
+  { plan: "shared-tool", eventId: "seal-b", focus: "B", copy: "Sapphire Canyon is the science target: reported organics and mineral associations make its provenance relevant to interpretation." },
+  { plan: "shared-tool", eventId: "touch-a", focus: "A", copy: "At hypothetical A, Glove G1 contacts the work surface before Sample A is collected with Tool T1." },
+  { plan: "shared-tool", eventId: "collect-b", focus: "B", copy: "Follow the solid walking route to B. The event history, not the map line, represents possible contacts." },
+  { plan: "shared-tool", eventId: "seal-b", focus: "B", copy: "With T1 reused, the model traces possible source paths through the shared tool into Sample B." },
+  { plan: "separate-tool", eventId: "seal-b", focus: "B", copy: "T2 is separate, but the modeled path still includes G1 → T2 → Sample B. This is a possible contact history, not measured contamination." }
+];
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let data;
 let datumM;
 let scenario;
@@ -26,10 +34,7 @@ fetch("/data/bright-angel-demo.json").then((response) => {
   datumM = TerrainGeometry.medianValidElevation(data.arrays);
   $("#area-title").textContent = data.area;
   $(".intro .eyebrow").textContent = "Jezero · Bright Angel / Neretva Vallis";
-  $("#mission-summary").textContent = data.mission_summary;
-  $("#science-target").textContent = `${data.sample_site.label} · ${data.sample_site.feature} · ${data.sample_site.region} · Sol ${data.sample_site.sol}`;
   $("#target-coordinate").textContent = `${data.sample_site.latitude_north_deg.toFixed(5)}°N, ${data.sample_site.longitude_east_deg.toFixed(5)}°E`;
-  $("#target-cell-note").textContent = `Marker is on the nearest valid ${Math.round(data.raster.pixel_size_m[0])} m cell; the source report gives no location accuracy.`;
   $("#position-source").href = data.sample_site.position_source_url;
   $("#position-source").textContent = "PDS sample report ↗";
   $("#ctx-product-id").textContent = data.product.item_id;
@@ -37,24 +42,12 @@ fetch("/data/bright-angel-demo.json").then((response) => {
   $("#ctx-ortho-link").href = data.product.asset_urls.ortho;
   $("#ctx-ray-link").href = data.product.asset_urls.intersection_error;
   $("#ctx-product-credit").textContent = `${data.product.ctx_inputs.join(" + ")} · MRO/CTX, NASA/USGS · ${data.product.license} · DOI 10.5066/P9JKVWR3`;
-  const placeLabels = { prep: data.scenario_markers.start.label, A: data.scenario_markers.A.label, B: data.scenario_markers.B.label };
-  const focusButtons = new Map($$("[data-focus-place]").map((button) => [button.dataset.focusPlace, button]));
-  for (const [placeId, label] of Object.entries(placeLabels)) focusButtons.get(placeId).textContent = `${placeId === "prep" ? "S" : placeId} · ${label}`;
+  const placeLabels = { prep: "route start", A: "hypothetical activity", B: "nominal sample target" };
   const overlay = $(".scene-overlay-label").children;
   ["prep", "A", "B"].forEach((placeId, index) => { overlay[index].textContent = `${index === 0 ? "S" : placeId} · ${placeLabels[placeId]}`; });
   canvas.setAttribute("aria-label", `MRO CTX terrain around Bright Angel with an illustrative route to documented sample site ${data.sample_site.label}`);
   loading.hidden = true;
-  const [px, , x0, , py, y0] = data.raster.transform;
-  const marsRadiusM = 3396190;
-  const lon = ((x0 + px * data.raster.width / 2) / marsRadiusM * 180 / Math.PI).toFixed(2);
-  const lat = ((y0 + py * data.raster.height / 2) / marsRadiusM * 180 / Math.PI).toFixed(2);
-  $("#coord-readout").textContent = `${lat}°N  ${lon}°E · ocentric · local height datum ${datumM.toFixed(0)} m`;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const tour = $("#play-tour");
-    tour.disabled = true;
-    tour.title = "Automatic camera motion is disabled by your reduced-motion setting.";
-    tour.querySelector("span:last-child").textContent = "TOUR OFF · REDUCED MOTION";
-  }
+  $("#guide-motion-note").hidden = !reduceMotion;
   initializePlans();
   resize();
   updatePlan();
@@ -65,31 +58,37 @@ fetch("/data/bright-angel-demo.json").then((response) => {
 });
 
 function initializePlans() {
-  const buttons = $$("[data-plan]");
-  for (const button of buttons) button.addEventListener("click", () => {
+  for (const button of $$("[data-plan]")) button.addEventListener("click", () => {
+    stopGuide();
+    $("#plan-c-exploration").open = button.dataset.plan === "omit-glove-contact";
+    if (button.dataset.plan === state.plan) return;
     state.plan = button.dataset.plan;
-    state.eventIndex = 0;
+    state.eventIndex = scenario.events.findIndex((event) => event.id === "seal-b");
     updatePlan();
   });
-  $$("[data-focus-place]").forEach((button) => button.addEventListener("click", () => focusPlace(button.dataset.focusPlace)));
-  $("#previous-event").addEventListener("click", () => selectEvent(Math.max(0, state.eventIndex - 1)));
-  $("#next-event").addEventListener("click", () => selectEvent(Math.min(scenario.events.length - 1, state.eventIndex + 1)));
-  $("#inspect-sample-b").addEventListener("click", () => {
-    state.focusedPlace = "B";
-    selectEvent(scenario.events.findIndex((event) => event.id === "seal-b"));
+  for (const button of $$("[data-focus-place]")) button.addEventListener("click", () => {
+    stopGuide();
+    focusPlace(button.dataset.focusPlace);
   });
+  $("#previous-event").addEventListener("click", () => { stopGuide(); selectEvent(Math.max(0, state.eventIndex - 1)); });
+  $("#next-event").addEventListener("click", () => { stopGuide(); selectEvent(Math.min(scenario.events.length - 1, state.eventIndex + 1)); });
   $("#event-timeline").addEventListener("click", (event) => {
     const button = event.target.closest("[data-event-index]");
-    if (button) selectEvent(Number(button.dataset.eventIndex));
-  });
-  $("#current-event").addEventListener("click", (event) => {
-    const button = event.target.closest("[data-jump-event]");
-    if (button) selectEvent(scenario.events.findIndex((item) => item.id === button.dataset.jumpEvent));
+    if (button) { stopGuide(); selectEvent(Number(button.dataset.eventIndex)); }
   });
   $("#sample-history").addEventListener("click", (event) => {
     const button = event.target.closest("[data-jump-event]");
-    if (button) selectEvent(scenario.events.findIndex((item) => item.id === button.dataset.jumpEvent));
+    if (button) {
+      $(".event-sequence").open = true;
+      stopGuide();
+      selectEvent(scenario.events.findIndex((item) => item.id === button.dataset.jumpEvent));
+    }
   });
+  $("#guide-start").addEventListener("click", startGuide);
+  $("#guide-stop").addEventListener("click", stopGuide);
+  $("#guide-restart").addEventListener("click", () => startGuide(true));
+  $("#guide-previous").addEventListener("click", () => moveGuide(-1));
+  $("#guide-next").addEventListener("click", () => moveGuide(1));
 }
 
 function resize() {
@@ -225,14 +224,10 @@ function drawProfile(samples) {
   $("#profile-range").textContent = `Valid cells: ≈${rounded(min).toLocaleString()} to ≈${rounded(max).toLocaleString()} m · NoData shown as gaps`;
 }
 
-function sourceLabels(result) {
-  return [...new Set(result.sampleHistory.map((item) => item.sourceId))];
-}
-
 function updatePlan() {
   if (!data) return;
   scenario = CleanApproachScenario.build(state.plan, data);
-  state.eventIndex = Math.min(state.eventIndex, scenario.events.length - 1);
+  state.eventIndex = Math.max(0, Math.min(state.eventIndex, scenario.events.length - 1));
   finalReplay = ContactHistoryModel.replay(scenario);
   $$("[data-plan]").forEach((button) => {
     const selected = button.dataset.plan === state.plan;
@@ -250,36 +245,22 @@ function updatePlan() {
 
 function renderPlanComparison() {
   const results = CleanApproachScenario.PLANS.map((plan) => ({ plan, result: ContactHistoryModel.replay(CleanApproachScenario.build(plan.id, data)) }));
-  const currentIndex = results.findIndex(({ plan }) => plan.id === state.plan);
-  const current = results[currentIndex];
-  const prior = results[Math.max(0, currentIndex - 1)];
-  const currentSources = sourceLabels(current.result);
-  const priorSources = sourceLabels(prior.result);
-  const added = currentSources.filter((sourceId) => !priorSources.includes(sourceId));
-  const removed = priorSources.filter((sourceId) => !currentSources.includes(sourceId));
-  const labels = (ids) => ids.map((id) => scenario.sources[id].label).join("; ");
-  let explanation;
-  if (currentIndex === 0) {
-    explanation = `Calculated sample-B source groups: ${labels(currentSources)}.`;
-  } else if (added.length || removed.length) {
-    explanation = `Compared with ${prior.plan.label}: ${removed.length ? `no longer traced to B: ${labels(removed)}. ` : ""}${added.length ? `newly traced to B: ${labels(added)}. ` : ""}Still traced to B: ${labels(currentSources.filter((id) => !added.includes(id)))}.`;
-  } else {
-    const changedTrace = currentSources.some((sourceId) => {
-      const oldPath = prior.result.sampleHistory.find((entry) => entry.sourceId === sourceId)?.path.map((edge) => edge.eventId).join("/");
-      const newPath = current.result.sampleHistory.find((entry) => entry.sourceId === sourceId)?.path.map((edge) => edge.eventId).join("/");
-      return oldPath !== newPath;
-    });
-    explanation = changedTrace
-      ? `Compared with ${prior.plan.label}: the same source groups reach B through a different event chain. Read the trace below; the separate tool alone leaves the modeled glove links.`
-      : `Compared with ${prior.plan.label}: the same source groups and event chain remain.`;
-  }
-  $("#plan-difference").textContent = explanation;
-  $("#sample-source-summary").replaceChildren(...currentSources.map((sourceId) => {
-    const chip = document.createElement("span");
-    chip.className = `source-chip ${sourceId === "fromB" ? "source-chip-native" : ""}`;
-    chip.textContent = scenario.sources[sourceId].label;
-    return chip;
-  }));
+  const current = results.find(({ plan }) => plan.id === state.plan);
+  const humanPath = current.result.sampleHistory.find((entry) => entry.sourceId === "human")?.path || [];
+  const fromAPath = current.result.sampleHistory.find((entry) => entry.sourceId === "fromA")?.path || [];
+  const activeToolId = state.plan === "shared-tool" ? "tool-1" : "tool-2";
+  const gloveReachesBTool = humanPath.some((edge) => edge.from === "glove" && edge.to === activeToolId)
+    && humanPath.some((edge) => edge.from === activeToolId && edge.to === "sample-B");
+  const aMaterialReachesB = fromAPath.some((edge) => edge.from === "tool-1" && edge.to === "sample-B");
+  const heading = state.plan === "shared-tool"
+    ? (aMaterialReachesB ? "Shared tool. Possible A-surface path reaches B." : "Tool T1 is used at A and B.")
+    : state.plan === "separate-tool"
+      ? (gloveReachesBTool ? "Different tool. Shared glove history." : "Separate tool; no modeled glove path reaches B.")
+      : (gloveReachesBTool ? "The modeled glove path still reaches B." : "No glove-to-T2 contact is modeled at B.");
+  $("#plan-result-heading").textContent = heading;
+  $("#plan-difference").textContent = state.plan === "omit-glove-contact"
+    ? "This counterfactual omits only G1 → T2 at B; it is not a validated procedure or a cleanliness finding."
+    : "Possible contact path under the selected scenario · not measured contamination.";
 }
 
 function renderTimeline() {
@@ -317,6 +298,8 @@ function selectEvent(index, redrawList = true) {
       timeline.scrollTop = itemTop + activeItem.offsetHeight - timeline.clientHeight;
     }
   }
+  $("#current-event-title").textContent = event.action;
+  $("#current-event-place").textContent = `Event ${event.order} of ${scenario.events.length} · ${scenario.places[event.placeId].label}`;
   renderCurrentEvent(event);
   renderSampleHistory(partial);
   draw();
@@ -352,29 +335,34 @@ function nodeLabel(id) { return scenario.sources[id]?.label || scenario.objects[
 function renderSampleHistory(result) {
   const container = $("#sample-history");
   const histories = result.sampleHistory;
+  const stateLabel = $("#history-state");
   if (!histories.length) {
-    container.innerHTML = '<p class="empty-history">No source path to sample B has been created by this point in the timeline. An empty scenario history is not a sterility finding.</p>';
+    stateLabel.textContent = "No possible source path has reached B at this event yet.";
+    container.replaceChildren();
     return;
   }
-  const title = document.createElement("p");
-  title.className = "history-state";
-  title.textContent = result.sampleSealed ? "Sample B is sealed; this is the history recorded at sealing." : "Possible source groups connected to B at this point in the event sequence:";
-  const list = document.createElement("ol"); list.className = "history-paths";
+  stateLabel.textContent = result.sampleSealed
+    ? "Scenario history at sealing · possible contacts, not measured transfer."
+    : `Possible source paths through event ${state.eventIndex + 1} · scenario assumptions.`;
+  const rows = [];
   for (const history of histories) {
     const item = document.createElement("li");
-    const source = document.createElement("b"); source.textContent = scenario.sources[history.sourceId].label;
-    const pathList = document.createElement("ol");
-    for (const edge of history.path) {
-      const pathItem = document.createElement("li");
-      const link = document.createElement("button"); link.type = "button"; link.className = "trace-link";
-      if (edge.eventId) link.dataset.jumpEvent = edge.eventId;
-      link.textContent = `${nodeLabel(edge.from)} → ${nodeLabel(edge.to)}${edge.eventId ? ` · event ${edge.order}` : " · declared starting history"}`;
-      const assumption = document.createElement("small"); assumption.textContent = edge.assumption;
-      pathItem.append(link, assumption); pathList.append(pathItem);
-    }
-    item.append(source, pathList); list.append(item);
+    item.className = `compact-source-row source-${history.sourceId}`;
+    const source = document.createElement("span"); source.className = "source-chip";
+    source.textContent = ({
+      human: "Possible human-associated material",
+      fromA: "Possible material from hypothetical A",
+      fromB: "B's own sample material"
+    })[history.sourceId] || scenario.sources[history.sourceId].label;
+    const nodes = [history.path[0]?.to, ...history.path.slice(1).map((edge) => edge.to)].filter(Boolean);
+    const chain = document.createElement("span"); chain.className = "object-chain";
+    chain.textContent = nodes.map(nodeLabel).join(" → ");
+    const trace = document.createElement("button"); trace.type = "button"; trace.className = "trace-link";
+    trace.dataset.jumpEvent = history.path.at(-1)?.eventId || "seal-b";
+    trace.textContent = "Trace";
+    item.append(source, chain, trace); rows.push(item);
   }
-  container.replaceChildren(title, list);
+  container.replaceChildren(...rows);
 }
 
 function focusPlace(placeId) {
@@ -385,12 +373,56 @@ function focusPlace(placeId) {
   else draw();
 }
 
+function applyGuideStep(index) {
+  state.guideIndex = index;
+  const step = guideSteps[index];
+  $("#plan-c-exploration").open = false;
+  state.plan = step.plan;
+  state.eventIndex = scenario.events.findIndex((event) => event.id === step.eventId);
+  $("#guide-step-copy").textContent = step.copy;
+  $("#guide-progress").textContent = `Step ${index + 1} of ${guideSteps.length}`;
+  updatePlan();
+}
+
+function scheduleGuideStep() {
+  clearTimeout(state.guideTimer);
+  if (!state.guidePlaying || reduceMotion) return;
+  state.guideTimer = setTimeout(() => {
+    if (state.guideIndex < guideSteps.length - 1) {
+      applyGuideStep(state.guideIndex + 1);
+      scheduleGuideStep();
+    } else stopGuide();
+  }, 4800);
+}
+
+function startGuide(restart = false) {
+  if (restart || state.guideIndex < 0 || state.guideIndex === guideSteps.length - 1) state.guideIndex = 0;
+  state.guidePlaying = !reduceMotion;
+  $("#guide-start").textContent = state.guidePlaying ? "Playing walkthrough" : "Walk me through it";
+  $("#guide-stop").disabled = !state.guidePlaying;
+  applyGuideStep(state.guideIndex);
+  scheduleGuideStep();
+}
+
+function stopGuide() {
+  state.guidePlaying = false;
+  clearTimeout(state.guideTimer);
+  $("#guide-start").textContent = "Walk me through it";
+  $("#guide-stop").disabled = true;
+}
+
+function moveGuide(delta) {
+  stopGuide();
+  const next = state.guideIndex < 0 ? (delta > 0 ? 0 : guideSteps.length - 1) : Math.max(0, Math.min(guideSteps.length - 1, state.guideIndex + delta));
+  applyGuideStep(next);
+}
+
 canvas.addEventListener("click", (event) => {
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left, y = event.clientY - rect.top;
   const nearest = markerPoints.map((item) => ({ ...item, distance: Math.hypot(item.point[0] - x, item.point[1] - y) }))
     .sort((a, b) => a.distance - b.distance)[0];
-  if (nearest && nearest.distance < 22) focusPlace(nearest.id);
+  if (nearest && nearest.distance < 22) { stopGuide(); focusPlace(nearest.id); }
 });
 
 $$('[data-layer]').forEach((button) => button.addEventListener("click", () => {
@@ -401,8 +433,8 @@ $$('[data-layer]').forEach((button) => button.addEventListener("click", () => {
   });
   const notes = {
     ortho: "Observed MRO / CTX orthoimage · grayscale display stretch · units are unspecified.",
-    elevation: "Observed DTM heights: −2,615.7 to −2,515.6 m relative to the areoid · true height scale by default.",
-    intersection: "Observed ASP camera-ray separation: 0.023–4.333 m · relative stereo diagnostic, not accuracy or uncertainty."
+    elevation: `Observed DTM heights: ${data.raster.elevation_min_m_source.toFixed(1)} to ${data.raster.elevation_max_m_source.toFixed(1)} m relative to the areoid · true height scale by default.`,
+    intersection: `Observed ASP camera-ray separation: ${data.raster.intersection_error_min_m.toFixed(3)}–${data.raster.intersection_error_max_m.toFixed(3)} m · relative stereo diagnostic, not accuracy or uncertainty.`
   };
   $("#layer-note").textContent = notes[state.layer];
   draw();
@@ -413,7 +445,6 @@ canvas.addEventListener("pointerdown", (event) => {
 });
 canvas.addEventListener("pointermove", (event) => {
   if (!state.dragging) return;
-  if (state.tour) { state.tour = false; $("#play-tour").querySelector("span:last-child").textContent = "PLAY SHORT TOUR"; }
   state.yaw += (event.clientX - state.lastX) * .008;
   state.pitch = Math.max(.45, Math.min(1.2, state.pitch + (event.clientY - state.lastY) * .004));
   state.lastX = event.clientX; state.lastY = event.clientY; draw();
@@ -421,11 +452,10 @@ canvas.addEventListener("pointermove", (event) => {
 canvas.addEventListener("pointerup", () => { state.dragging = false; });
 canvas.addEventListener("pointercancel", () => { state.dragging = false; });
 canvas.addEventListener("wheel", (event) => {
-  event.preventDefault(); if (state.tour) stopTour();
+  event.preventDefault();
   state.zoom = Math.max(.7, Math.min(1.55, state.zoom * (event.deltaY > 0 ? .92 : 1.08))); draw();
 }, { passive: false });
-function stopTour() { state.tour = false; $("#play-tour").querySelector("span:last-child").textContent = "PLAY SHORT TOUR"; }
-function resetCamera() { stopTour(); Object.assign(state, initialCamera); draw(); }
+function resetCamera() { Object.assign(state, initialCamera); draw(); }
 $("#reset-camera").addEventListener("click", resetCamera);
 $("#vertical-scale").addEventListener("click", () => {
   state.verticalScale = state.verticalScale === 1 ? 3 : 1;
@@ -434,17 +464,3 @@ $("#vertical-scale").addEventListener("click", () => {
   button.setAttribute("aria-pressed", String(exaggerated)); draw();
 });
 canvas.addEventListener("keydown", (event) => { if (event.key.toLowerCase() === "r") { resetCamera(); event.preventDefault(); } });
-$("#play-tour").addEventListener("click", () => {
-  if (state.tour) { stopTour(); return; }
-  state.tour = true; const button = $("#play-tour"), start = performance.now(), yaw = state.yaw, zoom = state.zoom;
-  button.querySelector("span:last-child").textContent = "PLAYING · DRAG TO INTERRUPT";
-  function frame(now) {
-    if (!state.tour) return;
-    const fraction = Math.min(1, (now - start) / 18000);
-    state.yaw = yaw + Math.sin(fraction * Math.PI * 2) * .16;
-    state.zoom = zoom + .08 * Math.sin(fraction * Math.PI); draw();
-    if (fraction < 1) requestAnimationFrame(frame);
-    else { state.tour = false; state.yaw = yaw; state.zoom = zoom; button.querySelector("span:last-child").textContent = "PLAY SHORT TOUR"; draw(); }
-  }
-  requestAnimationFrame(frame);
-});

@@ -11,7 +11,7 @@ Build Clean Approach: a narrow local prototype about sample-contact provenance a
 - Rebuild the compact Bright Angel display derivative from ignored source rasters: `.venv/bin/python scripts/build_demo_data.py --input data/raw/bright-angel-n02 --output public/data/bright-angel-demo.json --scenario-config scripts/bright-angel-scenario.json`.
 - Fetch the chosen public USGS/CTX COG crop only when network is available: `.venv/bin/python scripts/fetch_mars_samples.py --bbox 77.28 18.47 77.34 18.52 --item-id N02_063242_1988_XN_18N283W__N03_063532_1988_XN_18N283W --output-dir data/raw/bright-angel-n02`.
 - Check JavaScript syntax: `node --check public/app.js`.
-- Reproduce the NASA/USGS crop only when network is available: `source .venv/bin/activate && python scripts/fetch_mars_samples.py --bbox 77.44 18.42 77.49 18.47`.
+- Use the Bright Angel fetch command above to reproduce the selected sample crop; do not use the superseded landing-area bbox.
 
 ## Data and scientific claims
 

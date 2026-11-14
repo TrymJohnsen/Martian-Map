@@ -1,45 +1,31 @@
-# GitWarriors handoff — Bright Angel target integration
+# Current status — Clean Approach
 
-## Current result
+## Demonstration
 
-- The existing Canvas terrain renderer and default layout A remain in use. The corrected metre world scale, ordered contact engine, seal/reopen behavior, NoData gaps and test suite are preserved.
-- The previous MRO/CTX landing-area crop did not cover the actual sample coordinate. A bounded USGS STAC search found several footprints; one overlapping product had NoData at the target. The selected product is `N02_063242_1988_XN_18N283W__N03_063532_1988_XN_18N283W`.
-- The map now uses the PDS Sample Dossier coordinate associated with `M2020-1215-28 Sapphire Canyon` (sample 25; Cheyava Falls, Bright Angel; Sol 1215) for marker B. It transforms to a valid cell `(row 66, col 73)` in the selected raster and lies 6.67 m from its cell centre. The report gives no horizontal accuracy or coordinate datum; the UI calls the map tie nominal and does not imply drill-hole precision.
-- The PDS report lists elevation −2354.236 m; the target CTX cell is −2324.475 m, a 29.76 m difference. Cause is unresolved. The values are not presented as precisely vertically registered, and the discrepancy is not used as an accuracy estimate.
-- DTM, orthoimage and ASP ray-separation diagnostic share a 175×147 grid at 20.399228 m/pixel. NoData is 921/25,725 cells (3.58%) and remains blank. The reported sample coordinate is valid in all three layers. A and start remain illustrative, on valid cells; same S→A→B route is used in all plans.
-- The story is: an astronaut collects a hypothetical sample at A, then visits documented target B; possible A-origin material matters only as an explicit history assumption. No observation or mineral finding is assigned to A.
-- Plan A uses T1 at A and B. B uses T2 but retains G1→T2. C asks “What if this contact could be avoided?” and omits only that assumed G1→T2 link. C is a counterfactual, not a supported or validated EVA action. All outcomes are reachability results, not material transfer or a plan ranking.
-- UI source distinction remains explicit: possible human-associated material, possible material associated with hypothetical A, and B's own geological origin. Sample B's source chain follows linked events. Route is drawn separately from contact paths. PDS sample context appears beside the map marker.
+The first screen puts the observed MRO/CTX Bright Angel terrain, nominal target B, the A/B tool choices and Sample B's calculated source paths together at 1440×900. The default view shows **Reuse the tool**. **Use a separate tool** recomputes the same event model and shows the remaining Glove G1 → Tool T2 → Sample B path when that path exists. Plan C is a secondary counterfactual that omits only the modeled G1 → T2 contact at B.
 
-## Mission contribution and limits
+The five-step **Walk me through it** uses the live model: science target, activity at A, arrival/collection at B, shared-tool history, and separate-tool history. It advances without camera motion; Stop, Restart and Previous/Next are available. Under reduced-motion preference, it waits for manual steps.
 
-- MRO/CTX gives an actual Bright Angel vicinity surface image, DTM and a relative stereo diagnostic. It supplies geographic orientation and broad terrain context, but does not calculate contact transfer.
-- Mars 2020/Perseverance gives the named science target and sample-report location, not a second raster. The scene is a focused MRO terrain map with a geospatial Mars 2020 target, not a multi-mission raster stack.
-- The PDS coordinate and STAC product bounds are independently sourced records that overlap. No high-resolution comparison resolves the drill hole. CTX's ~20.4 m posting and the unspecified target accuracy limit exact co-registration.
-- The DTM target-cell elevation differs from the PDS elevation by ~29.8 m. This remains a visible data discrepancy; no cause or uncertainty is inferred.
-- The human source and contact edges remain hypothetical. No transfer rate, probability, particle path, risk value, safe plan or EVA protocol is modeled. MEDA Sol 36 remains separate historical landing-area context and is not used.
+- [Reuse the tool · 1440×900](../output/playwright/clean-approach-reuse-tool-1440x900.png)
+- [Use a separate tool · 1440×900](../output/playwright/clean-approach-separate-tool-1440x900.png)
+
+## Data limits
+
+- B is a nominal target-area placement from the PDS report associated with Sapphire Canyon, not a verified drill point. Coordinate datum and horizontal accuracy are not stated.
+- The PDS and CTX elevations at B differ by about 29.8 m; cause remains unresolved.
+- A, the traverse and contact chain are illustrative. Reachability is not measured transfer, contamination, probability, safety or EVA guidance.
+- CTX DTM/ortho posting is about 20.4 m. NoData remains blank. ASP ray separation is a relative stereo diagnostic, not terrain uncertainty.
 
 ## Verification
 
-The Python geospatial-export check covers Mars lon/lat conversion, valid-cell selection and NoData rejection, alongside the existing model/geometry checks. JavaScript checks, all three Python tests and the browser run passed on 2026-11-14. Playwright rendered the bundled 175×147 terrain crop at a 1440×900 laptop viewport, loaded the selected product ID, exercised A and C and reported no console errors. Screenshots:
-
-- [Overview, 1440×900](../output/playwright/bright-angel-overview-1440x900.png)
-- [Plan A, 1440×900](../output/playwright/bright-angel-plan-a-1440x900.png) · [full page with B history](../output/playwright/bright-angel-plan-a-sample-history-fullpage.png)
-- [Plan C, 1440×900](../output/playwright/bright-angel-plan-c-1440x900.png) · [full page with B history](../output/playwright/bright-angel-plan-c-sample-history-fullpage.png)
-
-These checks verify software behavior and presentation, not physical transfer, position accuracy, absolute terrain accuracy or operational suitability. Run:
+On 2026-11-14, Playwright/Chromium at 1440×900 showed the complete first-screen comparison with no page scrolling. Both plan choices recomputed their results and reset to B's sealed event so previous history did not remain. Map clicks at A and B and source trace links selected their corresponding ordered events. The walkthrough start/stop, timed advance, restart and manual steps were exercised; reduced-motion mode displayed its note and required manual advance. Source details opened with the coordinate and elevation caveat. Browser console: no errors or warnings.
 
 ```bash
 node --check public/app.js
 node --check public/scenario.js
-node --check public/contact-model.js
-node --check public/terrain-geometry.js
 node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
 .venv/bin/python tests/test_geospatial_export.py
 git diff --check
 ```
 
-
-## Next useful work
-
-Review whether the nominal PDS-to-CTX point placement and the 29.8 m vertical discrepancy need additional source-level investigation before describing the map as precisely georeferenced. The smallest supported improvement is to retain the coordinate uncertainty/elevation caveats beside the visible marker, as this build does. Do not infer a precise drill coordinate or use the contact scenario as operational guidance.
+The agreed future video idea remains “LIFE DETECTED. … It’s you.” and closes with “Find Mars. Not ourselves.” No video production is included here.
