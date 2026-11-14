@@ -6,6 +6,7 @@
   else root.ContactHistoryModel = api;
 })(globalThis, function () {
   const KNOWN_TYPES = new Set(["contact", "seal", "reopen", "document-control"]);
+  const SEAL_INTEGRITY = new Set(["checked", "unchecked"]);
 
   function requireReference(collection, id, what) {
     if (!Object.hasOwn(collection, id)) throw new TypeError(`Unknown ${what}: ${id}`);
@@ -49,7 +50,54 @@
           throw new TypeError(`Contact assumption is required in ${event.id}`);
         }
       }
+      if (event.integrity !== undefined && (event.type !== "seal" || !SEAL_INTEGRITY.has(event.integrity))) {
+        throw new TypeError(`Seal integrity in ${event.id} must be "checked" or "unchecked" on a seal event`);
+      }
+      if (event.tag !== undefined && (typeof event.tag !== "string" || !event.tag.trim())) {
+        throw new TypeError(`Event tag in ${event.id} must be a non-empty string`);
+      }
     }
+    validatePlanning(scenario);
+  }
+
+  /* Optional planning records. They describe where a team wants to keep objects apart; they never
+   * create or remove a contact edge. */
+  function validatePlanning(scenario) {
+    for (const placeId of scenario.route || []) requireReference(scenario.places, placeId, "route place");
+    const zoneIds = new Set();
+    for (const zone of scenario.zones || []) {
+      if (!zone.id || zoneIds.has(zone.id)) throw new TypeError(`Missing or duplicate zone id: ${zone.id}`);
+      zoneIds.add(zone.id);
+      requireReference(scenario.places, zone.centerPlaceId, `centre place of zone ${zone.id}`);
+      if (!Array.isArray(zone.placeIds)) throw new TypeError(`Zone ${zone.id} must list the places inside it`);
+      for (const placeId of zone.placeIds) requireReference(scenario.places, placeId, `place in zone ${zone.id}`);
+    }
+    const ruleIds = new Set();
+    for (const rule of scenario.rules || []) {
+      if (!rule.id || ruleIds.has(rule.id)) throw new TypeError(`Missing or duplicate rule id: ${rule.id}`);
+      ruleIds.add(rule.id);
+      if (rule.kind !== "keep-out") throw new TypeError(`Unknown rule kind in ${rule.id}: ${rule.kind}`);
+      if (!zoneIds.has(rule.zoneId)) throw new TypeError(`Unknown zone in rule ${rule.id}: ${rule.zoneId}`);
+      if (!Array.isArray(rule.objectIds)) throw new TypeError(`Rule ${rule.id} must list object IDs`);
+      for (const objectId of rule.objectIds) requireReference(scenario.objects, objectId, `object in rule ${rule.id}`);
+    }
+  }
+
+  /* A keep-out rule is broken when a contact event at a place inside the rule's zone lists one of
+   * the rule's objects as a participant. The result is a warning only. */
+  function ruleWarningsFor(scenario, event) {
+    if (event.type !== "contact") return [];
+    const warnings = [];
+    for (const rule of scenario.rules || []) {
+      const zone = scenario.zones.find((item) => item.id === rule.zoneId);
+      if (!zone.placeIds.includes(event.placeId)) continue;
+      for (const objectId of rule.objectIds) {
+        if (event.participants.includes(objectId)) {
+          warnings.push({ ruleId: rule.id, zoneId: zone.id, eventId: event.id, order: event.order, placeId: event.placeId, objectId });
+        }
+      }
+    }
+    return warnings;
   }
 
   function replay(scenario, through = scenario.events.length) {
@@ -62,6 +110,9 @@
     const frozenHistory = new Map();
     const snapshots = [];
     const graphEdges = [];
+    const seals = {};
+    const records = [];
+    const ruleWarnings = [];
     const addEdge = (from, to, event, contact) => {
       const edge = {
         from,
@@ -124,12 +175,16 @@
         if (sealed.has(sampleId)) throw new TypeError(`Sample ${sampleId} is already sealed`);
         frozenHistory.set(sampleId, historyFor(sampleId));
         sealed.add(sampleId);
+        // Seal integrity is a recorded status. It changes no edge and no frozen history.
+        seals[sampleId] = { eventId: event.id, order: event.order, placeId: event.placeId, integrity: event.integrity || null };
       } else if (event.type === "reopen") {
         const sampleIds = event.participants.filter((id) => scenario.objects[id]?.kind === "sample");
         if (sampleIds.length !== 1) throw new TypeError(`Reopen event ${event.id} must name exactly one sample`);
         if (!sealed.has(sampleIds[0])) throw new TypeError(`Sample ${sampleIds[0]} is not sealed`);
         sealed.delete(sampleIds[0]);
+        delete seals[sampleIds[0]];
       } else if (event.type === "contact") {
+        ruleWarnings.push(...ruleWarningsFor(scenario, event));
         for (const objectId of event.participants.filter((id) => scenario.objects[id])) {
           if (sealed.has(objectId)) throw new TypeError(`Event ${event.id} touches sealed object ${objectId}; add an explicit reopen event first`);
         }
@@ -139,6 +194,9 @@
         }
       }
       // document-control events add a dated-by-order record only; no edge is removed or added.
+      if (event.type === "document-control") {
+        records.push({ eventId: event.id, order: event.order, placeId: event.placeId, tag: event.tag || null, participants: [...event.participants] });
+      }
       takeSnapshot(event.id);
     }
 
@@ -152,7 +210,10 @@
       graphEdges,
       sampleId: scenario.sampleId,
       sampleHistory: latest.histories[scenario.sampleId] || [],
-      sampleSealed: latest.sealed.includes(scenario.sampleId)
+      sampleSealed: latest.sealed.includes(scenario.sampleId),
+      seals,
+      records,
+      ruleWarnings
     });
   }
 
