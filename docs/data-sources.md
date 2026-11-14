@@ -63,3 +63,19 @@ The official [PDS Atmospheres MEDA page](https://pds-atmospheres.nmsu.edu/data_a
 | Figure / reproducibility | [Observation plot](figures/meda-sol-0036-wind.png); [minute-nearest subset](figures/meda-sol-0036-minute-observations.csv); [metadata/checksums](figures/meda-sol-0036-summary.json). Rebuild with `.venv/bin/python scripts/fetch_meda_wind_sample.py`. No interpolation or direction average is used. |
 
 MEDA's sensor measures near the rover and the sample is Sol 36 (2021), while Sapphire Canyon was collected on Sol 1215 (2024). Neither site nor time matches; the plot is a historical context input only. No wind field, contamination transport estimate, contact probability, safety threshold, or contamination-reduction result is produced.
+
+## Display context additions (2026-11-14)
+
+### MEDA aggregation and direction
+
+`node scripts/build_meda_context.cjs` reads the checked-in 337 actual minute-nearest observations, not the full 41,538-row archive. It computes arithmetic speed means by integer LTST hour and counts of non-calm directions in eight 45° sectors, clockwise from north, centred on compass directions. These are sample means, not time-weighted hourly or daily climatology. Empty hours have count zero and JSON null mean; no interpolation, zero filling or arithmetic direction averaging occurs. Invalid/missing paired fields are excluded and counted. Calm observations enter speed means but not directional bins. The original archive has 995 invalid pairs; these were already excluded before the minute subset. Uncertainty fields are absent, not zero.
+
+Direction is wind-from bearing clockwise from north, consistent with the existing source-processing script, source figure and MEDA derived-wind description above. No rover-relative direction transformation or CTX georeferencing is performed. The checked-in source summary identifies the historical rover point near the landing site. It does not establish the requested approximate 9 km distance to B; the card omits that distance instead of asserting it. Sol 36 is 2021-03-27/28, not the sampling sol or the illustrative EVA date.
+
+### Curiosity RAD primary measurement
+
+Hassler et al. (2014), *Mars’ Surface Radiation Environment Measured with the Mars Science Laboratory’s Curiosity Rover*, **Science 343**, 1244797, [doi:10.1126/science.1244797](https://doi.org/10.1126/science.1244797). Values verified in the primary article text and Table 1, available through [AAAS Science in the Classroom](https://www.scienceintheclassroom.org/research-papers/curiosity-tells-all-about-mars-radiation-environment).
+
+The tissue-like E detector gave average total galactic cosmic ray absorbed dose rate **0.210 ± 0.040 mGy/day** in Gale crater, about −4.4 km MOLA elevation, over the first approximately 300 sols (7 August 2012–1 June 2013), near solar-cycle-24 maximum. The article describes the mean as a 300-day period. These are rates per day as published, not silently converted to per-sol rates. The **0.64 ± 0.12 mSv/day** dose-equivalent rate combines measured tissue dose rate with the mean radiation quality factor; it is a derived quantity, not a second direct detector reading. The GCR average is distinct from separately discussed solar energetic particle events.
+
+Perseverance has no dedicated RAD-equivalent energetic-particle detector; MEDA optical radiometry is not such a measurement. Instrument suites: [NASA Perseverance instruments](https://science.nasa.gov/mission/mars-2020-perseverance/science-instruments/) and [NASA Curiosity RAD](https://science.nasa.gov/mission/msl-curiosity/science-instruments/rad/). These Gale data supply historical context only: **Gale, not Jezero**. No radiation map, local Jezero dose, crew exposure calculation or safety threshold is inferred.
