@@ -2,7 +2,7 @@
 
 ## Goal and scope
 
-Build Clean Approach: a narrow local prototype about sample-contact provenance at Jezero's Bright Angel region. The map includes a nominal CTX cell marker derived from the PDS sample-report coordinate for Perseverance's Sapphire Canyon sample; the source does not state coordinate datum or horizontal accuracy. Site A and the route remain illustrative. Use [docs/model.md](docs/model.md) as the canonical calculation spec: qualitative directed contact-path reachability only, no transfer amount/probability/risk score. Preserve the working terrain app and avoid major visual redesign. Do not add a backend, auth, or a new frontend framework without a concrete need. Preserve human changes and check `git status` before staging.
+Build Clean Approach: a prototype of an astronaut sample-planning tool for Bright Angel on Mars. It combines observed terrain and documented sample context with an illustrative activity sequence, and shows how gloves and tools can connect earlier activities to a sample's contact history. Keep the three-step Mission → Plan → Sample history workflow described in [docs/design.md](docs/design.md). The map includes a nominal CTX cell marker derived from the PDS sample-report coordinate for Perseverance's Sapphire Canyon sample; the source does not state coordinate datum or horizontal accuracy. Site A and the route remain illustrative. Use [docs/model.md](docs/model.md) as the canonical calculation spec: qualitative directed contact-path reachability only, no transfer amount/probability/risk score. Do not add a backend, auth, or a new frontend framework without a concrete need. Preserve human changes and check `git status` before staging.
 
 ## Source of truth and commands
 
@@ -26,7 +26,7 @@ Build Clean Approach: a narrow local prototype about sample-contact provenance a
 - Perseverance witness tubes are a robotic sampling precedent, not a validated astronaut protocol. The NASA CacheCam image is not co-registered with the CTX scene.
 - Read [docs/science.md](docs/science.md) before changing science copy.
 - Update [docs/model.md](docs/model.md) and [docs/data-contract.md](docs/data-contract.md) when changing graph variables, object/source IDs, events, sequence rules or edge meanings. Run `node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs` and `.venv/bin/python tests/test_geospatial_export.py`; these checks verify code/units and raster-cell conversion, not physical transfer.
-- Follow [docs/design.md](docs/design.md) for prior visual decisions, accessible interaction, evidence labels and visual treatment. Layout A is the current working surface; keep this task's UI changes focused on the event history and do not begin a broad redesign.
+- Follow [docs/design.md](docs/design.md) for the current three-step layout, accessible interaction, evidence labels and visual treatment. Keep the terrain renderer, contact model and georeferencing unchanged unless the requested work specifically requires a correction.
 
 ## Structure and handoffs
 

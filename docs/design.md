@@ -1,29 +1,40 @@
-# Clean Approach — visual and interaction direction
+# Clean Approach — design direction
 
-## Current direction
+## Product scope
 
-Use one compact dark-neutral field-study screen. At a 1440×900 laptop viewport, the observed terrain, nominal target B, the two main tool choices, the calculated Sample B history and the walkthrough controls should be visible together. Keep the terrain broad, the body copy short and the detailed source material in **Data & assumptions**.
+Clean Approach is a prototype of a planning tool for astronauts collecting rock samples at Bright Angel on Mars. It combines observed terrain and documented sample context with an illustrative activity plan, and shows how gloves and tools could connect earlier activities to a sample's contact history.
 
-The main choices are **Reuse the tool** and **Use a separate tool**. Show the gloves and tools used in each. Derive the explanation and source paths from the replayed event model. When G1 → T2 → Sample B exists, say **Different tool. Shared glove history.** Plan C remains secondary: **What if this contact is avoided?** and explicitly omits the modeled G1 → T2 edge at B. Do not call it clean, safe or validated.
+Keep claims precise: the map target is a nominal placement based on the Sapphire Canyon sample report, not a verified drill point. Site A, the route, astronaut actions and possible contact paths are hypothetical. They do not show measured contamination, transfer, probability, risk, a real NASA operation or a validated EVA procedure.
 
-Map clicks and source trace links select the related event and highlight its place. The solid map line is the walking route; contact chains appear in the event history and never as terrain lines. Ordered event details stay available but do not crowd the first screen. Label the scene **Illustrative EVA · possible contact history, not measured contamination**.
+## One map, three steps
 
-The five-step walkthrough uses the same scenario and replay as the controls. It may advance slowly, but has Stop, Restart and manual previous/next controls; it does not move the camera. Reduced-motion preference disables timed advancement. Keep keyboard focus visible, use readable type, and preserve distinct source colors without approval or risk symbolism.
+Keep the same terrain map visible as the working surface while the user moves through three keyboard-accessible steps:
 
-## Science labels and map treatment
+1. **Mission** — introduce Bright Angel, distinguish the documented nominal target B from hypothetical work site A, give one short reason the sample is scientifically relevant, and offer **Plan sampling**.
+2. **Plan** — compare **Reuse the tool** (T1 at A and B) with **Use a separate tool** (T1 at A, T2 at B). Show Glove G1 and the tool at each activity; keep the walking route distinct from contact history. The primary action is **Trace sample history**.
+3. **Sample history** — focus on Sample B. Compute source paths from the existing ordered event model, keep place/event/object names understandable, and let users switch plans here. If the model contains G1 → T2 → Sample B, explain **Different tool. Shared glove history.** Plan C is secondary, states that it omits only modeled G1 → T2 at B, and is described as a counterfactual rather than a procedure.
 
-B is a nominal target-area marker based on the PDS sample report associated with Sapphire Canyon. It is not a verified drill point: coordinate datum and horizontal accuracy are unspecified. Keep the coordinate and the unresolved ~29.8 m elevation difference in Data & assumptions. Do not show the pixel-centre snap distance as location accuracy.
+Show only the active step's task and explanation. Keep one clear primary action per step, readable type, generous spacing and neutral plan selection. Data sources, coordinate limitations, terrain layers, route length, elevation profile and ray-separation diagnostic are available on request under **Data & assumptions** or **Terrain analysis**. Opening those details must not reset the selected step or plan.
 
-The checked-in Bright Angel derivative is 175×147 pixels in Mars 2015 ocentric equirectangular projected coordinates. Pixel spacing is 20.399228 m in both axes. DTM, orthoimage and ASP ray-separation diagnostic share the grid and valid-data mask. NoData remains blank. The DTM range is −2376.467 to −1841.575 m relative to the areoid; the 921 missing cells are 3.58% of the crop.
+The visible caveat remains **Illustrative EVA · possible contact history, not measured contamination**. Contacts appear in the history, never as terrain lines; the map's solid line is the illustrative walking route. No camera motion is needed to navigate the steps.
 
-The surface image is a display-only grayscale stretch with unspecified physical units. The DTM is shown at true 1× vertical scale by default; optional 3× exaggeration stays explicitly labelled. Ray separation is a relative stereo-processing diagnostic, not elevation error, uncertainty or confidence. No uncertainty map is justified by the available evidence.
+## Walkthrough and accessibility
+
+The walkthrough uses the same three steps and live scenario/model as the interactive flow. Users can start, stop, restart, or move manually while keeping the current model state. Timed advancement is disabled under reduced-motion preference; manual navigation remains available. Use real buttons, visible keyboard focus and `aria-current="step"` for step navigation.
+
+## Terrain and evidence labels
+
+Preserve the checked-in Bright Angel derivative: 175×147 pixels in Mars 2015 ocentric equirectangular projected coordinates, 20.399228 m/pixel in each axis. Keep the observed image, DTM and ray-separation arrays on their shared grid and mask, retain NoData gaps, and preserve the existing metre conversion and true vertical scale. The image is a display-only grayscale stretch with no documented physical units. Elevation exaggeration, when enabled, must remain explicitly labelled. Ray separation is a relative stereo diagnostic, not DTM accuracy or uncertainty; no uncertainty map is supported by available evidence.
+
+Keep the PDS coordinate's unknown datum and horizontal accuracy, nominal placement, and unresolved ~29.8 m CTX/PDS elevation mismatch in details. Do not call the cell-centre offset a position accuracy.
 
 ## Browser review
 
-- [Reuse the tool · Chromium, 1440×900](../output/playwright/clean-approach-reuse-tool-1440x900.png)
-- [Use a separate tool · Chromium, 1440×900](../output/playwright/clean-approach-separate-tool-1440x900.png)
+The 1440×900 Chromium captures show each step with the map retained:
 
-The earlier Terrain First and Guided Field Story compositions were retired as visual directions; their terrain renderer, data and calculations remain. No new framework or design package is required.
+- [Mission · 1440×900](../output/playwright/clean-approach-step-1-mission-1440x900.png)
+- [Plan · 1440×900](../output/playwright/clean-approach-step-2-plan-1440x900.png)
+- [Sample history · 1440×900](../output/playwright/clean-approach-step-3-history-1440x900.png)
 
 ## Later video idea
 

@@ -216,3 +216,93 @@ body[data-layout="a"] .route-context{margin:6px 0}
 @media(max-width:1100px){body[data-layout="a"] .workspace{grid-template-columns:minmax(0,1.25fr) minmax(360px,.95fr);gap:18px}body[data-layout="a"] .scene-wrap{height:390px}}
 @media(max-width:820px){body[data-layout="a"] .intro{display:block}body[data-layout="a"] .assumptions-link{display:inline-block;margin-top:7px}body[data-layout="a"] .workspace{display:flex;flex-direction:column}body[data-layout="a"] .terrain-card,body[data-layout="a"] .plan-column{width:100%}body[data-layout="a"] .scene-wrap{height:clamp(330px,58vw,440px)}body[data-layout="a"] .plan-column{margin-top:15px}body[data-layout="a"] .footer{margin-top:18px}}
 @media(max-width:480px){body[data-layout="a"] .intro h1{font-size:26px}body[data-layout="a"] .plan-options{grid-template-columns:1fr 1fr}body[data-layout="a"] .compact-source-row{grid-template-columns:1fr auto}.compact-source-row .object-chain{grid-column:1/-1;grid-row:2}body[data-layout="a"] .illustrative-note{margin-top:3px}body[data-layout="a"] .scene-wrap{height:320px}}
+
+/* Three-step planning workspace: keep the terrain present and reveal one task at a time. */
+body[data-layout="steps"]{--bg:#171b1c;--line:#454d4d}
+body[data-layout="steps"] main{max-width:1540px;padding:19px clamp(24px,4vw,64px) 28px}
+body[data-layout="steps"] .workspace{grid-template-columns:minmax(0,1.55fr) minmax(390px,.82fr);gap:clamp(24px,3vw,46px);align-items:start}
+body[data-layout="steps"] .terrain-card{position:sticky;top:16px}
+body[data-layout="steps"] .terrain-topline{min-height:44px;padding-bottom:9px}
+body[data-layout="steps"] .scene-wrap{height:clamp(450px,62vh,610px)}
+body[data-layout="steps"] .scene-overlay-label{gap:12px}
+body[data-layout="steps"] .map-legend{display:flex;gap:19px;padding:9px 0 4px;color:#c0c7c3;font-size:12px}
+body[data-layout="steps"] .map-legend>span{display:flex;align-items:center;gap:7px}
+body[data-layout="steps"] .legend-route{width:18px;border-top:2px solid #d5cfb3}
+body[data-layout="steps"] .legend-contact{width:18px;border-top:2px dotted #d8a77b}
+body[data-layout="steps"] .step-column{min-width:0;padding-top:1px}
+body[data-layout="steps"] .step-nav{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #42494a;margin-bottom:12px}
+body[data-layout="steps"] .step-tab{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 4px;border:0;border-bottom:2px solid transparent;background:transparent;color:#aeb7b3;font:14px var(--sans);cursor:pointer}
+body[data-layout="steps"] .step-tab span{display:grid;place-items:center;width:21px;height:21px;border:1px solid #69716d;border-radius:50%;font-size:12px}
+body[data-layout="steps"] .step-tab.is-active{border-bottom-color:#d5b18f;color:#f1f2ef}
+body[data-layout="steps"] .step-tab.is-active span{border-color:#d5b18f;color:#f0d5bb}
+body[data-layout="steps"] .step-tab:focus-visible,body[data-layout="steps"] [data-go-step]:focus-visible,body[data-layout="steps"] .guide-controls button:focus-visible{outline:2px solid #e4c3a3;outline-offset:3px}
+body[data-layout="steps"] .step-panel{min-height:445px}
+body[data-layout="steps"] .step-kicker{margin:0 0 9px;color:#c9a583;font-size:12px;letter-spacing:.04em}
+body[data-layout="steps"] .step-panel h1{margin:0;color:#f2f2ee;font:500 clamp(25px,2.2vw,32px)/1.15 var(--sans);letter-spacing:-.03em}
+body[data-layout="steps"] .step-lead{max-width:500px;margin:11px 0 22px;color:#d0d6d2;font-size:16px;line-height:1.5}
+body[data-layout="steps"] .mission-sites{display:grid;gap:0;margin:14px 0 20px;border-top:1px solid #434a49}
+body[data-layout="steps"] .mission-sites>div{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #434a49}
+body[data-layout="steps"] .mission-sites b,body[data-layout="steps"] .activity-sequence b{display:block;color:#f0f2ee;font-size:14px;font-weight:550}
+body[data-layout="steps"] .mission-sites small,body[data-layout="steps"] .activity-sequence small{display:block;margin-top:3px;color:#b6c0bb;font-size:13px}
+body[data-layout="steps"] .site-marker{flex:none;display:grid;place-items:center;width:30px;height:30px;border:1px solid #bac7c0;border-radius:50%;color:#edf2ee;font-size:13px}
+body[data-layout="steps"] .site-b{border-color:#d4a67d;color:#f0c8a4}
+body[data-layout="steps"] .site-a{border-style:dashed;color:#d3dcda}
+body[data-layout="steps"] .science-note{padding:0 0 0 13px;border-left:2px solid #84998e}
+body[data-layout="steps"] .science-note>span{color:#bbc6c0;font-size:12px}
+body[data-layout="steps"] .science-note p{margin:4px 0 0;color:#e1e5e1;font-size:14px;line-height:1.5}
+body[data-layout="steps"] .step-primary{display:inline-flex;justify-content:space-between;align-items:center;gap:25px;margin-top:24px;padding:12px 15px;border:1px solid #9b836c;background:#33302c;color:#f4e6d7;font:500 15px var(--sans);cursor:pointer}
+body[data-layout="steps"] .step-primary:hover{background:#413a33}
+body[data-layout="steps"] .step-back{padding:9px 0;border:0;background:transparent;color:#d2d8d4;font:14px var(--sans);cursor:pointer}
+body[data-layout="steps"] .plan-options{grid-template-columns:1fr;gap:8px;margin:15px 0 20px}
+body[data-layout="steps"] .plan-option{min-height:0;padding:12px 13px;border-color:#5b6461;transition:background-color .15s,border-color .15s}
+body[data-layout="steps"] .plan-option.is-selected{border-color:#c0a388;background:#292d2c;box-shadow:inset 3px 0 #c0a388}
+body[data-layout="steps"] .plan-option b{font-size:15px}
+body[data-layout="steps"] .plan-option small{font-size:13px;line-height:1.4}
+body[data-layout="steps"] .plan-option:focus-visible{outline:2px solid #e4c3a3;outline-offset:2px}
+body[data-layout="steps"] .activity-sequence{border-top:1px solid #42494a}
+body[data-layout="steps"] .activity-sequence>div{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid #42494a}
+body[data-layout="steps"] .sequence-step{display:grid;place-items:center;width:24px;height:24px;border:1px solid #8a9690;border-radius:50%;color:#dce3df;font-size:12px}
+body[data-layout="steps"] .activity-sequence p{margin:0}
+body[data-layout="steps"] .activity-sequence button{border:0;background:none;color:#d9b99b;font-size:12px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+body[data-layout="steps"] .step-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:19px}
+body[data-layout="steps"] .step-actions .step-primary{margin:0}
+body[data-layout="steps"] .history-plan-options{grid-template-columns:1fr 1fr;margin:12px 0}
+body[data-layout="steps"] .history-plan-options .plan-option{padding:9px 10px}
+body[data-layout="steps"] .plan-result{margin:12px 0;padding:0 0 0 12px;border-left:2px solid #d7a277;background:none}
+body[data-layout="steps"] .plan-result h2{margin:0;color:#f2f1ec;font:550 18px/1.3 var(--sans)}
+body[data-layout="steps"] .plan-result p{margin:4px 0 0;color:#c3cbc7;font:13px/1.4 var(--sans)}
+body[data-layout="steps"] .compact-history{margin-top:14px;padding-top:12px;border-top:1px solid #454c4b}
+body[data-layout="steps"] .compact-history h2{margin:0;color:#eff1ee;font:500 16px/1.3 var(--sans)}
+body[data-layout="steps"] .history-state{font-size:12px;line-height:1.4}
+body[data-layout="steps"] .compact-source-row{grid-template-columns:minmax(120px,.8fr) minmax(0,1.4fr) auto;gap:9px;padding:9px 0;border-color:#414948}
+body[data-layout="steps"] .compact-source-row .source-chip{padding:0;border:0;font-size:12px;line-height:1.35}
+body[data-layout="steps"] .object-chain{color:#e0e6e2;font-size:13px;line-height:1.4}
+body[data-layout="steps"] .compact-source-row .trace-link{font-size:12px}
+body[data-layout="steps"] .event-stepper{margin-top:12px;padding:9px 0;border-top:1px solid #42494a;border-bottom:1px solid #42494a}
+body[data-layout="steps"] .event-stepper b{font-size:12px}
+body[data-layout="steps"] .event-stepper small{font-size:11px}
+body[data-layout="steps"] .event-sequence,body[data-layout="steps"] .plan-c-exploration{margin-top:8px;border-color:#42494a}
+body[data-layout="steps"] .event-sequence summary,body[data-layout="steps"] .plan-c-exploration summary{min-height:36px;color:#d7ded9;font-size:13px}
+body[data-layout="steps"] .plan-c-exploration summary{color:#e2c2a4}
+body[data-layout="steps"] .plan-c-exploration p{color:#c3cbc7;font-size:13px;line-height:1.45}
+body[data-layout="steps"] .plan-c-exploration [data-plan]{color:#e2c2a4}
+body[data-layout="steps"] .history-footnote{color:#b9c3be;font-size:12px;text-align:right}
+body[data-layout="steps"] .walkthrough{margin:0 0 17px;padding:0 0 11px;border-bottom:1px solid #42494a}
+body[data-layout="steps"] .walkthrough-state{display:grid;gap:4px}
+body[data-layout="steps"] #guide-progress{color:#d5b18f;font-size:12px}
+body[data-layout="steps"] #guide-step-copy{color:#bdc6c1;font-size:13px;line-height:1.4}
+body[data-layout="steps"] .guide-controls{gap:8px;margin-top:10px}
+body[data-layout="steps"] .guide-controls .plain-button{padding:5px 4px;font-size:12px}
+body[data-layout="steps"] .guide-primary{margin:0;padding:6px 9px;font-size:12px}
+body[data-layout="steps"] .source-panel{margin-top:24px;border-color:#434a49}
+body[data-layout="steps"] .source-panel summary{min-height:44px}
+body[data-layout="steps"] .terrain-analysis{width:100%}
+body[data-layout="steps"] .terrain-analysis>summary{padding:10px 0;color:#d7ded9;cursor:pointer;font-size:13px}
+body[data-layout="steps"] .terrain-analysis[open]{padding-top:4px}
+body[data-layout="steps"] .terrain-analysis .layer-control{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:4px 0}
+body[data-layout="steps"] .terrain-analysis .layer-note{margin:6px 0;color:#b9c2be}
+body[data-layout="steps"] .terrain-analysis .route-context{margin:5px 0}
+body[data-layout="steps"] .footer{margin-top:12px}
+@media(max-width:980px){body[data-layout="steps"] main{padding-inline:24px}body[data-layout="steps"] .workspace{grid-template-columns:minmax(0,1.15fr) minmax(350px,.9fr);gap:22px}body[data-layout="steps"] .scene-wrap{height:clamp(420px,60vh,560px)}}
+@media(max-width:760px){body[data-layout="steps"] main{padding:14px 18px 24px}body[data-layout="steps"] .workspace{display:flex;flex-direction:column}body[data-layout="steps"] .terrain-card{position:static;width:100%}body[data-layout="steps"] .scene-wrap{height:clamp(340px,75vw,470px)}body[data-layout="steps"] .step-column{width:100%;margin-top:18px}body[data-layout="steps"] .step-panel{min-height:0}body[data-layout="steps"] .step-nav{margin-bottom:12px}body[data-layout="steps"] .source-panel{margin-top:22px}}
+@media(max-width:460px){body[data-layout="steps"] main{padding-inline:14px}body[data-layout="steps"] .scene-wrap{height:330px}body[data-layout="steps"] .illustrative-note{font-size:11px}body[data-layout="steps"] .map-legend{gap:10px;font-size:11px}body[data-layout="steps"] .step-tab{gap:5px;font-size:12px}body[data-layout="steps"] .history-plan-options{grid-template-columns:1fr}body[data-layout="steps"] .compact-source-row{grid-template-columns:1fr auto;gap:4px}body[data-layout="steps"] .compact-source-row .object-chain{grid-column:1/-1;grid-row:2}body[data-layout="steps"] .compact-source-row .trace-link{grid-column:2;grid-row:1}}

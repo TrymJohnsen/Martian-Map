@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171b1c">
-  <meta name="description" content="Follow illustrative astronaut contact histories at Perseverance's Bright Angel science target.">
+  <meta name="description" content="An illustrative astronaut sample-planning prototype at Bright Angel, Mars.">
   <title>Clean Approach — Bright Angel field study</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/styles.css">
@@ -16,108 +16,109 @@
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="Clean Approach home"><span class="brand-mark" aria-hidden="true">C</span><span>CLEAN APPROACH</span></a>
-    <p class="topbar-meta">A Marswalk contact-history study <span>·</span> Jezero, Mars</p>
-    <a class="challenge-link" href="https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/" target="_blank" rel="noreferrer">Project brief <span aria-hidden="true">↗</span></a>
+    <a class="brand" href="#top" aria-label="Clean Approach home"><span class="brand-mark" aria-hidden="true">C</span><span>Clean Approach</span></a>
+    <p class="topbar-meta">Illustrative Mars sample-planning prototype <span>·</span> Jezero</p>
+    <a class="assumptions-link" href="#data-assumptions">Data &amp; assumptions</a>
   </header>
 
   <main id="top" class="proposal">
-    <section class="intro" aria-label="Study question">
-      <div class="intro-copy">
-        <p class="eyebrow">Jezero · Bright Angel / Neretva Vallis</p>
-        <h1>How does a sample gain a contact history?</h1>
-        <p class="deck" id="mission-summary">Sapphire Canyon is scientifically interesting because researchers reported organic compounds and mineral associations; those findings do not establish life. Compare how assumed astronaut handling at A could connect to the sample history at B.</p>
-      </div>
-      <a class="assumptions-link" href="#data-assumptions">Data &amp; assumptions <span aria-hidden="true">↘</span></a>
-    </section>
-
-    <section class="workspace" aria-label="Interactive Marswalk planning prototype">
+    <section class="workspace" aria-label="Bright Angel sample-planning prototype">
       <article class="terrain-card" aria-labelledby="area-title">
         <div class="terrain-topline">
           <div><h2 id="area-title">Bright Angel · Neretva Vallis · Jezero</h2><p class="terrain-caption">MRO / CTX surface image <span>·</span> 20.40 m / cell</p></div>
           <span class="illustrative-note">Illustrative EVA · possible contact history, not measured contamination</span>
         </div>
         <div class="scene-wrap">
-          <canvas id="terrain" tabindex="0" aria-label="Interactive MRO CTX terrain crop around Bright Angel with an illustrative route and sample target"></canvas>
+          <canvas id="terrain" tabindex="0" aria-label="Interactive MRO CTX terrain around Bright Angel with an illustrative route and sample target"></canvas>
           <div class="scene-corner scene-corner-left"><span class="corner-cross">＋</span><span>Observed CTX surface · north ↑</span></div>
           <div class="scene-corner scene-corner-right"><span id="north-arrow" class="north-arrow">↑</span><span>N</span></div>
           <div class="scene-overlay-label"><span>S · route start</span><button type="button" data-focus-place="A">A · hypothetical activity</button><button type="button" data-focus-place="B">B · nominal sample target</button></div>
           <div id="scene-loading" class="scene-loading">Loading local terrain…</div>
           <div id="scene-error" class="scene-error" hidden>Could not load the bundled terrain sample. See README for the data export step.</div>
         </div>
+        <div class="map-legend"><span><i class="legend-route"></i> Walking route</span><span><i class="legend-contact"></i> Contacts appear in the history, not on the map</span></div>
         <div class="scene-controls">
-          <div class="layer-control" role="group" aria-label="Terrain display layer">
-            <span class="control-label">View</span>
-            <button class="layer-button is-active" data-layer="ortho" aria-pressed="true">Surface image</button>
-            <button class="layer-button" data-layer="elevation" aria-pressed="false">Elevation</button>
-            <button class="layer-button" data-layer="intersection" aria-pressed="false">Ray separation</button>
-          </div>
-          <div class="camera-actions"><button id="reset-camera" class="plain-button">Reset view</button></div>
-        </div>
-        <p class="layer-note" id="layer-note" aria-live="polite">Observed MRO / CTX orthoimage · grayscale display stretch · pixel values have no documented physical units.</p>
-        <div class="scene-footnote"><span>Solid line = walking route · select A/B on the map to inspect its event</span><button id="vertical-scale" class="plain-button" aria-pressed="false">Height scale 1× · true scale</button></div>
-        <div class="geo-context" aria-label="Map location evidence">
-          <p><b>B · Sapphire Canyon</b> is a nominal sample-report target area, not a verified drill point. <span>A is hypothetical.</span> Contact histories appear here, not as lines across the terrain.</p>
+          <details class="terrain-analysis"><summary>Terrain analysis</summary>
+            <div class="layer-control" role="group" aria-label="Terrain display layer">
+              <span class="control-label">Display</span>
+              <button class="layer-button is-active" data-layer="ortho" aria-pressed="true">Surface image</button>
+              <button class="layer-button" data-layer="elevation" aria-pressed="false">Elevation</button>
+              <button class="layer-button" data-layer="intersection" aria-pressed="false">Ray separation</button>
+              <button id="vertical-scale" class="plain-button" aria-pressed="false">Height scale 1× · true scale</button>
+              <button id="reset-camera" class="plain-button">Reset view</button>
+            </div>
+            <p class="layer-note" id="layer-note" aria-live="polite">Observed MRO / CTX orthoimage · grayscale display stretch · pixel values have no documented physical units.</p>
+            <details class="route-context"><summary>Route length and elevation profile <span>not a mobility or safety model</span></summary><div class="results-row"><div><span>Illustrative route length</span><b><span id="route-distance">—</span> m</b></div></div><div class="profile-row"><div><span>Elevation along shown route</span><span id="profile-range">—</span></div><canvas id="profile" width="420" height="70" aria-label="Illustrative elevation profile sampled from the route with NoData gaps preserved"></canvas></div><p class="metric-caveat">Profile samples the ~20 m CTX grid. NoData remains gaps. No traversability, mobility or safety is inferred.</p></details>
+          </details>
         </div>
       </article>
 
-      <aside class="plan-column">
-        <section class="plan-card history-card" aria-labelledby="sequence-heading">
-          <p class="section-label">One route · different modeled tool contacts</p>
-          <h2 id="sequence-heading">Sample B · contact history</h2>
+      <aside class="step-column" aria-label="Planning steps">
+        <nav class="step-nav" aria-label="Planning progress">
+          <button type="button" class="step-tab is-active" data-step="mission" aria-current="step"><span>1</span> Mission</button>
+          <button type="button" class="step-tab" data-step="plan"><span>2</span> Plan</button>
+          <button type="button" class="step-tab" data-step="history"><span>3</span> Sample history</button>
+        </nav>
+
+        <section class="walkthrough" aria-label="Guided walkthrough controls">
+          <div class="walkthrough-state"><span id="guide-progress">Ready</span><span id="guide-step-copy">Three steps · follows this live plan and model.</span></div>
+          <div class="guide-controls"><button id="guide-start" class="guide-primary">Walk me through it</button><button id="guide-stop" class="plain-button" disabled>Stop</button><button id="guide-restart" class="plain-button">Restart</button><span class="guide-spacer"></span><button id="guide-previous" class="plain-button" aria-label="Previous walkthrough step">←</button><button id="guide-next" class="plain-button" aria-label="Next walkthrough step">→</button></div>
+          <p id="guide-motion-note" class="guide-motion-note" hidden>Reduced motion is on; use the step controls manually.</p>
+        </section>
+
+        <section class="step-panel" data-step-panel="mission" aria-labelledby="mission-title">
+          <p class="step-kicker">MISSION · BRIGHT ANGEL</p>
+          <h1 id="mission-title">Plan a sample collection</h1>
+          <p class="step-lead">Explore how astronaut activities could shape the contact history of a rock sample at Bright Angel.</p>
+          <div class="mission-sites"><div><span class="site-marker site-b">B</span><div><b>Sapphire Canyon target area</b><small>Documented sample location · nominal placement</small></div></div><div><span class="site-marker site-a">A</span><div><b>Work site A</b><small>Hypothetical activity location</small></div></div></div>
+          <div class="science-note"><span>Why this sample?</span><p>Researchers reported organic compounds and mineral associations. These findings make sample context relevant; they do not establish life.</p></div>
+          <button class="step-primary" type="button" data-go-step="plan">Plan sampling <span aria-hidden="true">→</span></button>
+        </section>
+
+        <section class="step-panel" data-step-panel="plan" aria-labelledby="plan-title" hidden>
+          <p class="step-kicker">PLAN · SAME WALK, DIFFERENT TOOL USE</p>
+          <h1 id="plan-title">Choose the sampling sequence</h1>
+          <p class="step-lead">Select which tool is used at each activity. The plan is illustrative, not a recommended procedure.</p>
           <div class="plan-options" role="group" aria-label="Choose a contact-history plan">
-            <button class="plan-option is-selected" data-plan="shared-tool" aria-pressed="true"><b>Reuse the tool</b><small>G1 contacts T1 at A and B</small></button>
-            <button class="plan-option" data-plan="separate-tool" aria-pressed="false"><b>Use a separate tool</b><small>G1 contacts T1 at A and T2 at B</small></button>
+            <button class="plan-option is-selected" data-plan="shared-tool" aria-pressed="true"><b>Reuse the tool</b><small>A · Tool T1 <span aria-hidden="true">→</span> B · Tool T1</small></button>
+            <button class="plan-option" data-plan="separate-tool" aria-pressed="false"><b>Use a separate tool</b><small>A · Tool T1 <span aria-hidden="true">→</span> B · Tool T2</small></button>
           </div>
-          <div id="plan-result" class="plan-result" aria-live="polite">
-            <h3 id="plan-result-heading">Loading calculated contact history…</h3>
-            <p id="plan-difference"></p>
+          <div class="activity-sequence" aria-live="polite">
+            <div><span class="sequence-step">1</span><p><b>A · Surface activity</b><small>Glove G1 · Tool T1</small></p><button type="button" data-focus-place="A" aria-label="Show work site A on map">Show A</button></div>
+            <div><span class="sequence-step">2</span><p><b>B · Collect sample</b><small>Glove G1 · <span id="sequence-tool-b">Tool T1</span></small></p><button type="button" data-focus-place="B" aria-label="Show sample target B on map">Show B</button></div>
           </div>
+          <div class="step-actions"><button type="button" class="step-back" data-go-step="mission">← Back</button><button type="button" class="step-primary" data-go-step="history">Trace sample history <span aria-hidden="true">→</span></button></div>
+        </section>
+
+        <section class="step-panel" data-step-panel="history" aria-labelledby="history-title" hidden>
+          <p class="step-kicker">SAMPLE B · CALCULATED CONTACT HISTORY</p>
+          <h1 id="history-title">What connects to the sample?</h1>
+          <div class="plan-options history-plan-options" role="group" aria-label="Compare sampling plans">
+            <button class="plan-option is-selected" data-plan="shared-tool" aria-pressed="true"><b>Reuse the tool</b><small>T1 at A and B</small></button>
+            <button class="plan-option" data-plan="separate-tool" aria-pressed="false"><b>Use a separate tool</b><small>T1 at A · T2 at B</small></button>
+          </div>
+          <div id="plan-result" class="plan-result" aria-live="polite"><h2 id="plan-result-heading">Loading calculated contact history…</h2><p id="plan-difference"></p></div>
           <section class="compact-history" aria-labelledby="sample-history-heading">
-            <div class="event-section-heading"><h3 id="sample-history-heading">Possible source paths into B</h3><span id="event-position" class="event-position">—</span></div>
+            <div class="event-section-heading"><h2 id="sample-history-heading">Possible paths into Sample B</h2><span id="event-position" class="event-position">—</span></div>
             <p id="history-state" class="history-state">Replaying ordered activity…</p>
             <ol id="sample-history" class="history-paths" aria-label="Calculated possible source paths into Sample B"></ol>
           </section>
-          <div class="event-stepper" aria-label="Move through activity events in order">
-            <button id="previous-event" class="plain-button" aria-label="Previous event">← Event</button>
-            <span><b id="current-event-title">—</b><small id="current-event-place"></small></span>
-            <button id="next-event" class="plain-button" aria-label="Next event">Event →</button>
-          </div>
-          <section class="event-sequence-wrap" aria-label="Detailed events">
-            <details class="event-sequence">
-              <summary>All activity events <span>ordered · no clock times</span></summary>
-              <ol id="event-timeline" class="event-timeline" aria-label="Scenario event timeline"></ol>
-              <article id="current-event" class="current-event" aria-live="polite"></article>
-            </details>
-          </section>
-          <details id="plan-c-exploration" class="plan-c-exploration">
-            <summary>What if this contact is avoided?</summary>
-            <p>Counterfactual: omit only the modeled Glove G1 → Tool T2 contact at B. This is not a validated procedure or a cleanliness finding.</p>
-            <button class="plain-button" data-plan="omit-glove-contact" aria-pressed="false">Explore this assumption</button>
-          </details>
-          <section class="guided-walkthrough" aria-labelledby="guide-heading">
-            <div class="guide-copy"><div><h3 id="guide-heading">Guided walkthrough</h3><p id="guide-step-copy" aria-live="polite">Five short steps · same live scenario and contact model.</p></div><span id="guide-progress" aria-live="polite">Ready</span></div>
-            <div class="guide-controls">
-              <button id="guide-start" class="guide-primary">Walk me through it</button>
-              <button id="guide-stop" class="plain-button" disabled>Stop</button>
-              <button id="guide-restart" class="plain-button">Restart</button>
-              <span class="guide-spacer"></span>
-              <button id="guide-previous" class="plain-button" aria-label="Previous walkthrough step">←</button>
-              <button id="guide-next" class="plain-button" aria-label="Next walkthrough step">→</button>
-            </div>
-            <p id="guide-motion-note" class="guide-motion-note" hidden>Reduced motion is on; move between steps manually.</p>
-          </section>
+          <div class="event-stepper" aria-label="Move through activity events in order"><button id="previous-event" class="plain-button" aria-label="Previous event">← Event</button><span><b id="current-event-title">—</b><small id="current-event-place"></small></span><button id="next-event" class="plain-button" aria-label="Next event">Event →</button></div>
+          <details class="event-sequence"><summary>Show ordered activity details</summary><ol id="event-timeline" class="event-timeline" aria-label="Scenario event timeline"></ol><article id="current-event" class="current-event" aria-live="polite"></article></details>
+          <details id="plan-c-exploration" class="plan-c-exploration"><summary>What if this contact is avoided?</summary><p>Counterfactual: omit only the modeled Glove G1 → Tool T2 contact at B. This is not a validated procedure or a cleanliness finding.</p><button class="plain-button" data-plan="omit-glove-contact" aria-pressed="false">Explore this assumption</button></details>
+          <div class="step-actions"><button type="button" class="step-back" data-go-step="plan">← Back to plan</button><span class="history-footnote">Possible contacts · not measured contamination</span></div>
         </section>
-        <details class="source-panel" id="data-assumptions">
-          <summary><span>Data &amp; assumptions</span><span class="summary-hint">Sources, measures and limits</span></summary>
-          <div class="source-group"><b>Science target · Perseverance / Mars 2020</b><p>NASA lists Sapphire Canyon as sample 25, a 6.2 cm sedimentary core collected from Cheyava Falls in Bright Angel on Sol 1215. SHERLOC findings of organic compounds and mineral associations make sample provenance relevant to future interpretation; they do not establish life.</p><p>Mapped coordinate: <span id="target-coordinate">18.49747°N, 77.30515°E</span>, from the PDS report associated with the sample. Its coordinate datum and horizontal accuracy are not stated. B is a nominal target-area placement, not a verified drill point. The report elevation and CTX target-cell elevation differ by about 29.8 m; the cause is unresolved.</p><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA sample record ↗</a> · <a id="position-source" href="https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_sample_dossier/initial_reports/initial_reports_volume4.pdf#page=120" target="_blank" rel="noreferrer">PDS sample report ↗</a> · <a href="https://doi.org/10.1038/s41586-025-09413-0" target="_blank" rel="noreferrer">Bright Angel study ↗</a></div>
-          <div class="source-group"><b>Observed terrain · MRO / CTX · <span id="ctx-product-id">selected STAC item</span></b><p><span id="ctx-product-credit">N02_063242_1988_XN_18N283W + N03_063532_1988_XN_18N283W · MRO/CTX, NASA/USGS · CC0-1.0 · DOI 10.5066/P9JKVWR3</span>. One 175×147 crop at 20.399 m/cell in Mars 2015 ocentric equirectangular CRS (IAU:49910), east longitude, metres. The DTM and orthorectified image share the grid; image values are display-only and have no documented physical units. The 3.58% NoData remains blank. ASP ray separation is a relative stereo diagnostic, not DTM accuracy or measurement uncertainty.</p><span id="ctx-product-links"><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product docs ↗</a> · <a id="ctx-dtm-link" href="#" target="_blank" rel="noreferrer">DTM COG ↗</a> · <a id="ctx-ortho-link" href="#" target="_blank" rel="noreferrer">Ortho COG ↗</a> · <a id="ctx-ray-link" href="#" target="_blank" rel="noreferrer">Ray-separation COG ↗</a></span></div>
-          <div class="source-group"><b>Illustrative contact model</b><p>Site A, start, route and human handling are scenario choices, not historic astronaut activities or Perseverance observations. The model shows possible contact-path reachability under those assumptions; it does not show measured transfer, contamination, probability, risk, safety or a crewed EVA procedure. The solid line in the map is only the walking route.</p></div>
-          <div class="source-group"><b>Further mechanism context</b><p>NASA EVA suit swabs and an Earth Mars-analog study support possible human-associated material on crew/suit surfaces and gloves; neither measures glove-to-Mars-sample transfer. MIASMMA describes planned suit-leakage measurements and dispersal modeling, not completed Mars-EVA measurements. Perseverance witness tubes monitor its robotic sample chain and do not establish an astronaut protocol.</p><a href="https://ntrs.nasa.gov/citations/20220003128" target="_blank" rel="noreferrer">NASA EVA Swab Kit ↗</a> · <a href="https://doi.org/10.3389/fspas.2021.589147" target="_blank" rel="noreferrer">Ramon Crater analog study ↗</a> · <a href="https://ntrs.nasa.gov/citations/20250006358" target="_blank" rel="noreferrer">MIASMMA status ↗</a></div>
-          <details class="route-context"><summary>Route geometry <span>not a mobility or safety model</span></summary><div class="results-row"><div><span>Illustrative route length</span><b><span id="route-distance">—</span> m</b></div></div><div class="profile-row"><div><span>Elevation along shown route</span><span id="profile-range">—</span></div><canvas id="profile" width="420" height="70" aria-label="Illustrative elevation profile sampled from the route with NoData gaps preserved"></canvas></div><p class="metric-caveat">Profile samples the ~20 m CTX grid. NoData remains gaps. No traversability, mobility or safety is inferred.</p></details>
-        </details>
+
       </aside>
     </section>
+
+    <details class="source-panel" id="data-assumptions">
+      <summary><span>Data &amp; assumptions</span><span class="summary-hint">Sources, measures and limits</span></summary>
+      <div class="source-group"><b>Science target · Perseverance / Mars 2020</b><p>NASA lists Sapphire Canyon as sample 25, a 6.2 cm sedimentary core collected from Cheyava Falls in Bright Angel on Sol 1215. SHERLOC findings of organic compounds and mineral associations make sample provenance relevant to future interpretation; they do not establish life.</p><p>Mapped coordinate: <span id="target-coordinate">18.49747°N, 77.30515°E</span>, from the PDS report associated with the sample. Its coordinate datum and horizontal accuracy are not stated. B is a nominal target-area placement, not a verified drill point. The report elevation and CTX target-cell elevation differ by about 29.8 m; the cause is unresolved.</p><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA sample record ↗</a> · <a id="position-source" href="https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_sample_dossier/initial_reports/initial_reports_volume4.pdf#page=120" target="_blank" rel="noreferrer">PDS sample report ↗</a> · <a href="https://doi.org/10.1038/s41586-025-09413-0" target="_blank" rel="noreferrer">Bright Angel study ↗</a></div>
+      <div class="source-group"><b>Observed terrain · MRO / CTX · <span id="ctx-product-id">selected STAC item</span></b><p><span id="ctx-product-credit">N02_063242_1988_XN_18N283W + N03_063532_1988_XN_18N283W · MRO/CTX, NASA/USGS · CC0-1.0 · DOI 10.5066/P9JKVWR3</span>. One 175×147 crop at 20.399 m/cell in Mars 2015 ocentric equirectangular CRS (IAU:49910), east longitude, metres. The DTM and orthorectified image share the grid; image values are display-only and have no documented physical units. The 3.58% NoData remains blank. ASP ray separation is a relative stereo diagnostic, not DTM accuracy or measurement uncertainty.</p><span id="ctx-product-links"><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product docs ↗</a> · <a id="ctx-dtm-link" href="#" target="_blank" rel="noreferrer">DTM COG ↗</a> · <a id="ctx-ortho-link" href="#" target="_blank" rel="noreferrer">Ortho COG ↗</a> · <a id="ctx-ray-link" href="#" target="_blank" rel="noreferrer">Ray-separation COG ↗</a></span></div>
+      <div class="source-group"><b>Illustrative contact model</b><p>Site A, start, route and human handling are scenario choices, not historic astronaut activities or Perseverance observations. The model shows possible contact-path reachability under those assumptions; it does not show measured transfer, contamination, probability, risk, safety or a crewed EVA procedure. The solid line in the map is only the walking route.</p></div>
+      <div class="source-group"><b>Further mechanism context</b><p>NASA EVA suit swabs and an Earth Mars-analog study support possible human-associated material on crew/suit surfaces and gloves; neither measures glove-to-Mars-sample transfer. MIASMMA describes planned suit-leakage measurements and dispersal modeling, not completed Mars-EVA measurements. Perseverance witness tubes monitor its robotic sample chain and do not establish an astronaut protocol.</p><a href="https://ntrs.nasa.gov/citations/20220003128" target="_blank" rel="noreferrer">NASA EVA Swab Kit ↗</a> · <a href="https://doi.org/10.3389/fspas.2021.589147" target="_blank" rel="noreferrer">Ramon Crater analog study ↗</a> · <a href="https://ntrs.nasa.gov/citations/20250006358" target="_blank" rel="noreferrer">MIASMMA status ↗</a></div>
+    </details>
   </main>
   <footer class="footer"><span>GitWarriors · independent research prototype</span><span>Not NASA endorsed</span><a href="/data/bright-angel-demo.json">Data manifest ↗</a></footer>
 </body>

@@ -7,13 +7,11 @@ const pctx = profile.getContext("2d");
 const loading = $("#scene-loading");
 const errorBox = $("#scene-error");
 const initialCamera = { yaw: -0.55, pitch: 0.82, zoom: 1 };
-const state = { layer: "ortho", plan: "shared-tool", eventIndex: 8, verticalScale: 1, ...initialCamera, dragging: false, guidePlaying: false, guideIndex: -1, guideTimer: null, focusedPlace: "B" };
+const state = { layer: "ortho", plan: "shared-tool", eventIndex: 8, currentStep: "mission", verticalScale: 1, ...initialCamera, dragging: false, guidePlaying: false, guideIndex: -1, guideTimer: null, focusedPlace: "B" };
 const guideSteps = [
-  { plan: "shared-tool", eventId: "seal-b", focus: "B", copy: "Sapphire Canyon is the science target: reported organics and mineral associations make its provenance relevant to interpretation." },
-  { plan: "shared-tool", eventId: "touch-a", focus: "A", copy: "At hypothetical A, Glove G1 contacts the work surface before Sample A is collected with Tool T1." },
-  { plan: "shared-tool", eventId: "collect-b", focus: "B", copy: "Follow the solid walking route to B. The event history, not the map line, represents possible contacts." },
-  { plan: "shared-tool", eventId: "seal-b", focus: "B", copy: "With T1 reused, the model traces possible source paths through the shared tool into Sample B." },
-  { plan: "separate-tool", eventId: "seal-b", focus: "B", copy: "T2 is separate, but the modeled path still includes G1 → T2 → Sample B. This is a possible contact history, not measured contamination." }
+  { step: "mission", plan: "shared-tool", eventId: "seal-b", focus: "B", copy: "Bright Angel's Sapphire Canyon sample has reported organic compounds and mineral associations. B is a nominal target area." },
+  { step: "plan", plan: "shared-tool", eventId: "touch-a", focus: "A", copy: "At hypothetical A, Glove G1 and Tool T1 are used before the route continues to B." },
+  { step: "history", plan: "separate-tool", eventId: "seal-b", focus: "B", copy: "At B, Tool T2 is separate, while the modeled history still connects Glove G1 to Sample B." }
 ];
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let data;
@@ -22,8 +20,7 @@ let scenario;
 let finalReplay;
 let markerPoints = [];
 
-const params = new URLSearchParams(location.search);
-document.body.dataset.layout = params.get("design") === "field-plate" ? "b" : "a";
+document.body.dataset.layout = "steps";
 $(".assumptions-link").addEventListener("click", () => { $("#data-assumptions").open = true; });
 
 fetch("/data/bright-angel-demo.json").then((response) => {
@@ -33,7 +30,6 @@ fetch("/data/bright-angel-demo.json").then((response) => {
   data = loaded;
   datumM = TerrainGeometry.medianValidElevation(data.arrays);
   $("#area-title").textContent = data.area;
-  $(".intro .eyebrow").textContent = "Jezero · Bright Angel / Neretva Vallis";
   $("#target-coordinate").textContent = `${data.sample_site.latitude_north_deg.toFixed(5)}°N, ${data.sample_site.longitude_east_deg.toFixed(5)}°E`;
   $("#position-source").href = data.sample_site.position_source_url;
   $("#position-source").textContent = "PDS sample report ↗";
@@ -89,6 +85,25 @@ function initializePlans() {
   $("#guide-restart").addEventListener("click", () => startGuide(true));
   $("#guide-previous").addEventListener("click", () => moveGuide(-1));
   $("#guide-next").addEventListener("click", () => moveGuide(1));
+  $$('[data-step], [data-go-step]').forEach((button) => button.addEventListener("click", () => {
+    stopGuide();
+    showStep(button.dataset.step || button.dataset.goStep);
+  }));
+}
+
+function showStep(step) {
+  if (!["mission", "plan", "history"].includes(step)) return;
+  if (step === "history" && state.currentStep !== "history" && scenario) {
+    const sealedIndex = scenario.events.findIndex((event) => event.id === "seal-b");
+    if (sealedIndex >= 0) selectEvent(sealedIndex);
+  }
+  state.currentStep = step;
+  $$('[data-step-panel]').forEach((panel) => { panel.hidden = panel.dataset.stepPanel !== step; });
+  $$(".step-tab").forEach((button) => {
+    const selected = button.dataset.step === step;
+    button.classList.toggle("is-active", selected);
+    if (selected) button.setAttribute("aria-current", "step"); else button.removeAttribute("aria-current");
+  });
 }
 
 function resize() {
@@ -258,6 +273,8 @@ function renderPlanComparison() {
       ? (gloveReachesBTool ? "Different tool. Shared glove history." : "Separate tool; no modeled glove path reaches B.")
       : (gloveReachesBTool ? "The modeled glove path still reaches B." : "No glove-to-T2 contact is modeled at B.");
   $("#plan-result-heading").textContent = heading;
+  const toolAtB = state.plan === "separate-tool" ? "Tool T2" : "Tool T1";
+  $("#sequence-tool-b").textContent = toolAtB;
   $("#plan-difference").textContent = state.plan === "omit-glove-contact"
     ? "This counterfactual omits only G1 → T2 at B; it is not a validated procedure or a cleanliness finding."
     : "Possible contact path under the selected scenario · not measured contamination.";
@@ -379,6 +396,7 @@ function applyGuideStep(index) {
   $("#plan-c-exploration").open = false;
   state.plan = step.plan;
   state.eventIndex = scenario.events.findIndex((event) => event.id === step.eventId);
+  showStep(step.step);
   $("#guide-step-copy").textContent = step.copy;
   $("#guide-progress").textContent = `Step ${index + 1} of ${guideSteps.length}`;
   updatePlan();

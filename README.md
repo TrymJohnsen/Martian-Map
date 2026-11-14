@@ -1,10 +1,10 @@
 # Clean Approach
 
-**Clean Approach** is a local Marswalk demonstration about how earlier activities could become part of a sample's contact history. Sapphire Canyon at Bright Angel is scientifically interesting because researchers reported organic compounds and mineral associations; these findings do not establish life.
+Clean Approach is a prototype of an astronaut sample-planning tool for Bright Angel on Mars. It combines observed terrain and documented sample context with an illustrative activity plan, and shows how gloves and tools could connect earlier activities to a sample's contact history.
 
-The map uses an MRO/CTX surface image and DTM. B is a nominal target-area placement based on the PDS report associated with Sapphire Canyon, sample 25; it is not a verified drill point. A, the route and the astronaut activity are illustrative.
+Sapphire Canyon is scientifically relevant because researchers reported organic compounds and mineral associations; this does not establish life. Sample target B is a nominal placement based on the PDS sample report, not a verified drill point. Work site A, the route and astronaut activity are hypothetical, not a real NASA operation.
 
-## Run the demo
+## Run locally
 
 From the repository root:
 
@@ -14,25 +14,25 @@ python3 -m http.server 4173 --directory public
 
 Open <http://localhost:4173>.
 
-## Explore the contact histories
+## Explore the three steps
 
-The two main choices replay the same ordered scenario and route:
+1. **Mission** introduces Bright Angel, documented target area B, hypothetical site A, and the science context.
+2. **Plan** compares reusing Tool T1 at A and B with using T1 at A and separate Tool T2 at B. Both scenarios model Glove G1. Choose **Trace sample history** to continue.
+3. **Sample history** shows the paths calculated by the existing ordered-event model. If its scenario contains Glove G1 → Tool T2 → Sample B, the app explains **Different tool. Shared glove history.** Switch plans here to compare the computed result. **What if this contact is avoided?** is a counterfactual that omits only modeled G1 → T2 at B, not a validated procedure.
 
-- **Reuse the tool:** Glove G1 contacts Tool T1 at A and B. The model can connect possible A-surface and human-associated sources to Sample B through T1.
-- **Use a separate tool:** Glove G1 contacts T1 at A and T2 at B. The model still includes a possible path through the shared glove: **Different tool. Shared glove history.**
+The solid map line is only the walking route. Contact paths appear in the history. These are possible paths under scenario assumptions, not measured material transfer or contamination, probability, risk, safety guidance or a crewed EVA procedure. Use **Data & assumptions** for sources and location limits; **Terrain analysis** contains optional layers and route diagnostics.
 
-The shorter **What if this contact is avoided?** exploration omits only the modeled G1 → T2 contact at B. It is a counterfactual, not a clean, safe or validated EVA procedure. The guided walkthrough replays these same events and can be stopped, restarted or stepped manually.
+## Screenshots
 
-Paths show reachability under scenario assumptions, not measured contamination or material transfer. The solid line on the map shows only the walking route. Select A or B on the terrain, or select a source trace, to follow the corresponding event.
+- [Mission · 1440×900](output/playwright/clean-approach-step-1-mission-1440x900.png)
+- [Plan · 1440×900](output/playwright/clean-approach-step-2-plan-1440x900.png)
+- [Sample history · 1440×900](output/playwright/clean-approach-step-3-history-1440x900.png)
 
-## Data and limits
+## Data limits
 
-- **MRO/CTX:** a 175×147 Bright Angel crop at 20.399 m/pixel, with a co-gridded orthoimage, DTM and ASP ray-separation diagnostic. NoData remains blank. Ray separation is a relative stereo diagnostic, not elevation accuracy or uncertainty.
-- **Mars 2020 / Perseverance:** the PDS report coordinate maps nominally to a valid CTX cell. The report does not state coordinate datum or horizontal accuracy. B is not represented as a precise drill point.
-- **Vertical comparison:** the CTX target-cell elevation and PDS report elevation differ by about 29.8 m; the cause is unresolved. The map does not claim precise vertical registration.
-- **Scenario:** A, the start, route and contacts are illustrative. There are no rates, probabilities, safety rankings or astronaut procedures in the model.
-
-The optional elevation and ray-separation views are analysis layers. The default vertical scale is 1×; any 3× exaggeration is labelled. See [Data & assumptions](docs/data-sources.md) for sources and [Current status](docs/STATUS.md) for tested behavior.
+- MRO/CTX Bright Angel crop: 175×147 pixels at about 20.399 m/cell. Orthoimage, DTM and ASP ray-separation diagnostic share a grid; NoData remains blank.
+- The PDS report does not state target-coordinate datum or horizontal accuracy. B is a nominal target-area placement, not a verified drill point. The PDS and CTX elevations differ by about 29.8 m; the cause is unresolved.
+- Ray separation is a relative stereo diagnostic, not terrain accuracy or uncertainty. There are no contamination rates, transfer probabilities, risk rankings or astronaut procedures in the model.
 
 ## Verify
 
@@ -43,10 +43,4 @@ node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
 .venv/bin/python tests/test_geospatial_export.py
 ```
 
-Chromium screenshots at 1440×900: [Reuse the tool](output/playwright/clean-approach-reuse-tool-1440x900.png) · [Use a separate tool](output/playwright/clean-approach-separate-tool-1440x900.png).
-
-## 30-second demo script
-
-> At Bright Angel, Sapphire Canyon is a science target because researchers reported organic compounds and mineral associations. Its map position comes from the sample report and is approximate. In this illustrative EVA, reusing Tool T1 connects possible contacts from A to Sample B. A separate Tool T2 still shares Glove G1 in the model. These are possible contact paths, not measured contamination.
-
-The later video concept remains **“LIFE DETECTED. … It’s you.”** and ends **“Find Mars. Not ourselves.”** It is an imagined narrative idea, not a discovery claim; video production is not part of this prototype task. See [design notes](docs/design.md).
+The later video idea remains **“LIFE DETECTED. … It’s you.”**, closing with **“Find Mars. Not ourselves.”** It is a fictional narrative frame, not a discovery claim; video production is later work. See [design notes](docs/design.md) and [current status](docs/STATUS.md).
