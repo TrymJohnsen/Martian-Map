@@ -1,0 +1,5 @@
+/* Map-side styles: layer panel, zones, markers, context cards.
+ * Owned by the map/layers work. Panel and step styles go in panel.css; shared rules stay in
+ * design-overrides.css. Mount points must stay free of whitespace so :empty hides them. */
+#layer-panel:empty,
+#context-cards:empty { display: none; }

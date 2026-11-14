@@ -37,3 +37,11 @@ The repo uses a no-build static app with browser-native canvas/JavaScript and th
 ## 2026-11-14 — Preserve the video concept for a later phase
 
 Keep the proposed story framing **“LIFE DETECTED. … It’s you.”** and the ending **“Find Mars. Not ourselves.”** for a later video. The line is an imagined scenario, not a discovery claim. No video production is part of the current visual design checkpoint.
+
+## 2026-11-14 — Split the front end into map, panel and shell modules
+
+`public/app.js` held the terrain renderer, the step panel and the data loading in one file, so two people could not work on it in parallel. It is now `map.js` (map card), `panel.js` (right-hand column) and a small `app.js` that loads data and starts both. They share `window.CleanApproach` and the events `scenario:change`, `mission:step` and `map:place`; each owns its own stylesheet (`map.css`, `panel.css`) and empty mount points (`#layer-panel`, `#context-cards`, `#mission-panel`). The split is behaviour-neutral: 35 browser states (steps, plans, events, camera, layers, walkthrough, two resized layouts) gave identical text, map pixels and screenshots before and after. The contract is in [data-contract.md](data-contract.md).
+
+## 2026-11-14 — Allow planning layers and zones; keep wind and radiation out
+
+The earlier instruction to keep the renderer and workflow unchanged is lifted so the map can gain layers and planning zones, and the right-hand column can become a mission checklist; visual design will be redone later in Claude Design. Zones must come from data we hold (slope derived from the DTM, NoData as unknown terrain) or be explicit scenario rules, labelled as such, with user-set thresholds called planning thresholds, never safe/unsafe or a score. Wind and radiation stay out of the app: there is no wind or radiation dataset for Bright Angel in the repo (MEDA Sol 36 is landing-site background, and Perseverance carries no radiation instrument), so a layer would be invented. Revisit only when a sourced dataset is checked in. This does not change the scientific limits or the earlier wind decision.

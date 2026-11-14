@@ -86,3 +86,47 @@ This small valid scenario shows one assumed source-to-sample chain. The live app
 ```
 
 The engine rejects unknown place/object/source IDs, missing or duplicate event IDs, non-contiguous/ambiguous order, undeclared contact direction, missing contact assumptions, contacts with a sealed sample, and invalid seal/reopen use. To reproduce tests: `node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs`.
+
+## Module and event contract
+
+The front end is a no-build set of classic scripts split by owner, so two people can work on separate branches without editing the same file. The modules share one namespace and three events; nothing else crosses the boundary.
+
+| File | Owns | Mount points and styles |
+|---|---|---|
+| `public/map.js` | Terrain canvas, display layers, camera, route and place markers, route profile, planning zones drawn on the map | `#layer-panel`, `#context-cards`, everything inside `.terrain-card`; `public/map.css` |
+| `public/panel.js` | Mission / Plan / Sample history steps, plan selection, event timeline, sample-B paths, walkthrough, mission checklist | `#mission-panel`, everything inside `.step-column`; `public/panel.css` |
+| `public/app.js` | Loads `bright-angel-demo.json`, fills shared source/credit text, starts both modules | none |
+| `scenario.js`, `contact-model.js` | Scenario and replay model (panel side) | none |
+| `terrain-geometry.js` | Metre-scale terrain geometry and profile (map side) | none |
+
+Scripts load in this order: model files, `map.js`, `panel.js`, `app.js`. `app.js` calls `map.init` before `panel.init`, so the map's listeners exist before the panel publishes the first scenario.
+
+### Shared namespace `window.CleanApproach`
+
+| Property | Written by | Meaning |
+|---|---|---|
+| `data` | `app.js` | The loaded display derivative. Read-only for every module. |
+| `datumM` | `app.js` | Local elevation datum in metres (median valid elevation), a rendering origin only. |
+| `scenario` | `panel.js` only | The current scenario from `CleanApproachScenario.build`. Replaced on every plan change; do not mutate it from the map. |
+| `map`, `panel` | each module | `{ init(context) }`. Do not call another module's internals. |
+
+### Events (dispatched as `CustomEvent` on `window`)
+
+| Event | Sent by | `detail` | Receiver behaviour |
+|---|---|---|---|
+| `scenario:change` | panel | `{ planId }` | `CleanApproach.scenario` is already updated. The map recomputes route length and profile and redraws. |
+| `mission:step` | panel | `{ stepId, placeId }` | Fired whenever the active event or step changes. `stepId` is the scenario event ID (`null` when only a place is focused); `placeId` is a key of `scenario.places`. The map highlights that place and may move an astronaut marker to it. |
+| `map:place` | map | `{ placeId }` | A place marker or map-side place button was chosen. The panel stops the walkthrough and focuses that place, which answers with `mission:step`. |
+
+### Scenario fields the map reads
+
+- `places[id]`: `{ label, row, col, kind }`, as in the activity-history contract above. Place IDs are free; `prep`, `A` and `B` exist today.
+- `route` (optional): ordered array of place IDs the map draws as the walking route. Absent means `["prep", "A", "B"]`. Add places such as a zone boundary by listing them here.
+- `zones` (optional, not drawn yet): array of `{ id, kind, centerPlaceId, radius_m, label, evidence }`. `kind: "work-zone"` with `evidence: "scenario"` is a planning rule chosen by the team, never an observation. A zone changes what the panel warns about; it removes no contact path.
+
+### Layer and zone rules
+
+- Every map layer is one of **Observed** (read from a source raster or product), **Derived** (computed from observed arrays, for example slope from the DTM, with method and resolution limits stated and kept apart from the observed arrays) or **Scenario** (a planning rule or illustrative marker).
+- A hazard or planning zone must come from data in `public/data/` or be an explicit Scenario rule. A threshold the user can change is a planning threshold, not a validated suit or mobility limit. Never label a zone safe, unsafe or risky, and never attach a score.
+- NoData stays visible as unknown terrain; it is never filled or smoothed.
+- No wind, radiation, thermal or other environmental layer or card is part of the app until a documented dataset for Bright Angel (or an explicitly labelled context source) is checked in with its source, location, time and limits recorded in [data-sources.md](data-sources.md).

@@ -9,9 +9,13 @@
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/design-overrides.css">
+  <link rel="stylesheet" href="/map.css">
+  <link rel="stylesheet" href="/panel.css">
   <script src="/contact-model.js" defer></script>
   <script src="/terrain-geometry.js" defer></script>
   <script src="/scenario.js" defer></script>
+  <script src="/map.js" defer></script>
+  <script src="/panel.js" defer></script>
   <script src="/app.js" defer></script>
 </head>
 <body>
@@ -51,6 +55,7 @@
             <details class="route-context"><summary>Route length and elevation profile <span>not a mobility or safety model</span></summary><div class="results-row"><div><span>Illustrative route length</span><b><span id="route-distance">—</span> m</b></div></div><div class="profile-row"><div><span>Elevation along shown route</span><span id="profile-range">—</span></div><canvas id="profile" width="420" height="70" aria-label="Illustrative elevation profile sampled from the route with NoData gaps preserved"></canvas></div><p class="metric-caveat">Profile samples the ~20 m CTX grid. NoData remains gaps. No traversability, mobility or safety is inferred.</p></details>
           </details>
         </div>
+        <div id="layer-panel" class="layer-panel" aria-label="Map layers"></div>
       </article>
 
       <aside class="step-column" aria-label="Planning steps">
@@ -109,8 +114,11 @@
           <div class="step-actions"><button type="button" class="step-back" data-go-step="plan">← Back to plan</button><span class="history-footnote">Possible contacts · not measured contamination</span></div>
         </section>
 
+        <div id="mission-panel" class="mission-panel" aria-label="Mission checklist"></div>
       </aside>
     </section>
+
+    <section id="context-cards" class="context-cards" aria-label="Sourced context"></section>
 
     <details class="source-panel" id="data-assumptions">
       <summary><span>Data &amp; assumptions</span><span class="summary-hint">Sources, measures and limits</span></summary>

@@ -1,0 +1,4 @@
+/* Panel-side styles: mission checklist and step-panel additions.
+ * Owned by the mission/panel work. Map styles go in map.css; shared rules stay in
+ * design-overrides.css. Mount points must stay free of whitespace so :empty hides them. */
+#mission-panel:empty { display: none; }

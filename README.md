@@ -38,6 +38,8 @@ The solid map line is only the walking route. Contact paths appear in the histor
 
 ```bash
 node --check public/app.js
+node --check public/map.js
+node --check public/panel.js
 node --check public/scenario.js
 node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
 .venv/bin/python tests/test_geospatial_export.py

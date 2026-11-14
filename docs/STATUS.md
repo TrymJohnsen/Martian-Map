@@ -10,6 +10,10 @@ When the separate-tool model contains the path, the interface says **Different t
 - [Plan · 1440×900](../output/playwright/clean-approach-step-2-plan-1440x900.png)
 - [Sample history · 1440×900](../output/playwright/clean-approach-step-3-history-1440x900.png)
 
+## Front-end structure
+
+The browser code is split by owner: `public/map.js` (terrain map, layers, route/markers, profile), `public/panel.js` (Mission / Plan / Sample history, event timeline, walkthrough) and a small `public/app.js` (data loading, shared source text). They communicate through `window.CleanApproach` and three events; empty mount points `#layer-panel`, `#context-cards` and `#mission-panel` are ready for new work. See [the module contract](data-contract.md#module-and-event-contract) and [decisions](decisions.md). The user-visible app is unchanged by the split.
+
 ## Data limits
 
 - B is a nominal target-area placement from the PDS report associated with Sapphire Canyon, not a verified drill point. Coordinate datum and horizontal accuracy are not stated.
@@ -23,10 +27,14 @@ On 2026-11-14, Playwright/Chromium at 1440×900 verified keyboard access to all 
 
 ```bash
 node --check public/app.js
+node --check public/map.js
+node --check public/panel.js
 node --check public/scenario.js
 node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
 .venv/bin/python tests/test_geospatial_export.py
 git diff --check
 ```
+
+On 2026-11-14 the module split was checked in Edge (headless, 1440×900) before and after: 35 states covering all three steps, plan changes, event stepping, trace links, Plan C, canvas marker clicks, drag, zoom, layers, height scale, reset, walkthrough start/stop/auto-advance/manual, the assumptions panel and 820 px and 390 px widths produced identical text, map pixels and screenshots, with no console errors.
 
 The agreed future video idea remains **“LIFE DETECTED. … It’s you.”** and closes with **“Find Mars. Not ourselves.”** Video production is not included.
