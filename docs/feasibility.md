@@ -12,7 +12,7 @@ Direct contact through glove → sample-contact interface → core is the best s
 
 Activity order is not itself a transport mechanism. Holding the same assumed glove/tool contacts constant yields the same possible contact path for collect-first and survey-first. A hypothetical isolation boundary (glove change plus protected dedicated sample interface) removes one assumed edge from the graph; this does not establish that the action is effective or a validated EVA procedure.
 
-Airborne release and deposition are important but excluded. MIASMMA describes planned suit leakage measurements and model development; rover particle resuspension work and ISS exterior DNA are not human Mars surface deposition parameters. MEDA temporal point measurements do not automatically provide a local continuous crew-route wind field.
+Airborne release and deposition are important but excluded. MIASMMA describes planned suit leakage measurements and model development; rover particle resuspension work and ISS exterior DNA are not human Mars surface deposition parameters. A real MEDA derived-wind sample (Sol 36) is now archived for review, but it is a point time series near the landing site, several years earlier than the motivating sample, with no corresponding human source or sample deposition measurement. It is not used to alter the contact graph or estimate airborne exposure. See [the wind feasibility evidence](data-sources.md#meda-wind-feasibility-sample).
 
 ## Model and calculations
 
@@ -23,9 +23,9 @@ The existing CTX data remain useful for rendering Jezero relief, locating the il
 ## Mission data and challenge fit
 
 - **MRO / CTX:** currently the only georeferenced map layer; exact 148×148 crop, CRS, grid, NoData and limits are preserved in `docs/data-sources.md`.
-- **Mars 2020 / Perseverance:** sample catalogue and SHERLOC evidence support the science scenario; currently not spatially overlaid. No per-product Sol-1215 data was downloaded because host DNS from the shell failed.
+- **Mars 2020 / Perseverance:** sample catalogue and SHERLOC evidence support the science scenario; MEDA Sol 36 provides historical landing-site wind context, not wind at Sapphire Canyon or at the illustrative sample marker. No individual Sol-1215 SHERLOC product was downloaded because shell DNS was unavailable in the ordinary agent environment.
 - **MSL / Curiosity:** its published sample-transfer assays show how robotic hardware cleaning and contamination knowledge affect organic-analysis interpretation. Values are not reused as human parameters.
-- **MEDA, MOLA/HRSC/THEMIS:** considered but do not parameterize direct contact. No gratuitous layers are added.
+- **MEDA, MOLA/HRSC/THEMIS:** MEDA temperature/radiation products are known to exist, but none currently supports a defined product decision. Wind is kept as background evidence only; no gratuitous mapped layer is added.
 
 The app now contains two NASA mission contexts but still has only one mapped mission's data. The challenge requirement for an integrated georeferenced multi-mission map is therefore still open; don't claim it is satisfied.
 

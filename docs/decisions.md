@@ -8,6 +8,10 @@ The team selected the question of preserving a science sample's interpretive int
 
 The prototype represents a possible Earth-associated source → EVA glove → sample-contact interface → rock core chain as a directed graph. It reports only whether that path exists under explicit scenario assumptions. It does not estimate amount, probability, viability, or efficacy. Activity order is retained as a timeline comparison; with the same contacts it does not change graph reachability. An optional isolation boundary is a hypothetical graph edit, not a crewed-EVA recommendation or validated control. See [the model specification](model.md).
 
+## 2026-11-14 — Keep MEDA wind as background, not an app layer
+
+A reproducible Sol 36 derived wind sample near the Perseverance landing point was downloaded and plotted. It is 2021 landing-site history, while the motivating Sapphire Canyon sample was collected on Sol 1215 and the app target is illustrative and about 0.91 km from the landing point. Empty uncertainty/booms-used fields and the absence of a human-release/deposition model prevent a defensible contamination or target-exposure inference. Keep the dataset and figure as context; do not add a wind overlay or alter the direct-contact graph. Revisit only if a specific activity location/time is paired with a suitable environmental series and the feature is explicitly limited to observations or geometric relation.
+
 ## 2026-11-14 — Use Jezero CTX crop already fetched by the team
 
 Use STAC item `P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W`, preserving raw rasters under ignored `data/raw/`. The crop covers 148×148 cells at 20.162955 m/cell and has exact matching DTM/ortho/intersection-error grids. Use it for broad terrain context and approximate scenario-route metrics only.

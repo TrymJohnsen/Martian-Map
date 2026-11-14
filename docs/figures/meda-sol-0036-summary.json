@@ -1,0 +1,64 @@
+{
+  "selected_sol": 36,
+  "wind_product": {
+    "logical_identifier": "urn:nasa:pds:mars2020_meda:data_derived_env:we__0036___________der_ws__________________p",
+    "version_id": "2.0",
+    "start_date_time": "2021-03-27T05:42:18.038Z",
+    "stop_date_time": "2021-03-28T03:52:34.167Z"
+  },
+  "ancillary_product": {
+    "logical_identifier": "urn:nasa:pds:mars2020_meda:data_derived_env:we__0036___________der_ancillary___________p",
+    "version_id": "3.0",
+    "start_date_time": "2021-03-27T04:09:24.994Z",
+    "stop_date_time": "2021-03-28T04:48:59.694Z"
+  },
+  "archive_directory": "https://atmos.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_derived_env/sol_0000_0089/sol_0036/",
+  "source_files": {
+    "WE__0036___________DER_WS__________________P02.CSV": {
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_derived_env/sol_0000_0089/sol_0036/WE__0036___________DER_WS__________________P02.CSV",
+      "bytes": 2657575,
+      "sha256": "cad6cf9c2fb2918c4047d254f682663d241eceaea20ae60cd3fa3e07ffd3c426"
+    },
+    "WE__0036___________DER_WS__________________P02.xml": {
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_derived_env/sol_0000_0089/sol_0036/WE__0036___________DER_WS__________________P02.xml",
+      "bytes": 10671,
+      "sha256": "ca9a6770fd831f4c121ae7f63e25c180a4e09b899f062edebaf16ddd848abaa3"
+    },
+    "WE__0036___________DER_ANCILLARY___________P03.CSV": {
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_derived_env/sol_0000_0089/sol_0036/WE__0036___________DER_ANCILLARY___________P03.CSV",
+      "bytes": 10940419,
+      "sha256": "f09f3e35b0b1d95b3b21d32cc62ba67ac8a25e30eb962902f41dfef326b18bd7"
+    },
+    "WE__0036___________DER_ANCILLARY___________P03.xml": {
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_derived_env/sol_0000_0089/sol_0036/WE__0036___________DER_ANCILLARY___________P03.xml",
+      "bytes": 16184,
+      "sha256": "91af97927b60874dd00494c113f9b39b35308f9a62fc6567b01125b7639e6a8b"
+    }
+  },
+  "wind_rows_total": 41538,
+  "wind_rows_valid_speed_and_direction": 40543,
+  "wind_rows_missing_or_sentinel_speed_or_direction": 995,
+  "valid_ltst_start": "0036 01:06:50",
+  "valid_ltst_stop": "0036 22:40:04",
+  "horizontal_speed_m_s_min": 0.0,
+  "horizontal_speed_m_s_max": 16.24,
+  "direction_deg_min": 0.57,
+  "direction_deg_max": 355.57,
+  "calm_speed_records_direction_omitted_from_plot": 3,
+  "speed_uncertainty_nonempty_count": 0,
+  "direction_uncertainty_nonempty_count": 0,
+  "both_booms_flag_nonempty_count": 0,
+  "rover_position_frame": "M2020_TOPO, relative to the landing site; +X local north, +Z outward normal, +Y completes right hand frame",
+  "rover_position_xy_m": [
+    13.94,
+    -7.63
+  ],
+  "rover_horizontal_distance_from_landing_m_range": [
+    15.89152289744441,
+    15.89152289744441
+  ],
+  "minute_sample_records": 337,
+  "minute_sample_method": "actual valid observation nearest each LTST minute mark; no interpolation or averaging",
+  "figure": "docs/figures/meda-sol-0036-wind.png",
+  "plot_semantics": "individual speed and wind-from direction observations; no directional mean; no wind field or particle-transport model"
+}
