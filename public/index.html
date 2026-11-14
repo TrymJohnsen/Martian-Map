@@ -3,132 +3,81 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101615">
-  <meta name="description" content="A Marswalk sample-integrity planning prototype using real Jezero terrain data and a clearly labelled activity-order scenario.">
-  <title>Clean Approach — Marswalk field plan</title>
+  <meta name="theme-color" content="#171b1c">
+  <meta name="description" content="Explore an illustrative Marswalk activity sequence on observed Jezero terrain.">
+  <title>Clean Approach — Jezero field study</title>
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/design-overrides.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="Clean Approach home">
-      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span>FIELDNOTES <b>/ MARS</b></span>
-    </a>
-    <div class="topbar-meta">RESEARCH PROTOTYPE <span class="top-separator">·</span> JEZERO CRATER</div>
-    <a class="challenge-link" href="https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/" target="_blank" rel="noreferrer">SPACE APPS 2026 <span aria-hidden="true">↗</span></a>
+    <a class="brand" href="#top" aria-label="Clean Approach home"><span class="brand-mark" aria-hidden="true">C</span><span>CLEAN APPROACH</span></a>
+    <p class="topbar-meta">A Marswalk contact-history study <span>·</span> Jezero, Mars</p>
+    <a class="challenge-link" href="https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/" target="_blank" rel="noreferrer">Project brief <span aria-hidden="true">↗</span></a>
   </header>
 
-  <main id="top">
-    <section class="intro">
+  <main id="top" class="proposal">
+    <section class="intro" aria-label="Study question">
       <div class="intro-copy">
-        <p class="eyebrow">FIELD GUIDE <span class="eyebrow-rule"></span> JEZERO · MARS</p>
-        <h1>Could our arrival <em>compromise the sample?</em></h1>
-        <p class="deck">A route-order scenario about contact history. <strong>No transfer rate or contamination model is available.</strong></p>
+        <p class="eyebrow">Jezero · 18.45°N, 77.46°E</p>
+        <h1>How might activity order shape contact history?</h1>
+        <p class="deck">Explore two illustrative Marswalk sequences across the same terrain.</p>
       </div>
+      <a class="assumptions-link" href="#data-assumptions">Data &amp; assumptions <span aria-hidden="true">↘</span></a>
     </section>
 
-    <nav class="layout-choice" aria-label="Choose comparison layout">
-      <span>VIEW</span>
-      <button data-layout="a" aria-pressed="true">A · TERRAIN FIRST</button>
-      <button data-layout="b" aria-pressed="false">B · GUIDED FIELD STORY</button>
-    </nav>
-
     <section class="workspace" aria-label="Interactive Marswalk planning prototype">
-      <article class="terrain-card">
+      <article class="terrain-card" aria-labelledby="area-title">
         <div class="terrain-topline">
-          <div>
-            <p class="micro-label">01 / AREA & SAMPLE TARGET</p>
-            <h2>Jezero approach sector</h2>
-          </div>
-          <div class="source-chip"><span><b>MRO · CTX</b><small>OBSERVED DATA</small></span></div>
+          <div><h2 id="area-title">Jezero approach sector</h2><p class="terrain-caption">Observed CTX surface image <span>·</span> 20.16 m / cell</p></div>
+          <span class="illustrative-note">Illustrative activity plan</span>
         </div>
-
         <div class="scene-wrap">
-          <canvas id="terrain" tabindex="0" aria-label="Rotatable 3D terrain view of Jezero crater with illustrative walk start, survey waypoint and sample target"></canvas>
+          <canvas id="terrain" tabindex="0" aria-label="Interactive terrain view of Jezero crater with illustrative walk start, survey waypoint and sample target"></canvas>
           <div class="scene-corner scene-corner-left"><span class="corner-cross">＋</span><span id="coord-readout">Loading coordinates…</span></div>
-          <div class="scene-corner scene-corner-right"><span class="north-arrow">↑</span><span>N</span></div>
-          <div class="scene-overlay-label"><span class="overlay-line"></span><span>SCENARIO MARKERS · NOT A FIELD PLAN</span></div>
+          <div class="scene-corner scene-corner-right"><span id="north-arrow" class="north-arrow">↑</span><span>N</span></div>
+          <div class="scene-overlay-label"><span>S · walk start</span><span>W · survey</span><span>T · sample target</span></div>
           <div id="scene-loading" class="scene-loading">Loading local terrain…</div>
           <div id="scene-error" class="scene-error" hidden>Could not load the bundled terrain sample. See README for the data export step.</div>
         </div>
-
-        <div class="map-key" aria-label="Map marker key"><span><b>S</b> walk start</span><span><b>W</b> survey waypoint</span><span><b>T</b> illustrative sample target</span></div>
-
         <div class="scene-controls">
-          <div class="layer-control" role="group" aria-label="Terrain layer display">
-            <span class="control-label">SURFACE</span>
-            <button class="layer-button is-active" data-layer="ortho" aria-pressed="true">IMAGE</button>
-            <button class="layer-button" data-layer="elevation" aria-pressed="false">ELEVATION</button>
-            <button class="layer-button" data-layer="intersection" aria-pressed="false">RAY SEPARATION</button>
+          <div class="layer-control" role="group" aria-label="Terrain display layer">
+            <span class="control-label">View</span>
+            <button class="layer-button is-active" data-layer="ortho" aria-pressed="true">Surface image</button>
+            <button class="layer-button" data-layer="elevation" aria-pressed="false">Elevation</button>
+            <button class="layer-button" data-layer="intersection" aria-pressed="false">Ray separation</button>
           </div>
-          <p class="layer-note" id="layer-note" aria-live="polite">CTX orthophoto, display-only grayscale stretch; pixel units are not specified in product metadata.</p>
-          <div class="camera-actions"><button id="reset-camera" class="plain-button">RESET VIEW</button><button id="play-tour" class="tour-button"><span class="play-icon">▶</span><span>PLAY 18 SEC TOUR</span></button></div>
+          <div class="camera-actions"><button id="reset-camera" class="plain-button">Reset view</button><button id="play-tour" class="tour-button"><span class="play-icon">▶</span><span>Play short tour</span></button></div>
         </div>
-
-        <div class="scene-footnote">
-          <span>OBSERVED · DRAG TO ROTATE · SCROLL TO ZOOM</span>
-          <span>20.16 M / CELL · 3× VERTICAL DISPLAY</span>
-        </div>
+        <p class="layer-note" id="layer-note" aria-live="polite">Observed CTX orthoimage with recorded illumination · grayscale display stretch · pixel values have no documented physical units.</p>
+        <div class="scene-footnote"><span>Drag to rotate <span>·</span> scroll to zoom</span><button id="vertical-scale" class="plain-button" aria-pressed="false">Height scale 1× · true scale</button></div>
       </article>
 
       <aside class="plan-column">
-        <section class="plan-card sequence-card">
-          <p class="micro-label">02 / PLANNED ACTIVITY</p>
-          <h2>When does the survey happen?</h2>
-          <p class="card-intro">Both plans use the same illustrative start, waypoint and sample target.</p>
+        <section class="plan-card sequence-card" aria-labelledby="sequence-heading">
+          <p class="section-label">Compare activity order</p>
+          <h2 id="sequence-heading">Which happens first?</h2>
           <div class="sequence-options" role="group" aria-label="Choose activity order">
-            <button class="sequence-option is-selected" data-sequence="sample-first" aria-pressed="true">
-            <span class="option-index">A</span><span class="option-copy"><b>Collect first</b><small>Start → sample → survey</small></span><span class="option-mark">✓</span>
-            </button>
-            <button class="sequence-option" data-sequence="survey-first" aria-pressed="false">
-            <span class="option-index">B</span><span class="option-copy"><b>Survey first</b><small>Start → survey → sample</small></span><span class="option-mark">✓</span>
-            </button>
+            <button class="sequence-option is-selected" data-sequence="sample-first" aria-pressed="true"><span class="option-copy"><b>Collect sample</b><small>Start → sample → survey</small></span></button>
+            <button class="sequence-option" data-sequence="survey-first" aria-pressed="false"><span class="option-copy"><b>Survey area</b><small>Start → survey → sample</small></span></button>
           </div>
-          <div class="route-readout" aria-live="polite">
-            <div class="readout-head"><span class="readout-pulse"></span><span id="sequence-title">SAMPLE FIRST</span><span class="scenario-stamp">SCENARIO</span></div>
-            <p id="sequence-explanation">The route reaches the target before the survey leg. Marked footprint is a scenario boundary, not a contact radius.</p>
-          </div>
-        </section>
-
-        <section class="plan-card numbers-card">
-          <div class="card-heading-row"><p class="micro-label">03 / POSSIBLE CONFLICT & ROUTE CHANGE</p><span class="derived-tag">DERIVED</span></div>
-          <div class="metric-row"><div><span class="metric-value" id="route-distance">—</span><span class="metric-unit">m</span></div><span class="metric-label">drawn straight-line<br>route length</span></div>
-          <div class="metric-row"><div><span class="metric-value" id="pre-sample-zone">—</span><span class="metric-unit">m</span></div><span class="metric-label">route inside marked footprint<br>before collection</span></div>
-          <div class="elevation-strip"><span>PROFILE TO SAMPLE</span><span id="profile-range">—</span></div>
-          <div class="profile-chart"><canvas id="profile" width="420" height="82" aria-label="Illustrative route elevation profile sampled from the CTX grid"></canvas></div>
+          <div class="route-readout" aria-live="polite"><span class="scenario-stamp">Illustrative sequence</span><p id="sequence-explanation">This route reaches the marked target footprint before the survey leg. The geometry shows overlap only; it cannot establish physical contact or transfer.</p></div>
+          <div class="results-row"><div><span>Drawn route</span><b><span id="route-distance">—</span> m</b></div><div><span>Path inside marked footprint before sampling</span><b><span id="pre-sample-zone">—</span> m</b></div></div>
+          <div class="profile-row"><div><span>Elevation along route to sample</span><span id="profile-range">—</span></div><canvas id="profile" width="420" height="70" aria-label="Illustrative elevation profile from route start to sample"></canvas></div>
           <p class="metric-caveat">Straight segments sampled on the ~20 m grid. No traversability, mobility, physical contact, transfer or safety model.</p>
         </section>
-
-        <details class="source-panel" id="source-panel">
-          <summary><span>04 / SOURCES & LIMITS</span><span class="summary-hint">OPEN DETAILS</span></summary>
-          <div class="source-group"><b>OBSERVED · MRO / CTX stereo product</b><p><code>P18_007925_1987_XN_18N282W</code> + <code>P19_008650_1987_XI_18N282W</code>. 148×148 crop · 20.16 m/cell. Stereo inputs acquired 5 Apr and 31 May 2008. DTM heights are −2615.7 to −2515.6 m relative to the areoid. The one-band ortho shares the grid; physical pixel units are unspecified.</p><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product documentation ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_dtm.tif" target="_blank" rel="noreferrer">DTM COG ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_orthoimage.tif" target="_blank" rel="noreferrer">Ortho COG ↗</a><p>All layers share 295 NoData cells (1.35%); these are missing product values, not hazards. No interpolation is applied. Broad context only.</p></div>
-          <div class="source-group"><b>OBSERVED · ASP ray separation</b><p>0.023–4.333 m diagnostic from the same CTX stereo processing. Not absolute DTM accuracy or measurement uncertainty.</p><a href="https://stereopipeline.readthedocs.io/en/stable/tools/point2dem.html" target="_blank" rel="noreferrer">Ames Stereo Pipeline definition ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_intersection_error.tif" target="_blank" rel="noreferrer">Ray-separation COG ↗</a></div>
-          <div class="source-group"><b>MISSION PRECEDENT · Mars 2020 / Perseverance</b><p>CacheCam witness-tube reference, Sol 120 (21 Jun 2021). Records an environment reference near robotic sampling; separate location, not a crewed EVA procedure.</p><a href="https://science.nasa.gov/photojournal/witness-tube-in-perseverance-sample-caching-system/" target="_blank" rel="noreferrer">NASA CacheCam record ↗</a></div>
-          <div class="source-group scenario-group"><b>SCENARIO · team-set markers and order</b><p>Start, survey waypoint, target, 141 m footprint radius and activity order are illustrative. Geometric overlap is only a possible contact opportunity. NASA has not measured astronaut-to-Mars-sample transfer or validated route-order mitigation.</p><a href="https://ntrs.nasa.gov/citations/20250006358" target="_blank" rel="noreferrer">MIASMMA research context ↗</a></div>
-          <div class="source-group"><b>OTHER MISSION DATA · considered, not overlaid</b><p>Mars Trek lists MOLA/HRSC global relief, THEMIS and Jezero HiRISE mosaics. They differ in footprint, scale and registration and are not currently used in this scene. Curiosity Mastcam resolution is viewpoint-dependent and its images are from Gale, not this site.</p><a href="https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars" target="_blank" rel="noreferrer">Mars Trek layer catalog ↗</a> · <a href="https://science.nasa.gov/mission/msl-curiosity/science-instruments/" target="_blank" rel="noreferrer">NASA Mastcam specifications ↗</a></div>
+        <details class="source-panel" id="data-assumptions">
+          <summary><span>Data &amp; assumptions</span><span class="summary-hint">Sources, measures and limits</span></summary>
+          <div class="source-group"><b>Observed · MRO / CTX stereo product</b><p>148×148 crop · 20.16 m/cell · DTM heights −2615.7 to −2515.6 m relative to the areoid. The one-band ortho shares the grid; physical pixel units are unspecified. The vertical range is about 100 m over 2.98 km. Height display is 1× by default; optional 3× display is explicitly labelled.</p><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product documentation ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_dtm.tif" target="_blank" rel="noreferrer">DTM COG ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_orthoimage.tif" target="_blank" rel="noreferrer">Ortho COG ↗</a><p>295 NoData cells (1.35%) are omitted; no interpolation is applied. No product quality flag is available in this crop.</p></div>
+          <div class="source-group"><b>Observed · ASP ray separation</b><p>0.023–4.333 m diagnostic from the same CTX stereo processing. Relative ray-separation diagnostic; it is not absolute DTM accuracy or measurement uncertainty.</p><a href="https://stereopipeline.readthedocs.io/en/stable/tools/point2dem.html" target="_blank" rel="noreferrer">Ames Stereo Pipeline definition ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_intersection_error.tif" target="_blank" rel="noreferrer">Ray-separation COG ↗</a></div>
+          <div class="source-group"><b>Scenario · team-set markers and activity order</b><p>Walk start, survey waypoint, target, 141 m footprint radius and activity order are illustrative. Geometric overlap is only a possible contact opportunity. NASA has not measured astronaut-to-Mars-sample transfer or validated route-order mitigation.</p><a href="https://ntrs.nasa.gov/citations/20250006358" target="_blank" rel="noreferrer">MIASMMA research context ↗</a></div>
+          <div class="source-group"><b>Separate mission reference</b><p>Perseverance witness-tube imagery records an environment reference near robotic sampling. It is from another location and is not a crewed-EVA procedure.</p><a href="https://science.nasa.gov/photojournal/witness-tube-in-perseverance-sample-caching-system/" target="_blank" rel="noreferrer">NASA CacheCam record ↗</a></div>
         </details>
-
-        <section class="evidence-card">
-          <div class="evidence-heading"><span class="evidence-kicker">METHOD REFERENCE</span><span>MARS 2020 · SEPARATE SITE</span></div>
-          <a class="witness-image-link" href="https://science.nasa.gov/photojournal/witness-tube-in-perseverance-sample-caching-system/" target="_blank" rel="noreferrer" aria-label="Open NASA witness tube source">
-            <img id="witness-image" src="https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia24/pia24751/PIA24751.jpg?crop=faces%2Cfocalpoint&amp;fit=clip&amp;h=960&amp;w=1280" alt="Perseverance inspecting and sealing a witness tube before collecting its first Mars sample" loading="lazy">
-            <span id="witness-fallback" class="image-fallback" hidden>NASA reference image unavailable offline · source link remains available</span>
-            <span class="image-credit">NASA / JPL-CALTECH</span>
-          </a>
-          <p class="witness-copy"><b>Witness tubes record the environment near sampling.</b> Perseverance's robotic process is a reference, not a validated astronaut procedure.</p>
-          <a class="source-link" href="https://science.nasa.gov/photojournal/witness-tube-in-perseverance-sample-caching-system/" target="_blank" rel="noreferrer">VIEW NASA SOURCE <span>↗</span></a>
-        </section>
       </aside>
     </section>
-
-    <section class="limits-row">
-      <div><span class="limits-icon">i</span><p><b>READ THE LABELS.</b> Suit surfaces can carry biological material. NASA has not measured astronaut-to-Mars-sample transfer or validated a route-order mitigation here. All markers and order comparisons are illustrative.</p></div>
-      <a href="/data/jezero-demo.json" target="_blank">OPEN DATA MANIFEST ↗</a>
-    </section>
   </main>
-
-  <footer class="footer"><span>GITWARRIORS · CLEAN APPROACH</span><span>INDEPENDENT RESEARCH PROTOTYPE · NOT NASA ENDORSED</span><a href="/data/jezero-demo.json">LOCAL DATA MANIFEST</a></footer>
+  <footer class="footer"><span>GitWarriors · independent research prototype</span><span>Not NASA endorsed</span><a href="/data/jezero-demo.json">Data manifest ↗</a></footer>
 </body>
 </html>

@@ -6,28 +6,13 @@ const pctx = profile.getContext("2d");
 const loading = $("#scene-loading");
 const errorBox = $("#scene-error");
 const initialCamera = { yaw: -0.55, pitch: 0.82, zoom: 1 };
-const state = { layer: "ortho", sequence: "sample-first", ...initialCamera, dragging: false, tour: false };
+const state = { layer: "ortho", sequence: "sample-first", verticalScale: 1, ...initialCamera, dragging: false, tour: false };
 let data;
 
-function showWitnessFallback() {
-  $("#witness-image").hidden = true;
-  $("#witness-fallback").hidden = false;
-}
-$("#witness-image").addEventListener("error", showWitnessFallback);
-if ($("#witness-image").complete && $("#witness-image").naturalWidth === 0) showWitnessFallback();
-
 const params = new URLSearchParams(location.search);
-const requestedLayout = params.get("layout");
-document.body.dataset.layout = requestedLayout === "b" ? "b" : "a";
-document.querySelectorAll("[data-layout]").forEach((button) => {
-  button.setAttribute("aria-pressed", String(button.dataset.layout === document.body.dataset.layout));
-  button.addEventListener("click", () => setLayout(button.dataset.layout));
-});
-function setLayout(layout) {
-  document.body.dataset.layout = layout;
-  document.querySelectorAll("[data-layout]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.layout === layout)));
-  const url = new URL(location.href); url.searchParams.set("layout", layout); history.replaceState(null, "", url);
-}
+const requestedLayout = params.get("design");
+document.body.dataset.layout = requestedLayout === "field-plate" ? "b" : "a";
+$(".assumptions-link").addEventListener("click", () => { $("#data-assumptions").open = true; });
 
 fetch("/data/jezero-demo.json").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }).then((d) => {
   data = d;
@@ -77,7 +62,7 @@ function project(r, c, z, cx, cy, scale) {
   const cs = Math.cos(state.yaw), sn = Math.sin(state.yaw);
   const xr = x * cs - y * sn, yr = x * sn + y * cs;
   const cp = Math.cos(state.pitch), sp = Math.sin(state.pitch);
-  return [cx + xr * scale, cy + (yr * cp - (z + 2560) * 3 * sp) * scale];
+  return [cx + xr * scale, cy + (yr * cp - (z + 2560) * state.verticalScale * sp) * scale];
 }
 function markerPoint(marker, cx, cy, scale) {
   const z = data.arrays.elevation_m_rounded[marker.row * data.raster.width + marker.col];
@@ -92,8 +77,12 @@ function draw() {
   const w = canvas.clientWidth, h = canvas.clientHeight;
   if (!w || !h) return;
   ctx.clearRect(0, 0, w, h);
-  const scale = Math.min(w / 244, h / 235) * state.zoom;
+  const fieldPlate = document.body.dataset.layout === "b";
+  const viewScale = fieldPlate ? 1.5 : 1.3;
+  const scale = Math.min(w / (fieldPlate ? 210 : 244), h / (fieldPlate ? 190 : 235)) * state.zoom * viewScale;
   const cx = w * 0.5, cy = h * 0.56;
+  const northX=-Math.sin(state.yaw), northY=Math.cos(state.yaw)*Math.cos(state.pitch);
+  $("#north-arrow").style.transform=`rotate(${Math.atan2(northX,-northY)}rad)`;
   const {width,height}=data.raster, vertices=new Array(width*height);
   for(let r=0;r<height;r++) for(let c=0;c<width;c++) {
     const i=r*width+c;
@@ -173,19 +162,18 @@ function updatePlan() {
     : distanceInsideCircle(data.start_marker,data.survey_marker,target,radius)+distanceInsideCircle(data.survey_marker,target,target,radius);
   $("#route-distance").textContent=(Math.round(total/10)*10).toLocaleString();
   $("#pre-sample-zone").textContent=(Math.round(before/10)*10).toLocaleString();
-  $("#sequence-title").textContent=state.sequence==="sample-first"?"SAMPLE FIRST":"SURVEY FIRST";
   $("#sequence-explanation").textContent=state.sequence==="sample-first"
-    ?"The drawn approach reaches the sample target before the survey leg. The survey-first alternative crosses the marked footprint beforehand; neither route implies physical contact or transfer."
-    :"The start-to-survey line passes within the marked footprint before sampling. This is a geometric contact opportunity in the scenario, not evidence of physical contact or transfer.";
+    ?"This route reaches the marked target footprint before the survey leg. The geometry shows overlap only; it cannot establish physical contact or transfer."
+    :"The survey-first route crosses the marked target footprint before sampling. This is geometric overlap only; it cannot establish physical contact or transfer.";
   const values=profileFor(points.slice(0,2));drawProfile(values);draw();
 }
 document.querySelectorAll("[data-layer]").forEach((button)=>button.addEventListener("click",()=>{
   state.layer=button.dataset.layer;
   document.querySelectorAll("[data-layer]").forEach((b)=>{b.classList.toggle("is-active",b===button);b.setAttribute("aria-pressed",String(b===button));});
   const notes={
-    ortho:"Observed CTX orthophoto, display-only grayscale stretch; pixel units are not specified in product metadata.",
-    elevation:"Observed DTM heights: −2,615.7 to −2,515.6 m relative to the areoid; displayed vertical relief is exaggerated 3×.",
-    intersection:"Observed ASP camera-ray separation: 0.023–4.333 m (blue lower → ochre higher). Processing diagnostic only, not terrain accuracy or uncertainty."
+    ortho:"Observed CTX orthoimage with recorded illumination · grayscale display stretch · pixel values have no documented physical units.",
+    elevation:"Observed DTM heights: −2,615.7 to −2,515.6 m relative to the areoid. 1× vertical scale by default.",
+    intersection:"Observed ASP camera-ray separation: 0.023–4.333 m. Relative processing diagnostic only, not terrain accuracy or uncertainty."
   };
   $("#layer-note").textContent=notes[state.layer];
   draw();
@@ -199,6 +187,12 @@ canvas.addEventListener("wheel",(event)=>{event.preventDefault();if(state.tour)s
 function stopTour() { state.tour=false; $("#play-tour").querySelector("span:last-child").textContent="PLAY 18 SEC TOUR"; }
 function resetCamera() { stopTour(); Object.assign(state, initialCamera); draw(); }
 $("#reset-camera").addEventListener("click",resetCamera);
+$("#vertical-scale").addEventListener("click",()=>{
+  state.verticalScale=state.verticalScale===1?3:1;
+  const button=$("#vertical-scale"),exaggerated=state.verticalScale>1;
+  button.textContent=exaggerated?"Height scale 3× · exaggerated":"Height scale 1× · true scale";
+  button.setAttribute("aria-pressed",String(exaggerated));draw();
+});
 canvas.addEventListener("keydown",(event)=>{if(event.key.toLowerCase()==="r"){resetCamera();event.preventDefault();}});
 $("#play-tour").addEventListener("click",()=>{
   if(state.tour){stopTour();return;}

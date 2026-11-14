@@ -12,14 +12,14 @@ python3 -m http.server 4173 --directory public
 
 Open <http://localhost:4173>. The NASA Photojournal reference image requires browser internet access; the terrain demo data are local.
 
-Two layouts share the same data and interaction:
+Two unselected composition studies share the same data and interaction:
 
-- [A — terrain first](http://localhost:4173/?layout=a): wide map with a compact decision rail.
-- [B — guided field story](http://localhost:4173/?layout=b): persistent map with area → activity → possible conflict/results → sources.
+- [A — Terrain](http://localhost:4173/?design=terrain): large terrain scene beside a compact activity comparison.
+- [B — Field plate](http://localhost:4173/?design=field-plate): broad scene above a horizontal activity/results band.
 
-The page opens in A by default. Use the A/B buttons to switch. Open **Sources & limits** to inspect the observed products, acquisition dates, grid scale, NoData and scenario assumptions. Drag the map to rotate, scroll to zoom, **Reset view** to restore the camera, and use the tour button for optional camera motion. Dragging or clicking the tour button stops it; `R` while the map is focused resets the view. The browser's reduced-motion preference disables the camera tour.
+The page opens in A by default. Open **Data & assumptions** to inspect the observed products, grid scale, NoData and scenario assumptions. Drag the map to rotate, scroll to zoom, **Reset view** to restore the camera, and use the tour button for optional camera motion. Dragging or clicking the tour button stops it; `R` while the map is focused resets the view. The browser's reduced-motion preference disables the camera tour. The previous A/B layouts were rejected; neither current study is approved pending user review.
 
-The agent environment used to prepare this prototype does not permit local socket binding, and no headless browser is installed there. The command above is intended for the team's regular Ubuntu machine; check both sequence buttons, the three surface modes and camera controls there.
+The Playwright skill is installed in the agent's user environment. The two current studies were rendered and reviewed in Chromium at 1440×900; screenshots and the pending design checkpoint are recorded in [docs/design.md](docs/design.md).
 
 ## What is real, calculated, and illustrative
 
@@ -44,7 +44,7 @@ MPLCONFIGDIR=/tmp/martian-map-mpl .venv/bin/python scripts/build_demo_data.py
 ## Project notes
 
 - [Current status and suggested evening work blocks](docs/STATUS.md)
-- [Design system, alternatives A/B and inspection notes](docs/design.md)
+- [Current visual studies, geometry review and design checkpoint](docs/design.md)
 - [Science basis and closest prior art](docs/science.md)
 - [Data products and actual sample results](docs/data-sources.md)
 - [Data format](docs/data-contract.md)

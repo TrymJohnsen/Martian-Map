@@ -21,7 +21,7 @@ Build Clean Approach: a narrow, local planning prototype about sample-contact tr
 - Do not invent contamination rates, probabilities, safe distances, local wind fields, or claim a route order prevents contamination. Contact paths and EVA protocol changes are hypotheses/scenarios.
 - Perseverance witness tubes are a robotic sampling precedent, not a validated astronaut protocol. The NASA CacheCam image is not co-registered with the CTX scene.
 - Read [docs/science.md](docs/science.md) before changing science copy.
-- Follow [docs/design.md](docs/design.md) for layout, accessible interaction, evidence labels and visual treatment.
+- Follow [docs/design.md](docs/design.md) for the current unselected visual studies, accessible interaction, evidence labels and visual treatment. The earlier A/B layouts were rejected; do not treat them as approved direction. Wait for the user's choice between the two current rendered proposals before completing a redesign.
 
 ## Structure and handoffs
 

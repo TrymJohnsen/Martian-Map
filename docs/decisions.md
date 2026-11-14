@@ -21,3 +21,7 @@ Reference NASA Mars 2020/Perseverance CacheCam PIA24751 and witness-tube descrip
 ## 2026-11-14 — No app framework dependency for this time-boxed prototype
 
 The repo has no existing frontend. Build a no-build static app using browser-native canvas/JavaScript and the small derived `public/data/jezero-demo.json`. Keep original GeoTIFFs and secrets out of Git; check in only the 148×148, documented display derivative so a teammate can open the demo without rerunning geospatial tooling.
+
+## 2026-11-14 — Preserve the video concept for a later phase
+
+Keep the proposed story framing **“LIFE DETECTED. … It’s you.”** and the ending **“Find Mars. Not ourselves.”** for a later video. The line is an imagined scenario, not a discovery claim. No video production is part of the current visual design checkpoint.

@@ -6,10 +6,10 @@
 - The user's 148×148 Jezero CTX sample was opened and its preview inspected. DTM, ortho and `intersection_error` share the same 20.162955 m grid, Mars CRS, crop bounds and 295-cell NoData mask.
 - DTM values are −2615.689 to −2515.562 m relative to the areoid. Ortho source units are not declared. Intersection error is ASP ray separation in metres, a relative stereo diagnostic rather than accuracy/uncertainty.
 - `scripts/build_demo_data.py` generated `public/data/jezero-demo.json` (337,135 B), a small display derivative that masks NoData and keeps source citations/assumptions.
-- The static frontend offers two same-app layouts (A terrain-first / B guided field story), a collapsible source panel, observed/derived/scenario labels, layer descriptions and local manifest links. Coordinates derive from the raster transform; source pixel values are identified as display-only where appropriate.
+- The previous A/B layouts were rejected as visual direction. The same app now has two unselected composition studies (A Terrain / B Field plate), with shared source data, route comparison and controls. The terrain defaults to 1× vertical scale; optional 3× is explicitly labelled exaggerated. Details and rationale are in `docs/design.md`.
 - The previous zone-overlap length bug was corrected. Independent geometry gives approximately 3.30 km total straight-line route / 140 m inside the marked footprint before collection for collect-first, and 4.99 km / 350 m for survey-first. Values are rounded to ten metres. This is scenario geometry, not a navigable route or contact/contamination estimate.
 - Camera has explicit reset, click/drag interruption and respects reduced-motion preference. Map letters have a text key; controls have focus styling and pressed states.
-- `node --check public/app.js` and rebuilding the display data with `.venv/bin/python scripts/build_demo_data.py` pass. No browser binary/automation is installed and the agent sandbox denies local socket binding; therefore neither A/B layout nor interaction has been visually checked in a browser here. No screenshot is claimed.
+- `node --check public/app.js` passed after the revision. The new A/B studies were rendered and visually inspected in Playwright Chromium at 1440×900, with no console errors or warnings. Sequence selection updated the pressed state, route values and elevation profile. Screenshots are in `output/playwright/`; this is a proposal review only, pending the user's visual choice.
 - `docs/science.md` documents the evidence ladder and limitations. NASA sources support concern and witness-tube precedent, not a quantified astronaut-to-sample transfer or mitigation.
 
 ## Open questions / constraints
@@ -24,7 +24,7 @@
 
 ## Next three priorities
 
-1. **Human decision 1:** compare A (`/?layout=a`) and B (`/?layout=b`) and choose A, B or a concrete combination. Do not polish a single direction until this choice arrives.
+1. **Human design checkpoint:** compare A (`/?design=terrain`) and B (`/?design=field-plate`) at laptop size using the captured screenshots. Choose A, B or a concrete combination before any full redesign work.
 2. Continue independent work: identify a usable, co-located second-mission product with usable metadata and test alignment before adding it; keep human transfer as an unvalidated hypothesis.
 3. After the layout choice, revise the rough 30-second silent English walkthrough and ask for review before camera choreography. Finally, ask the team to try it cold and report what was unclear.
 

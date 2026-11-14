@@ -1,60 +1,51 @@
-# Clean Approach design reference
+# Clean Approach — visual direction studies
 
-## Product shape
+## Status
 
-The page is a field guide for one question: could an explorer's approach affect the sample's contact history? The opening must place the real Jezero terrain and the illustrative sample target in view immediately. The user can choose **collect first** or **survey first**. That changes the order and route drawing, the grid-derived route profile, and the geometric path length inside the scenario footprint before collection. It does not estimate transfer or contamination.
+The previous Terrain First and Guided Field Story alternatives were rejected as a visual direction. Their composition is retired; the route calculations, observed rasters, layer controls and source material remain in the prototype. The current page offers two lightweight, same-content composition studies. They are not a final redesign. Choose one before further visual work.
 
-## Existing experience inspection and first design alternatives
+Open the same app with `/?design=terrain` or `/?design=field-plate`. The alternatives share one HTML page, renderer, data, order selection, route metrics, elevation profile and expandable source detail. Both use the actual CTX orthophoto where available. The image is a one-band grayscale product with the same 20.16 m grid spacing as the DTM; there is no higher-resolution imagery in this crop. No synthetic lighting or uncertainty layer is being presented as observed data.
 
-The original implementation was inspected from HTML, CSS and JavaScript; no local browser binary or browser automation is available in the agent environment. It could not be visually tested there. Its visible opening is a large brand heading followed by a map, while the decision is lower in a dense side column. A user can choose collect-first or survey-first. The choice changes the route order, profile to the sample, straight-segment total and the drawn line length inside a 7-cell target footprint before collection. The previous overlap calculation incorrectly included the whole start-to-survey leg; it has been corrected to include only segment portions inside the footprint. The old camera tour had no reset button, used an externally fetched web font and displayed a hardcoded location string.
+## Two composition studies
 
-The two runnable layouts use the same map, scenario, controls and evidence. Switch with the in-page A/B buttons or open `/?layout=a` and `/?layout=b`.
-
-| Option | First impression and hierarchy | Strength | Tradeoff |
+| Study | Composition and expression | Intended strength | Tradeoff to review |
 |---|---|---|---|
-| **A · Terrain first** | Map takes about 70% of the desktop workspace; a compact decision/results/source rail stays beside it. | Real terrain and target are immediately visible; quick to compare the two orders. | Less room for the evidential story; source details are collapsed. |
-| **B · Guided field story** | Terrain remains sticky on the left; the right rail reads area → planned activity → possible conflict/result → sources. | Helps a non-specialist follow the mechanism without losing the map. | More text beside the map; vertical scrolling is more likely on shorter laptop screens. |
+| **A · Terrain / `?design=terrain`** | Dark neutral surround; broad, nearly full-height terrain image at left; compact activity comparison at right. Restrained sans-serif hierarchy, quiet controls, no nested cards. | Keeps the 3D surface as the largest object and leaves the two order choices beside it. | The route metrics and method note share a relatively narrow column. |
+| **B · Field plate / `?design=field-plate`** | Light mineral-paper background; wide horizontal terrain plate above a full-width decision band. The choice and route profile read like a concise field report. | Gives the scene more horizontal breadth and gives comparison/results a clear row below it. | The choice is lower on the page; less of the map and the activity comparison fit together in a short viewport. |
 
-**Working recommendation:** start with A because this is a hands-on route comparison and the real terrain should be the first object seen. Keep B available for a judging/demo walkthrough if users need the causal steps spelled out. This is a recommendation for the human design choice, not a settled decision.
+**Provisional recommendation:** A, Terrain. The purpose is to inspect route order against the terrain, so keeping the options adjacent to a large map may make that relationship easiest to understand. This is a design hypothesis, not a research finding or a final decision. The user should compare actual renders before we continue.
 
-### Existing visual elements
+## Shared content and interaction
 
-- **Useful:** raster scene, selected layer buttons, labelled start/waypoint/target, order toggle, profile and direct data manifest.
-- **Changed as confusing or generic:** brand-led headline is replaced by the bounded question; status dot/chip removed; repeated evidence strip removed; map coordinates now derive from the raster transform; route/footprint values are labelled scenario/derived; excess gradients and external fonts removed.
-- **Still optional:** the Perseverance image is a method reference at a different site. It may help explain witness tubes but is not evidence for the mapped scenario. If it distracts, move it behind source details after the first user review.
+- Compact project name: **Clean Approach**.
+- One sentence frames the investigation without implying measured contamination or transfer.
+- The user can select **Collect sample** or **Survey area** first. Selection has a neutral outline and pressed state only; no checkmark or approval cue.
+- Explanatory copy sits directly under the activity choice. It distinguishes the illustrative path from physical contact and transfer.
+- The phrase **Illustrative activity plan** remains visible beside the terrain.
+- **Data & assumptions** opens sources, raster properties, NoData handling, diagnostic meaning and scenario limitations in place.
+- Surface image is the initial view. Elevation and ASP ray-separation remain optional analysis views. Their labels identify data type; ray separation is not measurement uncertainty.
+- Drag, zoom, reset and optional camera tour remain available. Respect reduced-motion preference.
+- The later video concept is retained for a future task: opening idea **“LIFE DETECTED. … It’s you.”**, ending **“Find Mars. Not ourselves.”** It is an imagined narrative frame, not a discovery claim, and must not be built in this phase.
 
-## Layout and hierarchy
+## Terrain geometry and data checks
 
-- Keep the terrain visible beside the decision throughout the experience.
-- **A — Terrain first:** terrain takes roughly two thirds of a laptop viewport; a compact side rail contains target, order choice, consequence and source details.
-- **B — Guided field story:** persistent terrain sits beside a short numbered sequence: area/target, planned activity, possible conflict, choose an order, inspect the difference and limits.
-- Give the map and the one user decision visual priority. Source details expand in place; they do not push the user through a long landing page.
-- At narrower widths, stack controls below the terrain and keep all content in normal document flow.
+The checked-in demo derivative is a 148 × 148 crop in Mars 2015 ocentric equirectangular projected coordinates, with east/north axes in metres. Pixel spacing is 20.162955 m in both directions, so the footprint is approximately 2.984 km on each side. Raster columns advance east and rows advance south; the renderer reverses row direction in its north-up projected view. The orthophoto and DTM share the grid and valid-data mask.
 
-## Type, color, spacing and controls
+Observed DTM heights range from −2615.689 m to −2515.562 m relative to the areoid (about 100.127 m relief). Of 21,904 cells, 295 (1.35%) are NoData. The mesh renderer skips every quad touching a masked corner and does not fill or interpolate missing cells. Raster neighbour differences reach 4.614 m east/west and 3.507 m north/south over a 20.163 m step; these are local sampled slopes, not evidence of large raster spikes.
 
-- Use a readable sans-serif for explanations, with 16 px body text as the default and 14 px as the minimum for supporting copy. Headings should be sentence case and specific.
-- Reserve monospace for coordinates, units, product IDs and short metadata labels.
-- Use a warm light background for reading, dark graphite only as the map surround, and Mars surface colors as the visual focus.
-- Functional accents: green marks selected/collection sequence; blue marks survey; ochre marks the illustrative sample footprint. Every route marker also has a letter and text label; line styles distinguish planned legs.
-- Use an 8 px spacing base, quiet borders, flat panels and clear visible keyboard focus. Avoid decorative glow, glass effects and background gradients.
-- Buttons need explicit verbs/nouns and visible selected/pressed states. Keep one primary choice at a time.
+Earlier code multiplied vertical displacement by 3. This increased the steepest displayed cell slopes from about 12.9° to 35.7° and made the oblique scene appear unusually spiky. The updated default is 1× vertical scale. A 3× option remains accessible and explicitly labelled **exaggerated**. Zoom, yaw and pitch change the camera view but do not alter data coordinates. Canvas fills are flat; there are no computed surface normals or synthetic hillshade. Bright/dark texture in the surface view comes from the observed grayscale CTX image itself.
 
-## Camera and motion
+The selected 20.16 m/cell spacing is shared by the DTM and orthoimage. Resolution alone is not a measure of terrain reliability. NoData means missing values; no interpolation is applied. The ASP ray-separation layer is a relative stereo-processing diagnostic, not absolute elevation error, measurement uncertainty or confidence. No uncertainty map is justified by the available evidence.
 
-- The camera is user controlled by default. A short tour is optional, visibly stoppable by the same button or by dragging, and has a reset control.
-- Honor `prefers-reduced-motion`: no automatic camera movement; direct manipulation remains available.
-- Mark the terrain's 3× vertical display exaggeration next to the grid spacing. Do not imply operational navigation precision.
+## Visual review and next checkpoint
 
-## Evidence and uncertainty labels
+Both studies were started from the local static app, rendered in headless Chromium at 1440 × 900, and visually inspected. The ordinary sandbox denied socket binding. Port 4173 was occupied but unreachable; using an approved localhost server on port 4174 made the app available to Chromium without changing system security/network settings. The browser console was clean after fixing two obsolete element references from the removed NASA image card. The sequence control was clicked in the live browser: the selected state, explanation, route distances (3,300 m → 4,990 m; footprint overlap 140 m → 350 m) and profile all updated.
 
-- Show **Observed**, **Derived**, and **Scenario** as words, not colors alone.
-- For each data layer, let users inspect mission/instrument, product/source, spatial resolution, acquisition/catalog time and limitations.
-- Distinguish NoData from interpolation, product diagnostics and measurement uncertainty. Do not fill NoData as terrain. Do not call CTX ray separation an uncertainty value.
-- Keep the CTX dates (2008 stereo inputs) distinct from the catalog timestamp. Ortho pixel units are undocumented in this item; its contrast stretch is display-only.
-- The sample location, footprint, start, waypoint and action order are scenario inputs. The footprint is not a safe distance or transport radius.
-- The Mars 2020 witness tube is a separate robotic precedent, not a local map layer or a crewed EVA protocol.
+- A · Terrain: [Chromium screenshot](../output/playwright/proposal-a-terrain-1440x900.png). The terrain and activity comparison remain side by side; the visible hierarchy is concise but has more text in the right rail.
+- B · Field plate: [Chromium screenshot](../output/playwright/proposal-b-field-plate-1440x900.png). The lighter horizontal composition shows the terrain first, then the two choices and concise explanation; route metrics continue below the initial 900 px viewport.
 
-## Motion, meaning and access
+These are inspected design proposals, not final visual approval. The user should choose A, B or describe a hybrid before any full redesign or further polish.
 
-Color is always paired with marker letters, line pattern, and copy. Interactive controls must have focus styling and useful accessible names. Loading and error states must explain whether the local raster could be loaded. Reduced-motion mode removes the automatic tour while retaining manual map interaction.
+## Prior art / project story to preserve
+
+Keep the previously approved video idea for later: **“LIFE DETECTED. … It’s you.”**, closing with **“Find Mars. Not ourselves.”** No video is part of this design checkpoint.
