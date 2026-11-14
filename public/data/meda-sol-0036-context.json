@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "label": "Perseverance MEDA, Sol 36 (2021), near the landing site. Not a wind field for Bright Angel.",
+  "source_url": "https://atmos.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda/data_derived_env/sol_0000_0089/sol_0036/WE__0036___________DER_WS__________________P02.CSV",
+  "input": "docs/figures/meda-sol-0036-minute-observations.csv",
+  "method": "Arithmetic mean of actual minute-nearest samples per LTST hour, not a time-weighted daily mean. No interpolation. Wind rose counts non-calm samples in eight 45° sectors; wind-from, clockwise from north. Empty hours have a missing mean (JSON null).",
+  "units": {
+    "speed": "m/s",
+    "direction": "degrees clockwise from north, wind-from",
+    "time": "LTST hour"
+  },
+  "input_count": 337,
+  "excluded_count": 0,
+  "calm_count": 0,
+  "hours": [
+    {
+      "hour": 0,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 1,
+      "count": 28,
+      "mean_speed_m_s": 1.4253571428571425
+    },
+    {
+      "hour": 2,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 3,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 4,
+      "count": 24,
+      "mean_speed_m_s": 2.1883333333333326
+    },
+    {
+      "hour": 5,
+      "count": 4,
+      "mean_speed_m_s": 1.305
+    },
+    {
+      "hour": 6,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 7,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 8,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 9,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 10,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 11,
+      "count": 22,
+      "mean_speed_m_s": 4.161818181818181
+    },
+    {
+      "hour": 12,
+      "count": 49,
+      "mean_speed_m_s": 4.732857142857143
+    },
+    {
+      "hour": 13,
+      "count": 23,
+      "mean_speed_m_s": 7.086521739130433
+    },
+    {
+      "hour": 14,
+      "count": 58,
+      "mean_speed_m_s": 6.093620689655172
+    },
+    {
+      "hour": 15,
+      "count": 24,
+      "mean_speed_m_s": 7.900416666666666
+    },
+    {
+      "hour": 16,
+      "count": 41,
+      "mean_speed_m_s": 7.3324390243902435
+    },
+    {
+      "hour": 17,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 18,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 19,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 20,
+      "count": 0,
+      "mean_speed_m_s": null
+    },
+    {
+      "hour": 21,
+      "count": 23,
+      "mean_speed_m_s": 2.8743478260869564
+    },
+    {
+      "hour": 22,
+      "count": 41,
+      "mean_speed_m_s": 5.279268292682929
+    },
+    {
+      "hour": 23,
+      "count": 0,
+      "mean_speed_m_s": null
+    }
+  ],
+  "wind_rose_counts": [
+    11,
+    29,
+    113,
+    88,
+    18,
+    2,
+    58,
+    18
+  ],
+  "limits": "Minute samples are a subset of valid pairs, not all raw observations. 995 of 41538 source pairs lacked valid data. No uncertainty values. Distance to B is unverified and omitted."
+}
