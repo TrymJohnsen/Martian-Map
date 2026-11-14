@@ -141,12 +141,18 @@ The meaning of each choice, assumption and status is specified in [model.md](mod
 
 ### Mission panel markup hooks
 
-The checklist is rendered by `panel.js` into `#mission-panel` and will be restyled. Styling and layout may change freely; the behaviour depends only on these hooks, so keep them when the markup is redesigned:
+The page has four views, chosen by `body[data-view]` (`intro`, `checklist`, `examples`, `data`) and by the header tabs (`data-view-link`, also reachable as `#intro`, `#checklist`, `#examples`, `#data`). Every block inside `<main class="app">` lists the views it belongs to in `data-v`; the map card is shared by the first three. `panel.js` renders the checklist into `#mission-panel` (steps), `#mission-result`, `#mission-side` and `#mission-bar` (the compact result below desktop width), and the example plans into `#examples-main` and `#examples-walk`. On a view change it dispatches a window `resize` so `map.js` re-measures its canvas. The mission scenario is published in the intro, checklist and data views; an example plan in the examples view.
+
+The visual language is the design system in `public/tokens.css` (custom properties, base, type scale) and `public/components.css` (components and app layout), ported from the "Clean Approach · redesign" canvas. Add a token or a named component there before using a new value. `map.js` still finds its controls by the same IDs as before (`#terrain`, `[data-layer]`, `#reset-camera`, `#vertical-scale`, `#north-arrow`, `.scene-overlay-label`, `#layer-note`, `#profile`, `#route-distance`, `#profile-range`).
+
+Styling and layout may change freely; the behaviour depends only on these hooks, so keep them when the markup is changed:
 
 | Hook | On | Used for |
 |---|---|---|
-| `.step-column.is-mission` | the right-hand column | Set while the checklist is open; `panel.css` hides the example steps with it. |
-| `data-mission-enter`, `data-mission-exit`, `data-mission-reset` | buttons | Open, close and reset the checklist. |
+| `data-mission-enter`, `data-mission-exit`, `data-mission-reset` | buttons | Open the checklist view, go back to the example plans, reset choices and assumptions. |
+| `data-view-link="<view>"` | links and buttons | Switch view. |
+| `data-assumption-link="<id>"` | buttons | Move focus to that assumption switch. |
+| `data-action` (`plan`, `event`, `prev`, `next`, `walk`, `stop`, `restart`, `open-plan`, `note-hide`, `note-show`, `show-result`) with `data-plan` / `data-event-index` | buttons | Example-plan selection, walkthrough controls, the explanation note. |
 | `data-step-id` + `aria-current="step"` | each step container | The active step; a choice control must sit inside its step container. |
 | `data-mission-step="<step id>"` | any button | Selects that step (step headers and "created at" links). |
 | `data-choice="<key>"` + `value` | radio inputs | A choice; `"true"`/`"false"` are read as booleans. |

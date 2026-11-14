@@ -1,59 +1,9 @@
-/* Panel-side styles: mission checklist and step-panel additions.
- * Owned by the mission/panel work. Map styles go in map.css; shared rules stay in
- * design-overrides.css. Mount points must stay free of whitespace so :empty hides them.
- * Functional styling only: the visual design is redone later. Class names are stable. */
-#mission-panel:empty { display: none; }
-
-/* While the checklist is open, the example-plan steps step aside. */
-.step-column.is-mission > .step-nav,
-.step-column.is-mission > .walkthrough,
-.step-column.is-mission > .step-panel { display: none; }
-
-.mission-panel { margin-top: 18px; padding-top: 16px; border-top: 1px solid #3a4142; color: #e1e5e1; font: 14px/1.5 var(--sans); }
-.step-column.is-mission > .mission-panel { margin-top: 0; padding-top: 0; border-top: 0; }
-.mission-panel h2 { margin: 0; color: #f2f2ee; font: 500 22px/1.2 var(--sans); }
-.mission-panel h2:focus { outline: none; }
-.mission-panel h3 { margin: 0 0 6px; color: #f2f2ee; font: 600 15px/1.3 var(--sans); }
-.mission-entry-copy, .mission-disclaimer { max-width: 560px; margin: 8px 0 0; color: #c9d0cc; font-size: 13px; }
-.mission-disclaimer { padding-left: 10px; border-left: 2px solid #d7a277; }
-.mission-actions { display: flex; gap: 12px; margin-top: 8px; }
-.mission-actions .plain-button { padding: 5px 0; color: #e5c3a4; }
-
-.mission-steps { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
-.mission-step { padding: 10px 12px; border: 1px solid #3a4142; border-left: 3px solid #4b5556; background: #1d2223; }
-.mission-step[aria-current="step"] { border-left-color: #d7a277; background: #242a2a; }
-.mission-step-head { appearance: none; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 9px; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.mission-step-head:focus-visible, .mission-option input:focus-visible, .mission-assumption input:focus-visible { outline: 2px solid #e4c3a3; outline-offset: 3px; }
-.mission-step-number { min-width: 20px; color: #c9a583; font: 600 13px var(--mono); }
-.mission-step-place { color: #bbc6c0; font: 12px var(--mono); }
-.mission-step-title { flex: 1 1 100%; color: #f2f2ee; font-weight: 600; font-size: 15px; }
-.mission-instruction { margin: 6px 0 0; color: #f2f2ee; }
-.mission-why { margin: 4px 0 0; color: #c3cbc7; font-size: 13px; }
-.mission-decision { margin: 9px 0 0; padding: 8px 10px; border: 1px solid #5a6162; }
-.mission-decision legend { padding: 0 5px; color: #e5c3a4; font-size: 12px; }
-.mission-option { display: flex; align-items: baseline; gap: 7px; padding: 2px 0; cursor: pointer; }
-.mission-precedent { margin: 8px 0 0; color: #b4bdb8; font-size: 12px; }
-.mission-precedent a { color: #d7e3df; text-decoration: underline; text-underline-offset: 2px; }
-.mission-precedent-note { color: #c9a583; }
-
-.mission-assumptions, .mission-result, .mission-not-modeled { margin-top: 18px; padding-top: 14px; border-top: 1px solid #3a4142; }
-.mission-assumptions-copy, .mission-summary, .mission-footnote, .mission-not-modeled p { margin: 0 0 8px; color: #c3cbc7; font-size: 13px; }
-.mission-assumption { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; cursor: pointer; }
-.mission-assumption b { display: block; color: #f2f2ee; font-weight: 600; }
-.mission-assumption small { display: block; color: #b4bdb8; font-size: 12px; }
-
-.mission-sources, .mission-status, .mission-not-modeled ul { list-style: none; margin: 0; padding: 0; }
-.mission-source { display: grid; gap: 3px; padding: 8px 0; border-top: 1px solid #343a3b; }
-.mission-source .source-chip { width: fit-content; }
-.mission-source.is-absent .source-chip { border-style: dashed; opacity: .75; }
-.mission-source-state { font-weight: 600; }
-.mission-source.is-absent .mission-source-state { color: #aeb7b3; font-weight: 400; }
-.mission-source-steps, .mission-source-note { color: #c3cbc7; font-size: 12px; }
-.mission-source .trace-link { font-size: 12px; }
-.mission-depends { width: fit-content; padding: 1px 6px; border: 1px dashed #9b836c; color: #e5c3a4; font-size: 12px; }
-.mission-status { margin-top: 8px; }
-.mission-status li { padding: 6px 0 6px 10px; border-left: 2px solid #5a6162; margin-top: 6px; font-size: 13px; }
-.mission-status li.is-warning { border-left-color: #d7a277; color: #f4e6d7; }
-.mission-footnote { margin-top: 10px; }
-.mission-not-modeled li { padding: 4px 0; color: #c3cbc7; font-size: 13px; }
-.mission-not-modeled b { color: #e1e5e1; }
+/* Panel-side styles. The design system lives in tokens.css and components.css; add tokens and
+ * components there. This file only keeps the mount-point rule for the panel workstream.
+ * Mount points must stay free of whitespace so :empty hides them. */
+#mission-panel:empty,
+#mission-result:empty,
+#mission-side:empty,
+#mission-bar:empty,
+#examples-main:empty,
+#examples-walk:empty { display: none; }
