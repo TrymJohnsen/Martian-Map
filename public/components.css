@@ -317,7 +317,7 @@ body[data-view="data"] .app>[data-v]:not([data-v~="data"]){display:none}
 .ftr{height:auto;min-height:var(--ftr-h);flex-wrap:wrap;gap:4px 24px;padding:8px 24px;white-space:normal}
 
 /* Desktop: the page is one screen. Only the step list, the result and the side column scroll. */
-@media (min-width:1180px) and (min-height:680px){
+@media (min-width:1100px) and (min-height:540px){
   body.ca{height:100vh;overflow:hidden}
   .hdr{position:static}
   .app{display:grid;padding:16px 24px}
@@ -340,7 +340,7 @@ body[data-view="data"] .app>[data-v]:not([data-v~="data"]){display:none}
 }
 
 /* Below desktop: one column. The map stays pinned at the top of the checklist and the plans. */
-@media not ((min-width:1180px) and (min-height:680px)){
+@media not ((min-width:1100px) and (min-height:540px)){
   .tabs{overflow-x:auto}
   .hsub{display:none}
   .ar-map{height:400px;flex:none}
@@ -405,11 +405,31 @@ body[data-view="data"] .app>[data-v]:not([data-v~="data"]){display:none}
 .src-h{min-height:28px}
 .res-f{padding-top:4px}
 .sw{padding:8px 0}
-@media (min-width:1180px) and (min-height:680px){
+@media (min-width:1100px) and (min-height:540px){
   body[data-view="checklist"] .app{grid-template-rows:minmax(300px,46%) minmax(0,1fr)}
   body[data-view="examples"] .app{grid-template-rows:minmax(300px,48%) minmax(0,1fr)}
   body[data-view="checklist"] .lay-t,body[data-view="checklist"] .lay-s,body[data-view="examples"] .lay-t,body[data-view="examples"] .lay-s{display:none}
 }
-@media not ((min-width:1180px) and (min-height:680px)){
+@media not ((min-width:1100px) and (min-height:540px)){
   body[data-view="checklist"] .ar-map .mapc,body[data-view="examples"] .ar-map .mapc{border-radius:11px}
+}
+
+/* ---- Map as a floating view below desktop width: always visible, never in the way ---- */
+.mhead{display:none}
+@media not ((min-width:1100px) and (min-height:540px)){
+  body[data-view="checklist"] .ar-map,body[data-view="examples"] .ar-map{position:fixed;top:auto;left:auto;right:12px;bottom:84px;width:min(340px,48vw);height:auto;z-index:40;box-shadow:0 12px 32px rgba(0,0,0,.6);border-color:var(--line2)}
+  body[data-view="examples"] .ar-map{bottom:12px}
+  body[data-view="checklist"] .ar-map .mapc,body[data-view="examples"] .ar-map .mapc{flex:none;height:clamp(120px,24vh,200px);min-height:0;border-radius:0}
+  body[data-view="checklist"] .ar-map .lg,body[data-view="examples"] .ar-map .lg,
+  body[data-view="checklist"] .ar-map .mtr .mbtn,body[data-view="examples"] .ar-map .mtr .mbtn,
+  body[data-view="checklist"] .ar-map .mbr,body[data-view="examples"] .ar-map .mbr{display:none}
+  body[data-view="checklist"] .mhead,body[data-view="examples"] .mhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 6px 4px 12px;font-size:13px;font-weight:600;border-bottom:1px solid var(--line)}
+  body[data-map="hidden"] .ar-map .mapc{display:none}
+  body[data-map="hidden"] .ar-map .mhead{border-bottom:0}
+  body[data-map="hidden"] .ar-map{width:auto}
+  body[data-view="checklist"] .rbar{display:flex;position:fixed;top:auto;left:0;right:0;bottom:0;z-index:41;border-radius:12px 12px 0 0;padding:10px 14px}
+  body[data-view="checklist"] .rbar .rchips{flex-wrap:nowrap;overflow-x:auto}
+  body[data-view="checklist"] .app{padding-bottom:calc(min(240px,30vh) + 84px)}
+  body[data-view="examples"] .app{padding-bottom:calc(min(240px,30vh) + 12px)}
+  body[data-view="checklist"] .ftr{padding-bottom:84px}
 }

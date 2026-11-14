@@ -99,6 +99,15 @@
     document.addEventListener("click", (event) => {
       const link = event.target.closest("[data-view-link]");
       if (link) { event.preventDefault(); showView(link.dataset.viewLink); return; }
+      const toggle = event.target.closest("#map-toggle");
+      if (toggle) {
+        const hidden = document.body.dataset.map !== "hidden";
+        document.body.dataset.map = hidden ? "hidden" : "shown";
+        toggle.textContent = hidden ? "Show" : "Hide";
+        toggle.setAttribute("aria-expanded", String(!hidden));
+        window.dispatchEvent(new Event("resize"));
+        return;
+      }
       if (event.target.closest("[data-mission-enter]")) { showView("checklist"); return; }
       if (event.target.closest("[data-mission-exit]")) { showView("examples"); return; }
       if (event.target.closest("[data-mission-reset]")) { resetMission(); return; }
