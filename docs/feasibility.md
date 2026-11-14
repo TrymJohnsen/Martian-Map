@@ -1,39 +1,27 @@
 # Feasibility: Clean Approach
 
-## Science question and sample context
+## Question and data boundary
 
-The prototype is about preserving contamination provenance for a hypothetical Jezero sedimentary core intended for later organic-molecule and potential-biosignature analysis. Perseverance's Bright Angel / Cheyava Falls / Sapphire Canyon record motivates the kind of science, but that site is outside the existing CTX crop. The current target marker remains an illustrative scenario coordinate; it must not be described as the named sample/site.
+The prototype explores provenance for a hypothetical Jezero sedimentary sample intended for later organic-molecule / potential-biosignature analysis. Perseverance's Bright Angel / Cheyava Falls / Sapphire Canyon record motivates the science question; its sample location is not co-registered to the current CTX crop. The route's start and A/B activity positions are illustrative, not observed rover positions or identified targets. The exact crop extent and mission-data status are in [docs/data-sources.md](data-sources.md).
 
-This is distinct from preventing viable organisms from establishing on Mars. Human-associated organic residues and nonviable biological material could affect analytical interpretation without implying survival or growth; this app models neither life establishment nor planetary risk.
+Only MRO/CTX contributes mapped raster data. Mars 2020/Perseverance contributes sample/science context and a separately documented robotic sampling-control precedent. The prototype does not yet deliver a co-located multi-mission map.
 
 ## Mechanism decision
 
-Direct contact through glove → sample-contact interface → core is the best scoped mechanism. The literature documents source materials on suit surfaces, analog glove/soil microbial co-occurrence, and the care required for robotic sample transfer chains. It does not provide direct human Mars EVA glove-to-sample transfer values. Therefore the implementation is a qualitative graph-reachability check only.
+Direct contact is the bounded mechanism: a possible human-associated source may reach a sample through assumed glove/tool/surface contacts. Earth suit and analog evidence, plus rover sample-chain controls, motivate the question but provide no human Mars EVA glove-to-sample transfer measurement. The implementation is a deterministic qualitative event graph, not a physical contamination model.
 
-Activity order is not itself a transport mechanism. Holding the same assumed glove/tool contacts constant yields the same possible contact path for collect-first and survey-first. A hypothetical isolation boundary (glove change plus protected dedicated sample interface) removes one assumed edge from the graph; this does not establish that the action is effective or a validated EVA procedure.
+It compares three plans over the same S→A→B route. A uses T1 at both places; B uses separate T2 at B but retains G1→T2; C uses T2 and omits that one assumed contact. Under the current event assumptions, A and B keep human-associated and A-origin paths to sample B; C removes those paths, with B's own material origin still recorded. This does not rank operational plans or validate the omitted contact as a control. The result is fully determined by the event links.
 
-Airborne release and deposition are important but excluded. MIASMMA describes planned suit leakage measurements and model development; rover particle resuspension work and ISS exterior DNA are not human Mars surface deposition parameters. A real MEDA derived-wind sample (Sol 36) is now archived for review, but it is a point time series near the landing site, several years earlier than the motivating sample, with no corresponding human source or sample deposition measurement. It is not used to alter the contact graph or estimate airborne exposure. See [the wind feasibility evidence](data-sources.md#meda-wind-feasibility-sample).
+Airborne release and deposition remain excluded. MEDA Sol 36 is a real historical wind point series near the landing site, but it is not a local wind field at Bright Angel and supplies no human-source release or sample-deposition measurement. It remains a background figure only; no wind enters the event model. See [the wind feasibility evidence](data-sources.md#meda-wind-feasibility-sample).
 
-## Model and calculations
+## Implementation and calculations
 
-See [docs/model.md](model.md) for graph variables, Boolean reachability equation, assumptions, no-source/no-contact cases, and hand-verifiable checks. The calculated output is only “a directed source-to-sample path exists in this scenario” or “no path exists in this graph.” It is not a probability, dose, concentration, contamination risk, or efficacy estimate.
+See [docs/model.md](model.md) for the event schema, reachability, plan outcomes, unit-consistent terrain coordinates, NoData behavior and limitations. Each event updates per-object possible source histories and carries an explanation trace. Plans rebuild and replay independently. A sealed sample freezes its history until explicit reopening; a control event adds documentation without deleting any path.
 
-The existing CTX data remain useful for rendering Jezero relief, locating the illustrative activities, and calculating a map-derived straight-line distance and elevation profile. Its route geometry does not enter the contact graph. Footprint overlap is not interpreted as a glove touch, exposure, or transfer event.
+The route and elevation profile are secondary geographic context; they do not change contact graph results. Route length is identical in all plans. The app shows the walking route as a solid line and contact provenance in the event/history panel, never as an airborne or particle path.
 
-## Mission data and challenge fit
+## Verification and limits
 
-- **MRO / CTX:** currently the only georeferenced map layer; exact 148×148 crop, CRS, grid, NoData and limits are preserved in `docs/data-sources.md`.
-- **Mars 2020 / Perseverance:** sample catalogue and SHERLOC evidence support the science scenario; MEDA Sol 36 provides historical landing-site wind context, not wind at Sapphire Canyon or at the illustrative sample marker. No individual Sol-1215 SHERLOC product was downloaded because shell DNS was unavailable in the ordinary agent environment.
-- **MSL / Curiosity:** its published sample-transfer assays show how robotic hardware cleaning and contamination knowledge affect organic-analysis interpretation. Values are not reused as human parameters.
-- **MEDA, MOLA/HRSC/THEMIS:** MEDA temperature/radiation products are known to exist, but none currently supports a defined product decision. Wind is kept as background evidence only; no gratuitous mapped layer is added.
+`node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs` verifies the implemented logical paths, seal/reopen and control behavior, invalid references/order, deterministic replay, synthetic equal metre scale, metadata-driven raster width and NoData gaps. The Playwright browser inspection is recorded in [docs/STATUS.md](STATUS.md), with screenshots under `output/playwright/`.
 
-The app now contains two NASA mission contexts but still has only one mapped mission's data. The challenge requirement for an integrated georeferenced multi-mission map is therefore still open; don't claim it is satisfied.
-
-## What remains unvalidated
-
-- Whether the assumed source is present on a particular human EVA glove/tool.
-- Whether the specified glove/tool/sample contact occurs in a real procedure.
-- Transfer probability or mass, material dependence, pressure/environment effects, and efficacy of a glove-change or protected tool boundary.
-- Any route-based effect, contamination reduction, safety benefit or biological establishment.
-
-The graph tests only its own logic. Physical validation would require a defined, Mars-relevant glove/tool/sample material protocol with source assay, blanks, measured contact areas, controlled environmental conditions, measured transfer and an analytical detection method.
+These tests are implementation checks, not physical validation. Still unmeasured are actual Mars-EVA source loading, glove/tool contact, interface transfer, airborne release/deposition, relevant material effects, and any contamination-reduction or safety benefit.

@@ -1,83 +1,70 @@
-# Qualitative direct-contact pathway model
+# Clean Approach event-history model
 
-## Problem being represented
+## Purpose and boundary
 
-For a hypothetical Jezero sedimentary rock core reserved for later organic-molecule and potential-biosignature analysis, how can a crew preserve contact provenance when Earth-associated material on a glove or tool might reach the core through handling?
+The model records possible contact provenance for two illustrative work sites on the current Jezero MRO/CTX crop. It answers: **under the listed scenario assumptions, which named source nodes have a directed contact path to sample B, and which events created each link?** It does not simulate material movement or determine whether a contact actually transfers anything.
 
-The science anchor is Perseverance's sedimentary Sapphire Canyon core from Bright Angel: SHERLOC detected organic compounds in its source rock, while the origin and significance of those compounds remain open scientific questions. The sample/site is outside the current CTX crop; the map's target marker is illustrative and is not Sapphire Canyon. The model therefore does not assign the observed SHERLOC product to the map location.
+The map markers A and B are scenario positions selected on the available raster. Neither is a rover position, a named Perseverance sample, nor a verified geological target. Perseverance's Bright Angel / Cheyava Falls / Sapphire Canyon record motivates the organic-analysis context, but its sample site has not been georeferenced onto this CTX crop. MRO/CTX is the only mapped mission dataset; Mars 2020 contributes sample/science context only.
 
-This concerns **scientific interpretation of a sample**. A nonliving organic film, shed cell, or DNA-bearing particle may complicate an organic/biosignature analysis. Forward planetary protection asks whether viable Earth organisms could survive, reproduce, or spread on Mars. This model does not estimate viability, establishment, or ecological effect.
+## Implemented records
 
-## Mechanisms considered
+`public/scenario.js` builds a fresh plan object. It contains:
 
-| Mechanism | What supports it | Missing inputs for a quantitative Marswalk model | Map/model relevance | Decision supported now | Hackathon fit |
-|---|---|---|---|---|---|
-| **Direct contact / carry-over through glove, tool, or sample interface** | NASA suit sampling finds microbial material on suit exteriors; an Earth Mars-analog EVA study found human-associated taxa on nearby soils and overlap with post-EVA gloves; rover sample chains use measured cleanliness, witness materials, and blanks. | Human Mars EVA source loading, glove/tool/sample material-specific transfer fractions, pressure/force/contact area, cleaning efficacy, sample mass and exact contact events. None is a measured crewed-Mars set. | Activity locations can be shown on CTX. CTX does not provide contamination values. A directed graph can make an assumed contact chain inspectable. | Record which contacts may share a glove/interface, or inspect the effect of an explicitly assumed isolation boundary. | **Selected**, qualitatively; small, testable, no invented rates. |
-| **Crew/equipment release → atmospheric transport → deposition** | Human-associated DNA has been detected on sampled ISS exterior surfaces; rover particle-resuspension research combined models with JPL experiments. MIASMMA is developing Mars-pressure suit measurements. A real MEDA Sol 36 derived-wind time series was fetched near the landing site, but it measures only wind at one rover point, not human particles or deposition. | Mars EVA release rate, viability/decay, particle-size distribution, wind at the relevant activity and target locations/time, deposition/adhesion and target interception. MIASMMA measurements are planned; preliminary model outputs use assumptions. | A point time series cannot define a spatial wind field or crew-route exposure model. The CTX raster cannot parameterize transport. The Sol 36 time/site also does not match the app's illustrative sample event. | Could eventually document observed atmospheric conditions or compare a carefully labelled geometric wind bearing if time/site are matched. | Rejected for this prototype: no locally supported particle/deposition parameter chain. |
-| **Activity order / spatial separation** | It is a crew-operational choice; analog work reports spatial and temporal microbial patterns, but not a Mars route-order experiment. | An explicit causal link from order to changed source/contact/exposure state. A route crossing or distance alone supplies none. | It can order tasks on the scene, but route length/footprint overlap are only geometry. | Changes the timeline; supports contamination conclusions only if a mechanism edge changes. | Not a standalone physical mechanism. Kept as a comparison to show when order does **not** change the modeled pathway. |
+- `places`: stable IDs, labels, grid row/column, and a scenario-location kind.
+- `sources`: stable IDs and distinct source kinds, including possible human-associated material, possible material originating at A, and B's own sample origin.
+- `objects`: stable IDs for glove G1, tools T1/T2, target surfaces, samples, and a witness-control record. Each object declares `startHistory`; an empty list means no source is assigned by this scenario, not that the item is sterile.
+- `events`: stable IDs, unique contiguous integer `order`, place ID, type/action, participants, and directed contact assumptions. The app does not invent clock times.
 
-Sources: [NASA EVA Swab Kit](https://ntrs.nasa.gov/citations/20220003128); [Danko et al., spacesuit microbial communities](https://ntrs.nasa.gov/citations/20210017721); [Ramon Crater analog study](https://doi.org/10.3389/fspas.2021.589147); [Mars 2020 sample-tube contamination controls](https://doi.org/10.1089/ast.2022.0049); [NASA MSL sample-transfer contamination study](https://pubmed.ncbi.nlm.nih.gov/25085177/); [NASA MIASMMA status](https://ntrs.nasa.gov/citations/20250006358); [PDS MEDA archive and product documentation](https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/PERSEVERANCE/meda.html); [Newman et al. 2022 Jezero wind/aeolian study](https://doi.org/10.1126/sciadv.abn3783); [Mars 2020 particle-resuspension study](https://ntrs.nasa.gov/citations/20210005882).
+`public/contact-model.js` validates references and sequence order, then replays events in order. A contact record is `from`, `to`, an explicit `direction` (`forward` or `bidirectional`), and a non-empty assumption. A bidirectional record adds both directed edges. The current plan data uses forward edges explicitly, including reciprocal edges when a contact is allowed to carry possible material either way.
 
-## Model and variables
+At each step the engine traces source-to-object paths through event-created edges and snapshots the resulting histories. Every path edge retains its event ID, place, order and assumption. The timeline selects a replay prefix, so choosing an earlier event shows only history available by then. Choosing a new plan builds a new scenario and replay from its inputs; no state is carried over from the previous plan.
 
-Use a directed contact graph \(G=(V,E)\). The nodes are:
+### Sealing and controls
 
-- \(R\): possible Earth-associated material on an EVA glove (source **assumption**, not a local Mars observation),
-- \(G\): EVA glove,
-- \(I\): sample-contact interface/tool,
-- \(S\): rock core.
+A `seal` event stores the sample's then-current source paths. Later events cannot contact a sealed sample unless an explicit `reopen` event occurs first. A later change elsewhere cannot retroactively alter the frozen sample history. A `document-control` event adds a timeline record but no contact edge; it cannot erase a path. There is no global isolation toggle.
 
-The baseline edges are:
+## Three same-route plans
 
-\[
-R\to G,\quad G\to I,\quad I\to S.
-\]
+Every plan visits the same mapped places in the same order, start → A → B, with the same drawn route length. Human activities and all material contacts remain scenario inputs.
 
-Each edge means “a source/contact link is assumed possible in this scenario.” It does **not** mean transfer has been observed or that an amount moved. The output is the Boolean reachability indicator
+| Plan | Event difference at B | Calculated source groups in B's history |
+|---|---|---|
+| **A · Same tool** | T1 used at A and B; G1 also contacts T1 at both activities. | Possible human-associated material; possible material originating at A; B's own sample origin. A's material reaches B along A surface → T1 → B. |
+| **B · Separate tool** | T2 used at B, and the explicit G1 → T2 contact remains. | The same three groups. Possible human-associated and A-origin material reach T2 through G1. A separate tool by itself leaves the modeled glove connections. |
+| **C · Omit one contact** | T2 used at B; only the G1 → T2 contact is omitted. | B's own sample origin remains. The human-associated and A-origin paths to B are absent in this graph. The result follows from the omitted edge, not from a general isolation state. |
 
-\[
-\chi_{\mathrm{path}} = q\;c_{GI}\;c_{IS}\;(1-b),
-\]
+These are logical reachability results from the event records. They are not a ranking, protocol recommendation, or evidence that any physical material moved. B's own material is shown separately in the UI from external scenario source groups.
 
-where:
+## Map and terrain calculation
 
-- \(q\in\{0,1\}\): whether a possible source is included in the scenario,
-- \(c_{GI}\in\{0,1\}\): whether glove-to-interface contact is assumed,
-- \(c_{IS}\in\{0,1\}\): whether the interface contacts the sample,
-- \(b\in\{0,1\}\): whether a hypothetical isolation boundary cuts the old-glove-to-interface link.
+The activity route is geographic context; it does not create contact links. It is drawn as a solid line, while provenance appears only in the event/history panels. There are no particle trajectories, airborne paths, contamination fields, or contact lines drawn over the terrain.
 
-All inputs and \\(\\chi_{\\mathrm{path}}\\) are dimensionless logical states. They are not probabilities, contamination scores, concentrations, viable counts, or risk. The implementation uses graph reachability rather than a mass balance so the topology stays inspectable. Activity order is recorded separately as a two-event timeline; with the same contacts and no explicit mechanism edge changed by time, **both orders return the same source-to-sample path**.
+`public/terrain-geometry.js` converts row/column spacing and elevation to metres before camera projection:
 
-The interface offers an optional illustrative boundary: “glove change and protected, dedicated sample-contact interface before collection.” In the graph this removes \(G\to I\). If enabled, the graph has no path along this modeled chain. This is a conditional logical result, not evidence that the boundary is effective, an approved protocol, or that all contamination routes are absent.
+- east: `(col - (width - 1)/2) × spacing_x`,
+- north: `((height - 1)/2 - row) × spacing_y`,
+- up: `(elevation - datum) × verticalScale`, where `datum` is the median valid elevation and `verticalScale` is the explicit height-scale control.
 
-## Observed, derived and assumed
+Camera zoom is applied after those coordinates are formed. At 1×, horizontal and vertical world units are metres at equal scale. The camera's yaw/pitch can foreshorten screen distances; this is perspective, not a different data unit. NoData cells stay absent: terrain quads touching a missing corner are skipped, and profile samples with missing elevation break the line rather than joining around the gap. Raster dimensions and width come from the JSON metadata.
 
-- **Observed, external source evidence:** NASA's EVA Swab Kit cultured 235 CFU from sampled suit exteriors across 26 bacterial species and one fungal species in its tested suits/handling conditions. A separate NASA spacesuit study reported cultivable counts ranging below detection to \(9\times10^2\) CFU per 25 cm², with assay/location dependence. These are Earth spacecraft/suit observations, not Mars sample transfer data. [EVA Swab Kit](https://ntrs.nasa.gov/citations/20220003128), [spacesuit study](https://ntrs.nasa.gov/citations/20210017721).
-- **Observed, analogous contact evidence:** the 11-day Ramon Crater analog study sampled soils and nitrile gloves before/after EVA for six analog astronauts; taxa overlapped. The authors state their method could not quantify exact contamination. Co-occurrence does not establish transfer direction or a glove-to-sample rate. [Study](https://doi.org/10.3389/fspas.2021.589147).
-- **Observed, robotic method evidence:** Curiosity's sampling chain was assayed and controlled; the team estimated hardware residues and bounded some sample contamination after a particular dilution-cleaning sequence. Those values depend on that rover's surfaces, instruments, procedure and assay; none is used as an astronaut parameter. [Blakkolb et al.](https://pubmed.ncbi.nlm.nih.gov/25085177/).
-- **Derived by this prototype:** whether a directed graph path exists under the selected Boolean assumptions; and separately, CTX-derived route length/profile.
-- **Scenario assumptions:** that Earth-associated material is present on a glove; that the glove and sample-contact interface touch; that the interface contacts the sample; and that the hypothetical isolation step removes the specified edge.
-
-## Why there is no mass-balance or transport result
-
-A contact mass balance could be written symbolically as
-
-\[
-m_S = L_G A_{GI}\eta_{GI}\eta_{IS},
-\]
-
-with glove surface loading \(L_G\) (mass/area), contacted area \(A_{GI}\) (area), and dimensionless transfer fractions \(\eta_{GI},\eta_{IS}\). We lack Mars-EVA values for all of these terms, as well as a defined contaminant and sample mass. Published rover transfer-chain values cannot fill those gaps. Assigning arbitrary ranges or distributions would create a quantitative answer without scientific basis, so this prototype does not do so.
-
-Likewise, an airborne model would require source emission and size/composition, atmospheric transport, loss/viability, deposition and sampling times. MIASMMA's NTRS record describes planned suit leakage measurements and modeling, not a released empirical Mars EVA dataset. We do not use preliminary simulated dispersal as observed local exposure.
+The 148×148 display derivative has 20.162955 m spacing, DTM heights −2615.689 to −2515.562 m relative to the areoid, and 295 NoData cells (1.35%). The local median is a rendering origin only; it does not change stored heights or the stated areoid reference. Optional 3× exaggeration multiplies only the vertical coordinate and is labelled.
 
 ## Verification and limits
 
-`node --test tests/contact-model.test.cjs` checks hand-verifiable logic:
+Run:
 
-1. Baseline path: \(R\to G\to I\to S\).
-2. Changing only activity order changes the event order but not path reachability.
-3. No source, no glove/interface contact, or no interface/sample contact yields no path.
-4. Enabling the modeled isolation boundary removes the path.
-5. Unknown activity labels are rejected.
+```bash
+node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
+```
 
-These checks verify code against the graph definition; they are **numerical/logical verification**, not physical validation. Physical validation would require a defined Mars-relevant glove/tool/material protocol, blanks and controls, measured source loading, repeated transfer experiments at relevant pressure/environment, and a corresponding analytical assay. A witness/blank can document a background; it does not itself stop a contact path.
+The tests cover A-origin reachability through shared T1; the remaining glove path with separate T2; the effect of omitting only G1 → T2; control events; frozen sealed history and explicit reopening; deterministic fresh replay; invalid references/order; equal synthetic metre steps east/north/up before projection; explicit vertical exaggeration; metadata-driven raster width; local datum selection; and NoData gaps. These checks verify implementation logic and units, not physical contact transfer, terrain accuracy, astronaut operations, or sample safety.
+
+## Scientific limits
+
+- The possible human-associated source, target-associated availability and all future crew contacts are illustrative scenario inputs, not observations on Mars.
+- A graph path means possible connectivity under the stated assumptions; it is not a measured transfer, contamination rate, probability, risk score, viable organism, or biological-establishment claim.
+- The actual Perseverance Sapphire Canyon core is from Bright Angel, outside the verified footprint of the present lander-area crop. It is not the map's B marker.
+- The route is straight-line map geometry at CTX posting. It does not indicate traversability, mobility, risk, or mitigation efficacy.
+- The profile uses rounded display elevations and retains NoData gaps; it is secondary context, not a precision navigation product.
+
+For the product provenance, footprint, mission distinction and source URLs see [docs/data-sources.md](data-sources.md). For the machine-readable contract and complete compact example see [docs/data-contract.md](data-contract.md).

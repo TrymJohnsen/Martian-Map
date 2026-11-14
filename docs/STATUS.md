@@ -1,44 +1,44 @@
 # GitWarriors handoff — 14 November 2026
 
-## Current scientific/technical direction
+## Current build
 
-- Pause major visual redesign. Keep the working terrain prototype and its existing A/B design studies available, but do not spend time polishing those directions while validating the scientific core.
-- The question is sample-science integrity: a hypothetical Jezero sedimentary core for later organic-molecule and potential-biosignature analysis, motivated by Perseverance's Bright Angel / Sapphire Canyon sample. The current CTX target is illustrative and is **not** that sample or site.
-- Selected mechanism: possible direct contact/carry-over through an EVA glove, sample-contact interface and sample. Activity order is a timeline input, not a physical mechanism by itself.
-- New `public/contact-model.js` reports only graph reachability under explicit assumptions. With identical contacts, both activity orders give the same pathway. A hypothetical glove-change/protected-tool boundary can remove one graph edge; it is not a validated EVA protocol. No transfer amount, probability, risk score, viability, or biological establishment is computed.
-- `docs/model.md` is the canonical specification for variables, equation, assumptions, bounds, graph semantics and verification. `docs/science.md` compares mechanisms and documents the scientific distinction. `docs/data-sources.md` has the source-to-variable-to-calculation-to-decision audit.
+- Clean Approach retains the existing Canvas terrain renderer and default layout A. No framework migration or full redesign was made.
+- The event-history implementation is in `public/scenario.js` and `public/contact-model.js`. It compares three plans with a stable set of source, object and place IDs, ordered events, explicit directional contact assumptions, and event-specific provenance traces. Each plan is freshly replayed; no state is carried over.
+- Plan A uses T1 at both targets. Plan B switches to T2 at B but retains G1→T2. Plan C also uses T2 and omits only G1→T2. In the scenario replay, plan C removes the modeled human-associated and A-origin paths to B; B's own sample origin remains. This is a logical scenario result, not material-transfer evidence or an operational recommendation.
+- A document-control event records a witness entry but does not remove any path. Sealing freezes sample history; an explicit reopen is required before a later contact can affect the sample. An empty initial tool history is explicitly not a sterility finding.
+- The timeline has previous/next and selectable event rows; map buttons/markers focus the corresponding place. Contact provenance is shown in the timeline/history panel, separately from the solid walking route. All three plans use the same S→A→B route (about 4.99 km by grid geometry).
 
-## Data that works
+## Terrain correction
 
-- Local `.venv`: rasterio 1.5.2, pyproj 3.8.0, numpy 2.5.4, matplotlib 3.11.2.
-- Existing 148×148 Jezero MRO/CTX DTM/ortho/ASP ray-separation crops remain unchanged. They share Mars CRS/grid, 20.162955 m spacing and 295-cell NoData mask. DTM range is −2615.689 to −2515.562 m relative to the areoid; ortho band units are unspecified.
-- The CTX data supports terrain display and illustrative path geometry only. It supplies no contamination measurement. Bright Angel / Sapphire Canyon is outside this crop; no co-registration is claimed.
-- Curiosity / MSL sample-transfer publications and Perseverance / Mars 2020 sample/SHERLOC records inform the contamination-control and science context. They are not human transfer coefficients. An individual Sol-1215 SHERLOC product has not been downloaded.
-- **MEDA data test completed:** PDS Sol 36 derived wind v2.0 and matching ancillary v3.0 downloaded, validated, and plotted. 40,543/41,538 rows have valid paired speed+direction values, spanning LTST 01:06:50–22:40:04; speed is 0–16.24 m/s. The rover was 15.89 m from the landing site. The app's hypothetical target marker is about 0.91 km east of the landing point. The wind index does not include the motivating sample's Sol 1215. Source labels, checksums, minute-nearest sample and figure are under `docs/figures/`; reproduce with `scripts/fetch_meda_wind_sample.py`. Ordinary sandbox DNS is blocked, but a bounded HTTPS retrieval obtained these public PDS files.
-- The direction is north-relative and interpreted as meteorological “from” by the MEDA study; it is plotted as individual points, with no directional mean. In this product all speed/direction uncertainty and booms-used fields are empty. No wind view is integrated in the app; no transport/deposition model is implied.
+The inspected code had a confirmed units mismatch: horizontal position was divided by ~20.16 m/cell into cell units, while vertical displacement remained in metres. The renderer treated both values as the same unit, so a “1×” view exaggerated vertical scale by about 20×. `public/terrain-geometry.js` now uses metre-valued east, north and up coordinates before projection, subtracts a computed median valid elevation as a rendering origin, and applies vertical exaggeration only to z. Camera zoom remains a separate screen transform. The profile uses raster metadata dimensions and keeps NoData as gaps; terrain quads touching NoData remain omitted.
 
-## Verification performed for the qualitative model
+## Geographic and science status
 
-- `node --check public/app.js`
-- `node --check public/contact-model.js`
-- `node --test tests/contact-model.test.cjs`
-- `MPLCONFIGDIR=/tmp/martian-map-mpl .venv/bin/python scripts/fetch_meda_wind_sample.py`
-- `git diff --check`
+- The actual 148×148 MRO/CTX crop covers about 77.43977–77.49012°E, 18.41999–18.47033°N. Its 20.162955 m posting, 100.127 m DTM range and 295-cell NoData mask are unchanged.
+- NASA's Mars 2020 record verifies Sapphire Canyon as sample 25 from Cheyava Falls, Bright Angel, sealed Sol 1215. The current CTX crop does not contain a georeferenced sample position. The June 21 rover coordinate in a NASA map is outside the crop and predates collection; it is not used as the sample location. Start, A and B are still illustrative. MRO/CTX is the only mapped mission layer; Mars 2020 is context only.
+- **MEDA data test retained:** actual PDS Sol 36 derived wind v2.0 and matching ancillary v3.0; 40,543/41,538 valid paired speed/direction rows, 0–16.24 m/s, with empty uncertainty and boom-use fields. It remains a separate historical figure and does not enter this contact model. See [data sources](data-sources.md).
+- No human Mars-EVA source loading, glove/tool transfer measurement, contact frequency, airborne release, transport, deposition or risk/safety value is represented.
 
-The graph checks cover baseline path reachability, order invariance, no-source/no-contact cases, the hypothetical isolation boundary, and unknown sequence rejection; these verify implementation logic, not physical behavior. The MEDA script validated product IDs/versions, schema, valid-pair filtering, matching rover-position metadata and generated the linked figure. Browser QA remains incomplete for the prior app panel: localhost binding is denied in this agent environment, and the Playwright CLI package is cached but no browser executable is available. This task made no app changes, so no new browser visual claim is made.
+## Verification completed
 
-## Open limitations
+```bash
+node --check public/app.js
+node --check public/contact-model.js
+node --check public/scenario.js
+node --check public/terrain-geometry.js
+node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
+git diff --check
+```
 
-- No direct astronaut glove/tool-to-Mars-sample transfer data or validated human EVA protocol is available.
-- A graph path denotes a scenario contact possibility, not actual transfer. The proposed isolation boundary is a model assumption, not a recommendation proved to reduce contamination.
-- Airborne transport remains unmodeled: MEDA records wind at one rover point; it does not measure a human source, biological particle release, sample deposition or transfer. MIASMMA, ISS exterior DNA and rover resuspension evidence do not supply those missing links.
-- The georeferenced map still has only MRO/CTX. Mars 2020 sample and instrument records contribute science context but are not a co-registered layer in this scene. The multi-mission mapped-layer challenge element remains incomplete.
-- Route length and footprint overlap remain secondary geometric summaries and do not drive the contact graph.
+Both test files pass. They cover source-A→B reachability through shared T1, the remaining glove route with separate T2, removing only G1→T2, control records, seal/reopen behavior, fresh deterministic replay, invalid references/order, equal metre-scale synthetic axes before projection, explicit vertical exaggeration, metadata-based width, datum selection and NoData profile gaps. These tests do not validate physical transfer.
 
-## Next priorities
+The local static app was inspected with the installed Playwright CLI and cached Chromium at a 1440×900 viewport. The plan selector was changed live from B to C, the resulting source sets and traces updated, two screenshots were captured, and the browser console had no errors or warnings. The server required an approved localhost run on port 4175 because ordinary sandbox binding is denied. See [`output/playwright/`](../output/playwright/).
 
-1. Complete live-browser review of the graph explanation, isolation control, source panel and retained map interactions; repair only material errors.
-2. If the team wants a geologically specific mapped target, choose a CTX/HiRISE product whose footprint actually includes it and verify registration before changing the marker. Do not present Bright Angel metadata over the current crop.
-3. Ask a science reviewer whether the hypothetical isolation boundary is a useful scenario to show. Keep it labelled as unvalidated; do not call it a protocol recommendation.
-4. Only revisit quantitative transfer after a defined Mars-relevant material/contact assay provides source loading and interface transfer measurements.
-5. Next prototype step: make the central promise of activity history concrete by recording scenario events with order, map position, time/source and explicit contact assumptions. Keep MEDA in the background unless a later event has a matching observation location/time; the derived-wind index inspected does not list Sol 1215.
+## Open limitations and handoff
+
+- A and B are illustrative positions on a 20 m/cell CTX crop, not two verified science targets. The actual Sapphire Canyon sample is not registered on this map. Georeferencing Mars 2020 context into the same scene is the largest spatial gap.
+- Possible contact edges are scenario inputs. A path means only that a path exists in the declared graph; it is not transfer observed in any NASA dataset. Plan C is not a validated handling procedure.
+- The map now adds geographic orientation to the event history, but it does not yet show a Mars 2020 target co-located with terrain. Its geographic contribution is currently location context and a same-route geometry check; contamination results come from the event assumptions, not terrain values.
+- Existing `.venv`, raster assets, contact graph science framing and MEDA wind figure remain intact.
+
+For the next implementation, select a CTX product whose verified footprint includes a Perseverance target and a coordinate-bearing Mars 2020 record, or keep A/B illustrative and present the multi-mission geospatial limitation prominently. Then review whether the scenario assumptions are useful for a human-EVA design discussion before adding operational guidance.

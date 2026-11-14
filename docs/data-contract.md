@@ -27,3 +27,62 @@ Never:
 - treat the displayed intersection error as a contamination probability or terrain uncertainty;
 - export the source ortho display stretch as a scientific measurement;
 - report terrain route metrics at finer precision than the grid/product supports.
+
+## Activity-history scenario contract
+
+`public/scenario.js` supplies the event-history model with a fresh, deterministic scenario for the selected plan. All positions below are raster `row`/`col` coordinates, not longitude/latitude. Current app places are explicitly illustrative and do not assert a Perseverance observation or sample location.
+
+- `places`: stable ID, label, `row`, `col`, and scenario/evidence kind.
+- `sources`: stable ID, label and kind. Current distinct kinds include possible human-associated material, possible material originating at A, and B's own sample origin.
+- `objects`: stable ID, label, type, `startHistory`, and optional explanatory note. Each start-history item must identify a declared source and a written assumption. An empty array is only an empty scenario input; it is not a sterility statement.
+- `events`: stable event ID; unique contiguous integer `order` starting at 1; `placeId`; type/action; listed participants; and `contacts`.
+- Each contact has declared `from`/`to` node IDs, explicit `direction` (`forward` or `bidirectional`), and a non-empty assumption. Both directions are represented either by a bidirectional contact or by two separately stated forward links.
+- Event types are `contact`, `seal`, `reopen`, and `document-control`. A seal freezes that sample's current history. A later contact to it requires a preceding explicit reopen. A document-control event records evidence and removes no path.
+
+The event engine returns each object's current possible source histories plus the ordered edge trace (event ID, place, assumption). Histories are qualitative directed reachability. They contain no transfer quantity, probability, risk score, or physical observation.
+
+### Complete minimal example
+
+This small valid scenario shows one assumed source-to-sample chain. The live app scenario adds target A/B, the three tools/handling plans, a second sample and a documentation-only control event.
+
+```json
+{
+  "id": "minimal-example",
+  "sampleId": "sample-B",
+  "places": {
+    "prep": { "label": "Illustrative preparation point", "row": 1, "col": 1 },
+    "B": { "label": "Illustrative target B", "row": 2, "col": 3 }
+  },
+  "sources": {
+    "human": { "label": "Possible human-associated material", "kind": "human_associated_scenario_source" }
+  },
+  "objects": {
+    "glove-1": { "label": "Glove G1", "kind": "glove", "startHistory": [] },
+    "tool-1": { "label": "Tool T1", "kind": "tool", "startHistory": [] },
+    "sample-B": { "label": "Sample B", "kind": "sample", "startHistory": [] }
+  },
+  "events": [
+    {
+      "id": "e1-source-on-glove", "order": 1, "placeId": "prep", "type": "contact",
+      "action": "Include possible source on G1", "participants": ["human", "glove-1"],
+      "contacts": [{ "from": "human", "to": "glove-1", "direction": "forward", "assumption": "Scenario input: a possible source is present on the glove." }]
+    },
+    {
+      "id": "e2-glove-to-tool", "order": 2, "placeId": "B", "type": "contact",
+      "action": "G1 contacts T1", "participants": ["glove-1", "tool-1"],
+      "contacts": [{ "from": "glove-1", "to": "tool-1", "direction": "forward", "assumption": "Assume the contact could carry possible material to T1." }]
+    },
+    {
+      "id": "e3-tool-to-sample", "order": 3, "placeId": "B", "type": "contact",
+      "action": "T1 contacts sample B", "participants": ["tool-1", "sample-B"],
+      "contacts": [{ "from": "tool-1", "to": "sample-B", "direction": "forward", "assumption": "Assume the sampling interface contacts sample B." }]
+    },
+    {
+      "id": "e4-seal-b", "order": 4, "placeId": "B", "type": "seal",
+      "action": "Seal sample B", "participants": ["sample-B"], "contacts": []
+    }
+  ]
+}
+```
+
+The engine rejects unknown place/object/source IDs, missing or duplicate event IDs, non-contiguous/ambiguous order, undeclared contact direction, missing contact assumptions, contacts with a sealed sample, and invalid seal/reopen use. To reproduce tests: `node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs`.

@@ -16,13 +16,15 @@ Build Clean Approach: a narrow, local prototype about preserving contact provena
 
 - Original GeoTIFFs and secrets stay out of Git. Keep the 337 KB, 148×148 display derivative in `public/data/` with its provenance and assumptions intact.
 - Follow [docs/data-contract.md](docs/data-contract.md): Mars ocentric CRS in metres; array row/column order; independent observed/source values vs derived metrics vs scenario markers; preserve NoData.
+- `public/contact-model.js` replays ordered scenario events and reports source-to-object reachability with event/place/assumption traces. Sealed sample history freezes until explicit reopening; control events do not remove paths.
+- `public/terrain-geometry.js` converts east, north and up to metres before camera projection, uses a computed local elevation datum, and keeps camera zoom independent of explicit vertical exaggeration. NoData remains absent from mesh and profile.
 - DTM/ortho are both 20.162955 m/pixel in this crop. Do not claim a high-resolution/coarse-resolution contrast.
 - ASP `intersection_error` is ray separation in metres and only a relative stereo self-consistency diagnostic. It is not DTM accuracy, uncertainty, risk, or confidence.
 - Do not invent contamination rates, probabilities, safe distances, local wind fields, or claim a route order prevents contamination. Contact paths and EVA protocol changes are hypotheses/scenarios.
 - Perseverance witness tubes are a robotic sampling precedent, not a validated astronaut protocol. The NASA CacheCam image is not co-registered with the CTX scene.
 - Read [docs/science.md](docs/science.md) before changing science copy.
-- Update [docs/model.md](docs/model.md) when changing graph variables or edge meanings. `node --test tests/contact-model.test.cjs` checks logical cases; it does not validate physical transfer.
-- Follow [docs/design.md](docs/design.md) for the current unselected visual studies, accessible interaction, evidence labels and visual treatment. The earlier A/B layouts were rejected; do not treat them as approved direction. Wait for the user's choice between the two current rendered proposals before completing a redesign.
+- Update [docs/model.md](docs/model.md) and [docs/data-contract.md](docs/data-contract.md) when changing graph variables, object/source IDs, events, sequence rules or edge meanings. Run `node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs`; these checks verify code/units, not physical transfer.
+- Follow [docs/design.md](docs/design.md) for prior visual decisions, accessible interaction, evidence labels and visual treatment. Layout A is the current working surface; keep this task's UI changes focused on the event history and do not begin a broad redesign.
 
 ## Structure and handoffs
 

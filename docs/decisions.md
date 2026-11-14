@@ -8,6 +8,10 @@ The team selected the question of preserving a science sample's interpretive int
 
 The prototype represents a possible Earth-associated source → EVA glove → sample-contact interface → rock core chain as a directed graph. It reports only whether that path exists under explicit scenario assumptions. It does not estimate amount, probability, viability, or efficacy. Activity order is retained as a timeline comparison; with the same contacts it does not change graph reachability. An optional isolation boundary is a hypothetical graph edit, not a crewed-EVA recommendation or validated control. See [the model specification](model.md).
 
+## 2026-11-14 — Replace fixed chain with ordered contact history
+
+The working prototype now computes object histories from stable-ID places, sources, objects and ordered events. Compare the same route with a shared tool, a separate B tool retaining the glove contact, and a separate tool with the explicit G1→T2 contact omitted. The event trace determines possible-source paths; no plan is hardcoded as best. Sealing freezes sample history and controls only record evidence. A/B remain illustrative locations on the lander-area crop because no verified Bright Angel sample coordinate is co-registered. See [docs/model.md](model.md), [docs/data-contract.md](data-contract.md), and [docs/data-sources.md](data-sources.md).
+
 ## 2026-11-14 — Keep MEDA wind as background, not an app layer
 
 A reproducible Sol 36 derived wind sample near the Perseverance landing point was downloaded and plotted. It is 2021 landing-site history, while the motivating Sapphire Canyon sample was collected on Sol 1215 and the app target is illustrative and about 0.91 km from the landing point. Empty uncertainty/booms-used fields and the absence of a human-release/deposition model prevent a defensible contamination or target-exposure inference. Keep the dataset and figure as context; do not add a wind overlay or alter the direct-contact graph. Revisit only if a specific activity location/time is paired with a suitable environmental series and the feature is explicitly limited to observations or geometric relation.

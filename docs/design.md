@@ -2,25 +2,26 @@
 
 ## Status
 
-The previous Terrain First and Guided Field Story alternatives were rejected as a visual direction. Their composition is retired; the route calculations, observed rasters, layer controls and source material remain in the prototype. The current page offers two lightweight, same-content composition studies. They are not a final redesign. Choose one before further visual work.
+The previous Terrain First and Guided Field Story alternatives were rejected as a visual direction. Their composition is retired; route calculations, observed rasters, layer controls and source material remain. Layout A is the current working surface as requested. The same page still exposes a lightweight field-plate composition at `/?design=field-plate`, but further visual redesign is outside the current implementation task.
 
-Open the same app with `/?design=terrain` or `/?design=field-plate`. The alternatives share one HTML page, renderer, data, order selection, route metrics, elevation profile and expandable source detail. Both use the actual CTX orthophoto where available. The image is a one-band grayscale product with the same 20.16 m grid spacing as the DTM; there is no higher-resolution imagery in this crop. No synthetic lighting or uncertainty layer is being presented as observed data.
+Open the same app with `/?design=terrain` (default) or `/?design=field-plate`. Both use one HTML page, renderer and data. The working interface compares three event-based handling plans, a selectable activity timeline and per-sample provenance traces; the same MRO/CTX orthophoto remains the map substrate. The image is a one-band grayscale product with the same 20.16 m grid spacing as the DTM; there is no higher-resolution imagery in this crop. No synthetic lighting or uncertainty layer is presented as observed data.
 
 ## Two composition studies
 
 | Study | Composition and expression | Intended strength | Tradeoff to review |
 |---|---|---|---|
-| **A · Terrain / `?design=terrain`** | Dark neutral surround; broad, nearly full-height terrain image at left; compact activity comparison at right. Restrained sans-serif hierarchy, quiet controls, no nested cards. | Keeps the 3D surface as the largest object and leaves the two order choices beside it. | The route metrics and method note share a relatively narrow column. |
-| **B · Field plate / `?design=field-plate`** | Light mineral-paper background; wide horizontal terrain plate above a full-width decision band. The choice and route profile read like a concise field report. | Gives the scene more horizontal breadth and gives comparison/results a clear row below it. | The choice is lower on the page; less of the map and the activity comparison fit together in a short viewport. |
+| **A · Terrain / `?design=terrain`** | Dark neutral surround; broad terrain image at left; compact plan comparison and timeline at right. | Keeps the scene and event comparison together on desktop. | Detailed provenance traces require scrolling within the page. |
+| **B · Field plate / `?design=field-plate`** | Light field-paper surround; wider horizontal terrain plate above the history controls. | Gives the scene more horizontal breadth. | More vertical scrolling separates map and detailed trace. |
 
-**Provisional recommendation:** A, Terrain. The purpose is to inspect route order against the terrain, so keeping the options adjacent to a large map may make that relationship easiest to understand. This is a design hypothesis, not a research finding or a final decision. The user should compare actual renders before we continue.
+**Current working layout:** A, Terrain. It remains a prototype rather than a final visual direction; this implementation changed only what was needed to expose event history and plan comparisons.
 
 ## Shared content and interaction
 
 - Compact project name: **Clean Approach**.
 - One sentence frames the investigation without implying measured contamination or transfer.
-- The user can select **Collect sample** or **Survey area** first. Selection has a neutral outline and pressed state only; no checkmark or approval cue.
-- Explanatory copy sits directly under the activity choice. It distinguishes the illustrative path from physical contact and transfer.
+- The user can select one of three handling plans: shared T1, separate T2 with glove contacts retained, or separate T2 with G1→T2 omitted.
+- Previous/next and event rows move through ordered activities without inventing clock times; the current place is highlighted on the map.
+- Selecting sample B shows source paths with event-linked explanations. B's own sample origin is visually distinct from external scenario source groups.
 - The phrase **Illustrative activity plan** remains visible beside the terrain.
 - **Data & assumptions** opens sources, raster properties, NoData handling, diagnostic meaning and scenario limitations in place.
 - Surface image is the initial view. Elevation and ASP ray-separation remain optional analysis views. Their labels identify data type; ray separation is not measurement uncertainty.
@@ -37,14 +38,16 @@ Earlier code multiplied vertical displacement by 3. This increased the steepest 
 
 The selected 20.16 m/cell spacing is shared by the DTM and orthoimage. Resolution alone is not a measure of terrain reliability. NoData means missing values; no interpolation is applied. The ASP ray-separation layer is a relative stereo-processing diagnostic, not absolute elevation error, measurement uncertainty or confidence. No uncertainty map is justified by the available evidence.
 
-## Visual review and next checkpoint
+## Browser review and current checkpoint
 
-Both studies were started from the local static app, rendered in headless Chromium at 1440 × 900, and visually inspected. The ordinary sandbox denied socket binding. Port 4173 was occupied but unreachable; using an approved localhost server on port 4174 made the app available to Chromium without changing system security/network settings. The browser console was clean after fixing two obsolete element references from the removed NASA image card. The sequence control was clicked in the live browser: the selected state, explanation, route distances (3,300 m → 4,990 m; footprint overlap 140 m → 350 m) and profile all updated.
+The earlier composition studies were reviewed in Chromium at 1440×900; current plan states were also rendered with Playwright at a 1440×900 browser viewport. Changing the plan recomputed sample-B source groups and event traces; the browser console had no errors or warnings. Ordinary server binding is restricted in the agent sandbox; an approved localhost run on port 4175 made the app available without changing system settings.
 
 - A · Terrain: [Chromium screenshot](../output/playwright/proposal-a-terrain-1440x900.png). The terrain and activity comparison remain side by side; the visible hierarchy is concise but has more text in the right rail.
-- B · Field plate: [Chromium screenshot](../output/playwright/proposal-b-field-plate-1440x900.png). The lighter horizontal composition shows the terrain first, then the two choices and concise explanation; route metrics continue below the initial 900 px viewport.
+- B · Field plate: [Chromium screenshot](../output/playwright/proposal-b-field-plate-1440x900.png). This earlier composition study predates the event-history panel.
+- Plan B · Separate tool: [1440×900 browser screenshot](../output/playwright/plan-b-separate-tool-1440x900.png) · [full page](../output/playwright/plan-b-separate-tool-fullpage.png).
+- Plan C · Omit G1→T2: [1440×900 browser screenshot](../output/playwright/plan-c-omit-glove-contact-1440x900.png) · [full page](../output/playwright/plan-c-omit-glove-contact-fullpage.png).
 
-These are inspected design proposals, not final visual approval. The user should choose A, B or describe a hybrid before any full redesign or further polish.
+The plan screenshots show different event-model results, not design alternatives. Full visual refinement remains outside this implementation pass.
 
 ## Prior art / project story to preserve
 

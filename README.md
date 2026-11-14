@@ -1,55 +1,56 @@
 # Clean Approach
 
-**Clean Approach** explores contact provenance for a hypothetical Jezero sedimentary core intended for organic-molecule and potential-biosignature analysis. The sample rationale is informed by Perseverance's Bright Angel / Sapphire Canyon work, which is a separate site from the current MRO/CTX crop. The core calculation is a qualitative directed contact graph: it shows whether a possible Earth-associated source is connected to the sample through assumed glove/tool contacts. It does not calculate transferred material, probability, planetary biological establishment or astronaut safety.
+**Clean Approach** is a local Marswalk scenario for inspecting contact provenance around a hypothetical Jezero sedimentary sample. Its event history answers which possible source labels can be traced to sample B through explicitly assumed glove/tool contacts, and which event created each link. It does not model actual material transfer, probability, contamination amount, viability, risk, or astronaut safety.
 
-## Open the demo
+## Run the demo
 
-From the repository root in a terminal:
+From the repository root:
 
 ```bash
 python3 -m http.server 4173 --directory public
 ```
 
-Open <http://localhost:4173>. The NASA Photojournal reference image requires browser internet access; the terrain demo data are local.
+Open <http://localhost:4173>. The local terrain data work offline; the separate NASA sample reference links need internet access.
 
-Two unselected composition studies share the same data and interaction:
+The map uses an actual MRO/CTX DTM and its co-gridded orthoimage. Activity start, target A and target B are explicitly illustrative positions on that crop. They are not rover locations or named sample sites. Perseverance's Bright Angel / Cheyava Falls / Sapphire Canyon record informs the science context, but the sample site has not been georeferenced onto this lander-area raster.
 
-- [A — Terrain](http://localhost:4173/?design=terrain): large terrain scene beside a compact activity comparison.
-- [B — Field plate](http://localhost:4173/?design=field-plate): broad scene above a horizontal activity/results band.
+Choose among three event plans:
 
-The page opens in A by default. Open **Data & assumptions** to inspect mission data, the sample rationale, model limitations and assumptions. Compare sample-first and survey-first: with identical glove/tool contacts, the model's possible path is unchanged. The optional isolation step removes a graph edge under an explicit, unvalidated assumption; it is not a recommended or validated EVA procedure. Route distance/profile are available as secondary map context. Drag the map to rotate, scroll to zoom, **Reset view** to restore the camera, and use the tour button for optional camera motion. Dragging or clicking the tour button stops it; `R` while the map is focused resets the view. The browser's reduced-motion preference disables the camera tour.
+- **A · Same tool:** T1 is used at A and B.
+- **B · Separate tool:** T2 is used at B, while G1 contacts remain.
+- **C · Omit one contact:** T2 is used at B and the assumed G1 → T2 contact is omitted.
 
-The Playwright skill is installed in the agent's user environment. The two current studies were rendered and reviewed in Chromium at 1440×900; screenshots and the pending design checkpoint are recorded in [docs/design.md](docs/design.md).
+All plans use the same S → A → B map route. The solid map line represents walking geometry; contact histories appear in the event and sample panels, not as airborne/particle paths. Use **Previous / Next** or select an event to inspect source history as it develops. Select B to focus its history. The optional terrain route profile is secondary context and shows missing elevation as gaps.
 
-## What is real, calculated, and illustrative
+## Terrain and model limits
 
-- **Real:** the 148×148 MRO/CTX DTM, orthorectified image and ASP intersection-error crop; the Perseverance CacheCam witness-tube image/reference.
-- **Calculated:** route distance and elevation profile sampled from the CTX grid; rendered terrain mesh and display stretch.
-- **Illustrative:** target/start/waypoints, target footprint, route order and assumed contact graph. The optional isolation boundary is a hypothetical graph change; Perseverance witness tubes are documented as a separate robotic precedent and do not establish a crewed EVA protocol.
+The DTM and orthoimage share a 148×148 grid at 20.162955 m/pixel. Terrain uses metres for east, north and up before camera projection, a computed local height origin, and 1× vertical scale by default. The optional 3× control is explicitly labelled exaggeration. NoData cells are not filled; terrain quads crossing NoData and profile segments across missing samples are omitted.
 
-The data crop's orthoimage and DTM both have 20.16 m/pixel spacing. The intersection-error image is a stereo ray-separation diagnostic, not terrain accuracy or uncertainty. No contamination score, amount, plume, probability, or safe distance is calculated. The existing map target is illustrative and is not the named Perseverance Bright Angel sample site.
+MRO is the only mission with a mapped raster in this scene. Mars 2020/Perseverance contributes a documented sample-science record, not a registered map layer. MEDA Sol 36 wind remains a separate historical background test and does not enter these contact histories.
 
-## AI assistance
-
-AI assistants were used to help inspect primary-source documentation, implement and revise the static interface and data-export code, and draft the project notes. The team must make the scientific/design decisions and review all citations, scenario markers and generated outputs; no AI-generated contamination or terrain measurement is presented as observed data.
-
-## Rebuild the small demo data derivative
-
-The original GeoTIFFs are ignored under `data/raw/jezero/`. With the existing environment:
+## Tests
 
 ```bash
-MPLCONFIGDIR=/tmp/martian-map-mpl .venv/bin/python scripts/build_demo_data.py
+node --check public/app.js
+node --check public/contact-model.js
+node --check public/scenario.js
+node --check public/terrain-geometry.js
+node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
 ```
+
+The checks verify software logic, references, order, source paths, sealed-history rules, metre-scale geometry, raster metadata use and NoData gaps. They do not validate physical contamination or terrain accuracy. Browser screenshots from the current plan comparisons are in [`output/playwright/`](output/playwright/).
 
 ## Project notes
 
-- [Current status and suggested evening work blocks](docs/STATUS.md)
-- [Current visual studies, geometry review and design checkpoint](docs/design.md)
-- [Scientific mechanism comparison](docs/science.md)
-- [Contact graph variables and verification](docs/model.md)
-- [Science basis and closest prior art](docs/science.md)
-- [Data products and actual sample results](docs/data-sources.md)
-- [Data format](docs/data-contract.md)
-- [Major decisions](docs/decisions.md)
-- [Challenge and submission requirements](docs/challenge.md), [submission details](docs/submission.md)
-- [30-second demo script](docs/demo-script.md)
+- [Current status and handoff](docs/STATUS.md)
+- [Event-history model](docs/model.md)
+- [Data sources, product status and geographic coverage](docs/data-sources.md)
+- [Data and scenario contract, including a complete example](docs/data-contract.md)
+- [Science basis](docs/science.md)
+- [Decisions](docs/decisions.md)
+- [Visual direction checkpoint](docs/design.md)
+- [Challenge and submission](docs/challenge.md) · [demo script](docs/demo-script.md)
+
+## AI assistance
+
+AI tools helped inspect source documentation, implement the static prototype, and draft notes. The contact assumptions, location labels, model boundaries and scientific conclusions remain team decisions for review. No AI-generated contamination or terrain measurement is presented as observed data.

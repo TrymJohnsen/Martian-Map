@@ -4,11 +4,10 @@
 
 | Time | Voiceover | On-screen text / action |
 |---|---|---|
-| 0–4 s | “What if we disturb the sample before we collect it?” | Show Jezero terrain; label: “Illustrative sample site”. |
-| 4–10 s | “This surface comes from Mars Reconnaissance Orbiter CTX.” | Tilt/rotate terrain. Small source label: “20.16 m grid · broad context”. |
-| 10–17 s | “The two activity orders change the timeline. With the same contacts, they leave the modeled pathway unchanged.” | Toggle both activity orders; show the qualitative source → glove → interface → core graph. |
-| 17–23 s | “This path is an assumption we can inspect, not a measured transfer.” | Enable the hypothetical isolation boundary and show the graph path interrupted; read its caveat. |
-| 23–27 s | “The boundary is not a validated astronaut procedure, and other pathways are outside this model.” | Keep the limitation adjacent to the graph; optionally open Data & assumptions. |
-| 27–30 s | “Clean Approach makes the plan—and its assumptions—visible.” | End card: “No transfer amount, probability, or safety score”. |
+| 0–4 s | “What could reach a Mars sample through a sequence of contacts?” | Show the MRO/CTX surface and the explicitly illustrative S → A → B route. |
+| 4–9 s | “This is real terrain context from Mars Reconnaissance Orbiter; the activity locations are scenario inputs.” | Show the 20.16 m/cell readout and the visible illustrative-plan label. |
+| 9–18 s | “With one tool shared between A and B, both A-origin and human-associated sources have an assumed path to B.” | Select Plan A and inspect the event trace to Sample B. |
+| 18–24 s | “A separate tool alone leaves the modeled glove contact. Omitting that one contact removes those paths in this scenario.” | Select Plan B, then C. Point out the unchanged route and changed source-path chips. |
+| 24–30 s | “These are event assumptions, not measured transfer or a validated EVA procedure. Our current Mars 2020 sample target is not co-registered on this map.” | Show Data & assumptions or the trace caveat; leave the illustrative label visible. |
 
-All key text remains on screen long enough to read. The animation is a scenario, not a measured plume. If the NASA Photojournal image cannot load, keep its caption and citation visible and use the local CTX scene throughout.
+The app does not display a contamination plume, transfer amount, probability, or safety result. MEDA wind remains background only.
