@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101615">
+  <meta name="description" content="A Marswalk sample-integrity planning prototype using real Jezero terrain data and a clearly labelled activity-order scenario.">
+  <title>Clean Approach — Marswalk field plan</title>
+  <link rel="preconnect" href="https://assets.science.nasa.gov">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Clean Approach home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>FIELDNOTES <b>/ MARS</b></span>
+    </a>
+    <div class="topbar-meta"><span class="live-dot"></span> PROTOTYPE <span class="top-separator">·</span> JEZERO CRATER</div>
+    <a class="challenge-link" href="https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/" target="_blank" rel="noreferrer">SPACE APPS 2026 <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main id="top">
+    <section class="intro">
+      <div class="intro-copy">
+        <p class="eyebrow"><span>MISSION NOTE 01</span><span class="eyebrow-rule"></span><span>SCIENCE SAMPLE INTEGRITY</span></p>
+        <h1>Clean <em>Approach</em></h1>
+        <p class="deck">What if the astronaut affects the sample <strong>before they collect it?</strong></p>
+      </div>
+      <div class="intro-tag"><span class="tag-symbol">✳</span><span>CONTACT-SEQUENCE<br>PLANNING STUDY</span></div>
+    </section>
+
+    <section class="workspace" aria-label="Interactive Marswalk planning prototype">
+      <article class="terrain-card">
+        <div class="terrain-topline">
+          <div>
+            <p class="micro-label">01 / TERRAIN CONTEXT</p>
+            <h2>Jezero approach sector</h2>
+          </div>
+          <div class="source-chip"><span class="chip-orb"></span><span><b>MRO · CTX</b><small>STEREO TERRAIN</small></span></div>
+        </div>
+
+        <div class="scene-wrap">
+          <canvas id="terrain" aria-label="Rotatable 3D terrain view of Jezero crater with illustrative walk start, survey waypoint and sample target"></canvas>
+          <div class="scene-corner scene-corner-left"><span class="corner-cross">＋</span><span id="coord-readout">18.45°N&nbsp; 77.45°E</span></div>
+          <div class="scene-corner scene-corner-right"><span class="north-arrow">↑</span><span>N</span></div>
+          <div class="scene-overlay-label"><span class="overlay-line"></span><span>SCENARIO MARKERS · NOT A FIELD PLAN</span></div>
+          <div id="scene-loading" class="scene-loading">Loading local terrain…</div>
+          <div id="scene-error" class="scene-error" hidden>Could not load the bundled terrain sample. See README for the data export step.</div>
+        </div>
+
+        <div class="scene-controls">
+          <div class="layer-control" role="group" aria-label="Terrain layer display">
+            <span class="control-label">SURFACE</span>
+            <button class="layer-button is-active" data-layer="ortho">IMAGE</button>
+            <button class="layer-button" data-layer="elevation">ELEVATION</button>
+            <button class="layer-button" data-layer="intersection">RAY SEPARATION</button>
+          </div>
+          <button id="play-tour" class="tour-button"><span class="play-icon">▶</span><span>PLAY 18 SEC TOUR</span></button>
+        </div>
+
+        <div class="scene-footnote">
+          <span>DRAG TO ROTATE <b>·</b> SCROLL TO ZOOM</span>
+          <span>GRID 20.16 M / CELL <b>·</b> <span id="ve-label">3× VERTICAL DISPLAY</span></span>
+        </div>
+      </article>
+
+      <aside class="plan-column">
+        <section class="plan-card sequence-card">
+          <p class="micro-label">02 / CHOOSE ACTIVITY ORDER</p>
+          <h2>When do you cross the site?</h2>
+          <p class="card-intro">Compare a survey leg before or after the sample step.</p>
+          <div class="sequence-options" role="group" aria-label="Choose activity order">
+            <button class="sequence-option is-selected" data-sequence="sample-first" aria-pressed="true">
+              <span class="option-index">A</span><span class="option-copy"><b>Collect first</b><small>Sample → survey</small></span><span class="option-mark">✓</span>
+            </button>
+            <button class="sequence-option" data-sequence="survey-first" aria-pressed="false">
+              <span class="option-index">B</span><span class="option-copy"><b>Survey first</b><small>Survey → sample</small></span><span class="option-mark">✓</span>
+            </button>
+          </div>
+          <div class="route-readout" aria-live="polite">
+            <div class="readout-head"><span class="readout-pulse"></span><span id="sequence-title">SAMPLE FIRST</span><span class="scenario-stamp">SCENARIO</span></div>
+            <p id="sequence-explanation">The scout leg comes after collection. The marked target zone is crossed only during the final approach before sampling.</p>
+          </div>
+        </section>
+
+        <section class="plan-card numbers-card">
+          <div class="card-heading-row"><p class="micro-label">03 / TERRAIN-DERIVED ROUTE</p><span class="derived-tag">DERIVED</span></div>
+          <div class="metric-row"><div><span class="metric-value" id="route-distance">—</span><span class="metric-unit">m</span></div><span class="metric-label">planar route length</span></div>
+          <div class="metric-row"><div><span class="metric-value" id="pre-sample-zone">—</span><span class="metric-unit">m</span></div><span class="metric-label">path inside marked zone<br>before collection</span></div>
+          <div class="elevation-strip"><span>PROFILE / SAMPLE</span><span id="profile-range">—</span></div>
+          <div class="profile-chart"><canvas id="profile" width="420" height="82" aria-label="Illustrative route elevation profile sampled from the CTX grid"></canvas></div>
+          <p class="metric-caveat">Planar distance and sampled relief only. No suit-mobility model, safety limit, or contamination score.</p>
+        </section>
+
+        <section class="evidence-card">
+          <div class="evidence-heading"><span class="evidence-kicker">MISSION PRECEDENT</span><span class="mission-dot"></span><span>MARS 2020</span></div>
+          <a class="witness-image-link" href="https://science.nasa.gov/photojournal/witness-tube-in-perseverance-sample-caching-system/" target="_blank" rel="noreferrer" aria-label="Open NASA witness tube source">
+            <img id="witness-image" src="https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia24/pia24751/PIA24751.jpg?crop=faces%2Cfocalpoint&amp;fit=clip&amp;h=960&amp;w=1280" alt="Perseverance inspecting and sealing a witness tube before collecting its first Mars sample" loading="lazy">
+            <span class="image-credit">NASA / JPL-CALTECH</span>
+          </a>
+          <p class="witness-copy"><b>Witness tubes record the environment near sampling.</b> Perseverance's robotic process is a reference, not a validated astronaut procedure.</p>
+          <a class="source-link" href="https://science.nasa.gov/photojournal/witness-tube-in-perseverance-sample-caching-system/" target="_blank" rel="noreferrer">VIEW NASA SOURCE <span>↗</span></a>
+        </section>
+      </aside>
+    </section>
+
+    <section class="evidence-band">
+      <div class="evidence-cell evidence-question">
+        <p class="micro-label">THE EVIDENCE QUESTION</p>
+        <h2>A route can change <em>what was touched first.</em></h2>
+        <p>The route overlap is calculated from the drawn path and a team-set target footprint. It marks a possible contact opportunity, not a transfer event.</p>
+      </div>
+      <div class="evidence-cell source-cell">
+        <span class="source-number">01</span><div><b>MRO / CTX</b><p>20.16 m terrain grid<br>DTM & ortho, same resolution</p></div>
+      </div>
+      <div class="evidence-cell source-cell">
+        <span class="source-number source-number-copper">02</span><div><b>ASP DIAGNOSTIC</b><p>Camera-ray separation<br>not absolute terrain accuracy</p></div>
+      </div>
+      <div class="evidence-cell source-cell">
+        <span class="source-number source-number-blue">03</span><div><b>PERSEVERANCE / CACHECAM</b><p>Witness-tube method reference<br>separate place and mission</p></div>
+      </div>
+    </section>
+
+    <section class="limits-row">
+      <div><span class="limits-icon">i</span><p><b>READ THE LABELS.</b> Suit surfaces can carry biological material. NASA has not measured astronaut-to-Mars-sample transfer or validated a route-order mitigation here. All markers and order comparisons are illustrative.</p></div>
+      <a href="/data/jezero-demo.json" target="_blank">OPEN DATA MANIFEST ↗</a>
+    </section>
+  </main>
+
+  <footer class="footer"><span>GITWARRIORS <b>·</b> CLEAN APPROACH</span><span>NASA SPACE APPS CHALLENGE 2026 <b>·</b> RESEARCH PROTOTYPE</span><a href="/" id="data-status">LOCAL DATA READY</a></footer>
+</body>
+</html>
