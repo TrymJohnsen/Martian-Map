@@ -99,17 +99,17 @@
   const ASSUMPTIONS = Object.freeze([
     {
       id: "g2CarriesHuman", defaultOn: true,
-      label: "Outer glove G2 carries possible human-associated material",
+      label: "Glove G2 carries human material",
       text: "On by default: no data shows that an outer glove put on during an EVA is free of human-associated material. Switching it off is a what-if, not a finding."
     },
     {
       id: "swapContact", defaultOn: false,
-      label: "G1 touches G2 while the gloves are changed",
+      label: "G1 touches G2 at the change",
       text: "Off by default. Switch it on to include a contact from the removed glove G1 to G2 during the change."
     },
     {
       id: "equipmentSource", defaultOn: false,
-      label: "The equipment itself is a possible source",
+      label: "The equipment is a source",
       text: "Off by default. Switch it on to treat seals, coatings, lubricants and bag material of the tools and tube as a possible source."
     }
   ]);
@@ -138,7 +138,7 @@
       if (distanceM <= radiusM) continue;
       if (mask && !mask[row * width + col]) continue;
       return {
-        label: "Work-zone boundary · planning rule", row, col, kind: "illustrative_scenario",
+        label: "Work-zone boundary · planning rule", short: "", row, col, kind: "illustrative_scenario",
         distance_to_B_m: Math.round(distanceM),
         note: "A point on the A–B route just outside the scenario work zone. It is a planning rule, not an observation."
       };

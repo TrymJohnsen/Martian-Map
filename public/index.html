@@ -26,12 +26,12 @@
   <a class="skip" href="#main">Go to content</a>
   <header class="hdr">
     <a class="brand" href="#intro" data-view-link="intro" aria-label="Clean Approach, mission intro" style="text-decoration:none"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true" fill="none" stroke="currentColor"><circle cx="13" cy="13" r="11.5" stroke-width="1.5"/><path d="M6.5 18.5L14.5 10.5" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="1.8 2.6"/><circle cx="17.5" cy="8.5" r="2.6" fill="currentColor" stroke="none"/></svg><span>Clean Approach</span></a>
-    <span class="hsub">Illustrative Mars sample-planning prototype · Jezero</span>
+    <span class="hsub">Mars sample-planning prototype</span>
     <nav class="tabs" aria-label="Sections">
       <a class="tab" href="#intro" data-view-link="intro" aria-current="page">Mission intro</a>
       <a class="tab" href="#checklist" data-view-link="checklist">Checklist</a>
       <a class="tab" href="#examples" data-view-link="examples">Example plans</a>
-      <a class="tab assumptions-link" href="#data" data-view-link="data">Data &amp; assumptions</a>
+      <a class="tab assumptions-link" href="#data" data-view-link="data">About the data</a>
     </nav>
   </header>
 
@@ -42,60 +42,38 @@
         <span class="lbl" id="area-title">Bright Angel · Neretva Vallis · Jezero</span>
         <h1 class="h1" id="intro-title" tabindex="-1">Plan the approach to Sample B</h1>
       </div>
-      <p class="lead">Under the contacts you assume (glove, tool, tube), which possible source groups have a path to Sample B, and which step created each path?</p>
+      <p class="lead">Choose how you handle gloves and tools on the walk, and see what could connect to the sample.</p>
       <div class="cta">
         <button class="btn btn-pri btn-lg" type="button" data-mission-enter>Open the mission checklist<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
         <a class="btn btn-sec btn-lg" href="#examples" data-view-link="examples">See example plans</a>
       </div>
-      <p class="cta-m">8 steps · 4 choices · 3 assumptions you can switch · the map stays in view</p>
-      <section class="card blk" aria-labelledby="why-title">
-        <div class="blk-h"><h2 class="h3" id="why-title">Why Sapphire Canyon matters</h2><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span></div>
-        <p class="body muted">Perseverance collected the sample “Sapphire Canyon” at Bright Angel on Sol 1215. Organic compounds and mineral associations were reported; this does not establish life.</p>
-      </section>
       <ul class="places" aria-label="Places on the map">
-        <li><span class="place-i" aria-hidden="true"><span class="dotk dotk-s"></span></span><span class="place-n">S · Start</span><span class="ev ev-scn"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario</span><span class="place-d">An invented start point for the walk.</span></li>
-        <li><span class="place-i" aria-hidden="true"><span class="dotk dotk-a"></span></span><span class="place-n">A · Hypothetical work site</span><span class="ev ev-scn"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario</span><span class="place-d">An invented earlier sampling stop. It shows what could carry over to B.</span></li>
-        <li><span class="place-i" aria-hidden="true"><span class="dotk dotk-b"></span></span><span class="place-n">B · Sapphire Canyon</span><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span><span class="place-d">The real sample site, shown at a nominal placement.</span></li>
+        <li><span class="place-n">S · Start</span><span class="ev ev-scn">Scenario</span><span class="place-d">Where the walk begins.</span></li>
+        <li><span class="place-n">A · Earlier work site</span><span class="ev ev-scn">Scenario</span><span class="place-d">An invented first sampling stop.</span></li>
+        <li><span class="place-n">B · Sapphire Canyon</span><span class="ev ev-obs">Observed</span><span class="place-d">The real Perseverance sample site, Sol 1215. Organic compounds were reported here; that does not establish life.</span></li>
       </ul>
     </section>
 
     <!-- The map card is shared by the intro, the checklist and the example plans. map.js draws the canvas. -->
     <section class="card map ar-map terrain-card" data-v="intro checklist examples" aria-label="Terrain map, Bright Angel">
-      <div class="mapc">
-        <canvas id="terrain" tabindex="0" aria-label="Interactive MRO CTX terrain around Bright Angel with an illustrative route and sample target"></canvas>
-        <div class="mtl">
-          <div class="seg layer-control" role="group" aria-label="Map view">
-            <button type="button" class="layer-button is-active" data-layer="ortho" aria-pressed="true">Surface image</button>
-            <button type="button" class="layer-button" data-layer="elevation" aria-pressed="false">Elevation</button>
-            <button type="button" class="layer-button" data-layer="intersection" aria-pressed="false">Ray separation</button>
-          </div>
-        </div>
+      <div class="mapc scene-wrap">
+        <canvas id="terrain" tabindex="0" aria-label="Interactive terrain map around Bright Angel with the walking route and the sample target"></canvas>
         <div class="mtr">
           <div class="mtr-row">
-            <button class="mbtn" type="button" id="reset-camera"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg>Reset view</button>
+            <button class="mbtn" type="button" id="reset-camera">Reset view</button>
             <button class="mbtn" type="button" id="vertical-scale" aria-pressed="false">Height ×1</button>
           </div>
           <span class="north" role="img" aria-label="North direction"><span id="north-arrow" aria-hidden="true">↑</span>N</span>
         </div>
-        <div class="mbr"><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span><span class="mono">MRO / CTX · 20.4 m per cell</span></div>
-        <div id="scene-loading" class="mload">Loading local terrain…</div>
-        <div id="scene-error" class="mload" hidden>Could not load the bundled terrain sample. See README for the data export step.</div>
+        <div class="mbr"><span class="mono">MRO / CTX · 20.4 m per cell</span></div>
+        <div id="scene-loading" class="mload">Loading terrain…</div>
+        <div id="scene-error" class="mload" hidden>Could not load the terrain data.</div>
       </div>
       <div class="lg" aria-label="Map legend">
-        <div class="lg-r lg-x"><span class="lbl">Show on the map</span><div class="mplaces scene-overlay-label"><span>S · route start</span><button type="button" data-focus-place="A">A · hypothetical activity</button><button type="button" data-focus-place="B">B · nominal sample target</button></div></div>
-        <div class="lg-r"><span class="ev ev-scn"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario</span><span class="lg-i"><span class="dotk dotk-s"></span>S start</span><span class="lg-i"><span class="dotk dotk-a"></span>A hypothetical</span><span class="lg-i"><span class="dotk dotk-b"></span>Zone boundary</span><span class="lg-i"><span class="linek"></span>Walking route</span></div>
-        <div class="lg-r"><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span><span class="lg-i"><span class="dotk dotk-b"></span>B nominal sample target</span><span class="lg-i">Terrain image</span><span style="margin-left:auto">Contacts are not drawn on the map.</span></div>
-        <p class="lg-n lg-x layer-note" id="layer-note" aria-live="polite">Observed MRO / CTX orthoimage · grayscale display stretch · pixel values have no documented physical units.</p>
+        <div class="lg-r"><span class="lg-i"><span class="linek"></span>Walking route</span><span class="lg-i"><span class="ringk"></span>Work zone</span><span class="lg-i"><span class="steepk"></span>Steep ground</span><span class="lg-n" style="margin-left:auto">Contacts are not drawn on the map.</span></div>
+        <div id="layer-panel" class="layer-panel" aria-label="Map layers"></div>
       </div>
-      <div id="layer-panel" class="layer-panel" aria-label="Map layers"></div>
-    </section>
-
-    <section class="card blk ar-key" data-v="intro" aria-label="Evidence labels">
-      <div class="key">
-        <div><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span>From a satellite product or a mission record.</div>
-        <div><span class="ev ev-der"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" style="stroke:var(--der-tx)"><rect x="1" y="1" width="10" height="10"/><path d="M2 10L10 2M2 6L6 2M6 10L10 6"/></svg>Derived</span>Computed from observed data.</div>
-        <div><span class="ev ev-scn"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario</span>An assumption or an invented point.</div>
-      </div>
+      <span class="scene-overlay-label" hidden></span><span id="layer-note" hidden></span>
     </section>
 
     <!-- Checklist: steps, result and side column are rendered by panel.js -->
@@ -111,51 +89,33 @@
     <!-- Data & assumptions -->
     <section class="side ar-dmain" id="data-assumptions" data-v="data" aria-labelledby="data-title">
       <div class="vh">
-        <span class="lbl">Data &amp; assumptions</span>
-        <h1 class="h2" id="data-title" tabindex="-1">What is observed, what is derived, what we assumed</h1>
-        <p class="body muted">Every item on the map and in the checklist carries one of three labels. This page lists where each one comes from.</p>
+        <h1 class="h2" id="data-title" tabindex="-1">What is real and what we assumed</h1>
       </div>
       <div class="card xwrap">
         <table class="tbl">
-          <thead><tr><th scope="col">Label</th><th scope="col">Item</th><th scope="col">Source</th><th scope="col">Note</th></tr></thead>
+          <thead><tr><th scope="col">Label</th><th scope="col">Item</th><th scope="col">Source</th></tr></thead>
           <tbody>
-            <tr><td><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span></td><th scope="row" style="text-align:left;font-weight:600">Surface image</th><td class="muted">MRO / CTX orthoimage, 20.4 m per cell</td><td class="muted">Grayscale display stretch. Pixel values have no documented physical units.</td></tr>
-            <tr><td><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span></td><th scope="row" style="text-align:left;font-weight:600">Elevation model</th><td class="muted">MRO / CTX stereo elevation model on the same grid</td><td class="muted">Shapes the 3D surface. Height scale is 1× unless you switch it.</td></tr>
-            <tr><td><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span></td><th scope="row" style="text-align:left;font-weight:600">Ray separation</th><td class="muted">Stereo-processing diagnostic delivered with the same product</td><td class="muted">A relative stereo diagnostic, not terrain accuracy or uncertainty.</td></tr>
-            <tr><td><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span></td><th scope="row" style="text-align:left;font-weight:600">Sample B · Sapphire Canyon, Sol 1215</th><td class="muted">Perseverance sample record, PDS report: <span class="mono" id="target-coordinate">18.49747°N, 77.30515°E</span></td><td class="muted">Placed nominally. See the caveats.</td></tr>
-            <tr><td><span class="ev ev-scn"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario</span></td><th scope="row" style="text-align:left;font-weight:600">S, A, zone boundary, work zone, route</th><td class="muted">Chosen by the team</td><td class="muted">Not observed.</td></tr>
-            <tr><td><span class="ev ev-scn"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario</span></td><th scope="row" style="text-align:left;font-weight:600">Steps, choices and assumptions</th><td class="muted">Chosen by the team, with cited precedents</td><td class="muted">Not a validated EVA procedure.</td></tr>
+            <tr><td><span class="ev ev-obs">Observed</span></td><th scope="row">Terrain image and elevation</th><td class="muted">MRO / CTX, 20.4 m per cell</td></tr>
+            <tr><td><span class="ev ev-obs">Observed</span></td><th scope="row">Sample B · Sapphire Canyon</th><td class="muted">Perseverance sample report: <span class="mono" id="target-coordinate">18.49747°N, 77.30515°E</span></td></tr>
+            <tr><td><span class="ev ev-der">Derived</span></td><th scope="row">Slope and steep ground</th><td class="muted">Computed from the elevation model</td></tr>
+            <tr><td><span class="ev ev-scn">Scenario</span></td><th scope="row">S, A, route, work zone</th><td class="muted">Chosen by the team</td></tr>
+            <tr><td><span class="ev ev-scn">Scenario</span></td><th scope="row">Steps, choices and assumptions</th><td class="muted">Chosen by the team, with cited precedents. Not a validated EVA procedure.</td></tr>
           </tbody>
         </table>
       </div>
-      <section class="card blk" aria-labelledby="nodata-title">
-        <div class="hrow" style="align-items:flex-start;flex-wrap:nowrap">
-          <span class="swatch-lg hatch" aria-hidden="true"></span>
-          <div class="stack" style="flex:1;min-width:0">
-            <div class="blk-h" style="margin:0"><h2 class="h3" id="nodata-title">Cells with no data</h2><span class="ev ev-obs"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" style="fill:var(--obs-ink)"/></svg>Observed</span></div>
-            <p class="body muted"><b id="nodata-share" style="color:var(--tx)">Some cells</b> of the terrain crop have no value in the source product. They stay blank on the map and are never filled in. This hatch is reserved for showing them as unknown terrain.</p>
-          </div>
-        </div>
-      </section>
       <section class="card blk" aria-labelledby="route-title">
-        <div class="blk-h"><h2 class="h3" id="route-title">Walking route</h2><span class="ev ev-scn"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario</span></div>
-        <p class="kv">Illustrative route length: <b><span id="route-distance">—</span> m</b></p>
-        <p class="cap" style="margin:8px 0 4px">Elevation along the shown route · <span id="profile-range">—</span></p>
-        <canvas id="profile" class="prof" width="420" height="70" aria-label="Elevation profile sampled from the route, with gaps where there is no data"></canvas>
-        <p class="cap" style="margin-top:8px">The profile samples the 20 m terrain grid. Nothing about mobility or hazard is inferred from it.</p>
-      </section>
-      <section class="card blk" aria-labelledby="model-title">
-        <div class="blk-h"><h2 class="h3" id="model-title">The contact model</h2><span class="ev ev-scn"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario</span></div>
-        <p class="body muted">Site A, the start, the route and all handling are scenario choices, not historic astronaut activities or Perseverance observations. The model shows which sources have a path of assumed contacts to Sample B. It does not show measured transfer or contamination, and it grades nothing. The solid line on the map is only the walking route.</p>
+        <div class="blk-h"><h2 class="h3" id="route-title">Walking route</h2><span class="ev ev-scn">Scenario</span></div>
+        <p class="kv">Length: <b><span id="route-distance">—</span> m</b> · <span class="muted" id="profile-range">—</span></p>
+        <canvas id="profile" class="prof" width="420" height="70" aria-label="Elevation along the route"></canvas>
       </section>
     </section>
-    <aside class="side ar-dside" data-v="data" aria-label="Caveats, limits and credits">
+    <aside class="side ar-dside" data-v="data" aria-label="Limits and sources">
       <section class="card blk" aria-labelledby="caveats-title">
-        <div class="blk-h"><h2 class="h3" id="caveats-title">Coordinate caveats</h2><span class="lbl">Unresolved</span></div>
+        <div class="blk-h"><h2 class="h3" id="caveats-title">Limits</h2></div>
         <ul class="caveats">
-          <li><span class="nm-n">No datum or accuracy</span><span class="nm-r">The PDS report gives no datum or horizontal accuracy for the sample position.</span></li>
-          <li><span class="nm-n">B is a nominal placement</span><span class="nm-r">The marker sits on the nearest valid terrain cell. It is not a verified drill point.</span></li>
-          <li><span class="nm-n">29.8 m elevation mismatch</span><span class="nm-r">The report elevation and the terrain cell elevation differ by about 29.8 m. The cause is unresolved.</span></li>
+          <li><span class="nm-n">B is a nominal placement</span><span class="nm-r">The sample report gives no datum or accuracy, so the marker is not an exact drill point.</span></li>
+          <li><span class="nm-n">No measured contamination</span><span class="nm-r">Paths are assumed contacts. Nothing is graded.</span></li>
+          <li><span class="nm-n"><span id="nodata-share">Some cells</span> have no data</span><span class="nm-r">They stay blank on the map.</span></li>
         </ul>
       </section>
       <section class="card blk" aria-labelledby="data-nm-title">
@@ -163,27 +123,19 @@
         <ul class="nm" id="data-not-modeled"></ul>
       </section>
       <section class="card blk" aria-labelledby="credits-title">
-        <div class="blk-h"><h2 class="h3" id="credits-title">Sources and credits</h2></div>
+        <div class="blk-h"><h2 class="h3" id="credits-title">Sources</h2></div>
         <div class="stack">
-          <p class="kv"><b>Terrain · <span id="ctx-product-id">selected product</span></b><br><span class="muted" id="ctx-product-credit">MRO/CTX, NASA/USGS · CC0-1.0 · DOI 10.5066/P9JKVWR3</span></p>
-          <p class="links"><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product docs</a><a id="ctx-dtm-link" href="#" target="_blank" rel="noreferrer">Elevation file</a><a id="ctx-ortho-link" href="#" target="_blank" rel="noreferrer">Image file</a><a id="ctx-ray-link" href="#" target="_blank" rel="noreferrer">Ray-separation file</a></p>
-          <p class="kv"><b>Sample</b></p>
-          <p class="links"><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA sample record</a><a id="position-source" href="https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_sample_dossier/initial_reports/initial_reports_volume4.pdf#page=120" target="_blank" rel="noreferrer">PDS sample report</a><a href="https://doi.org/10.1038/s41586-025-09413-0" target="_blank" rel="noreferrer">Bright Angel study</a></p>
-          <p class="kv"><b>Why handling history matters</b></p>
-          <p class="cap">Suit swabs and a Mars-analog field study found human-associated material on suit surfaces and gloves. Neither measures transfer from a glove to a Mars sample.</p>
-          <p class="links"><a href="https://ntrs.nasa.gov/citations/20220003128" target="_blank" rel="noreferrer">NASA EVA Swab Kit</a><a href="https://doi.org/10.3389/fspas.2021.589147" target="_blank" rel="noreferrer">Ramon Crater analog study</a><a href="https://ntrs.nasa.gov/citations/20250006358" target="_blank" rel="noreferrer">MIASMMA status</a></p>
-          <p class="links"><a href="/data/bright-angel-demo.json">Data manifest</a></p>
-          <p class="kv"><b>Independent research prototype · Not NASA endorsed</b></p>
+          <p class="cap"><span id="ctx-product-id">Terrain product</span> · <span id="ctx-product-credit">MRO/CTX, NASA/USGS</span></p>
+          <p class="links"><a id="ctx-dtm-link" href="#" target="_blank" rel="noreferrer">Elevation file</a><a id="ctx-ortho-link" href="#" target="_blank" rel="noreferrer">Image file</a><a id="ctx-ray-link" href="#" hidden>Ray separation</a><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA sample record</a><a id="position-source" href="#" target="_blank" rel="noreferrer">PDS sample report</a></p>
         </div>
       </section>
     </aside>
 
-    <section id="context-cards" class="context-cards" data-v="intro checklist examples data" aria-label="Sourced context"></section>
+    <section id="context-cards" class="context-cards" hidden></section>
   </main>
 
   <footer class="ftr">
-    <span class="disc"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"><rect x="1" y="1" width="10" height="10"/></svg>Scenario steps and hypotheses, not a validated EVA procedure.</span>
-    <span>Illustrative EVA · possible contact history, not measured contamination</span>
+    <span class="disc">Scenario steps and hypotheses, not a validated EVA procedure.</span>
     <span class="end">Independent research prototype · Not NASA endorsed</span>
   </footer>
 </body>

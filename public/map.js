@@ -63,11 +63,11 @@
     const script=document.createElement('script');script.src='/layers.js';
     script.onload=()=>{layers=CA.layers.init({data,onChange:()=>{updateSummary();draw();}});updateSummary();draw();};
     script.onerror=()=>{$('#layer-panel').textContent='Map layers could not be loaded.';};
-    document.head.append(script);loadContext();
+    document.head.append(script);
     canvas.setAttribute("aria-label", `MRO CTX terrain around Bright Angel with an illustrative route to documented sample site ${data.sample_site.label}`);
     interactionNote=document.createElement('p');interactionNote.className='map-interaction-note';interactionNote.hidden=true;
     interactionNote.textContent='Interactive preview: simplified terrain mesh while moving. Full detail returns when movement stops.';
-    $('.scene-wrap').after(interactionNote);
+    
 
 
     window.addEventListener("resize", resize);
@@ -83,8 +83,8 @@
     });
 
     $$('[data-layer]').forEach(button=>{button.remove();});
-    $('.terrain-analysis').append($('#layer-panel'));
-    $('#layer-note').textContent='Use the layer controls below. The map colour legend explains the active layers.';
+    
+    
     canvas.addEventListener("pointerdown", (event) => {
       view.dragging = true; view.lastX = event.clientX; view.lastY = event.clientY; canvas.setPointerCapture(event.pointerId);
     });
@@ -243,14 +243,14 @@
       ctx.font = "600 11px sans-serif"; ctx.textAlign = "center"; ctx.fillStyle = "#f1f1e9";
       const place = CA.scenario.places[id];
       const knownHeight = data.arrays.valid_mask[place.row * data.raster.width + place.col];
-      ctx.fillText(id + (knownHeight ? '' : ' · unknown elevation, reference plane'),point[0],point[1]-14);
+      ctx.fillText(place.short ?? (id === "prep" ? "S" : id), point[0], point[1] - 14);
       if(selected){
         ctx.strokeStyle='#fff';ctx.lineWidth=2;
         const x=point[0],y=point[1]+21;
         ctx.beginPath();ctx.arc(x,y,4,0,2*Math.PI);ctx.stroke();
         ctx.beginPath();ctx.moveTo(x,y+4);ctx.lineTo(x,y+13);ctx.moveTo(x-6,y+7);ctx.lineTo(x+6,y+7);
         ctx.moveTo(x,y+13);ctx.lineTo(x-5,y+19);ctx.moveTo(x,y+13);ctx.lineTo(x+5,y+19);ctx.stroke();
-        ctx.font='11px sans-serif';ctx.fillText('Astronaut · scenario',x,y+32);
+        
       }
     });
     ctx.restore();
@@ -286,7 +286,7 @@
   }
 
   function updateRoute() {
-    const overlay=$('.scene-overlay-label');overlay.replaceChildren();
+    const overlay=document.createElement('div');
     for(const [id,place] of Object.entries(CA.scenario.places)){
       const button=document.createElement('button');button.type='button';button.textContent=id+' · '+place.label;
       button.addEventListener('click',()=>emitPlace(id));overlay.append(button);
@@ -305,9 +305,7 @@
     const route=routePlaces().map(id=>CA.scenario.places[id]);
     if(route.some(p=>!p)){ $('#route-terrain-summary').textContent='The route references an unknown place.';return; }
     const result=TerrainGeometry.routeTerrain(route,data.raster,data.arrays,slopes,layers.threshold);
-    $('#route-terrain-summary').textContent=result.steep+' unique crossed cells above '+layers.threshold+'°. '+
-      (result.noData ? 'The route crosses '+result.noData+' NoData cells.' : 'No NoData cells crossed within the raster.')+
-      ' '+result.unknownSlope+' cells without a computable slope.'+(result.outside ? ' The route extends beyond the raster; terrain there is unknown.' : '');
+    $('#route-terrain-summary').textContent='The route crosses '+result.steep+' cells steeper than '+layers.threshold+'°'+(result.noData ? ' and '+result.noData+' cells with no data.' : '.')+' A planning threshold, not a suit limit.';
   }
   function polygon(points){ctx.beginPath();points.forEach((p,i)=>i ? ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();}
   function drawOverlays(cx,cy,scale){
@@ -320,7 +318,7 @@
       const z=data.arrays.elevation_m_rounded[i];
       const points=[[-.5,-.5],[-.5,.5],[.5,.5],[.5,-.5]].map(([dr,dc])=>project(r+dr,c+dc,z,cx,cy,scale));
       polygon(points);
-      ctx.fillStyle='rgba(255,65,65,.65)';ctx.fill();
+      ctx.fillStyle='rgba(242,196,80,.6)';ctx.fill();
     }
     if(layers.zones)for(const zone of CA.scenario.zones || []){
       const place=CA.scenario.places[zone.centerPlaceId];
@@ -330,9 +328,9 @@
       const z=data.arrays.elevation_m_rounded[i];
       const points=Array.from({length:65},(_,n)=>{const a=n/64*2*Math.PI;return project(place.row+Math.sin(a)*zone.radius_m/data.raster.pixel_size_m[1],place.col+Math.cos(a)*zone.radius_m/data.raster.pixel_size_m[0],z,cx,cy,scale);});
       polygon(points);ctx.setLineDash(zone.evidence==='scenario' ? [6,4] : []);
-      ctx.strokeStyle='#a5e7eb';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
+      ctx.strokeStyle='#E0D6BF';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
       ctx.fillStyle='#ffffff';ctx.font='12px sans-serif';
-      ctx.fillText(zone.label+(zone.evidence==='scenario' ? ' · planned work zone · scenario' : ' · '+zone.evidence),...points[0]);
+      
     }
     ctx.restore();
   }

@@ -18,13 +18,13 @@
 
   const SOURCE_ORDER = ["human", "fromA", "equipment", "fromB"];
   const SOURCE_LABELS = {
-    human: "Possible human-associated material",
-    fromA: "Possible material from hypothetical A",
-    equipment: "Possible material from the equipment itself",
-    fromB: "B's own sample material"
+    human: "Human-associated material",
+    fromA: "Material from site A",
+    equipment: "Material from the equipment",
+    fromB: "Sample B's own material"
   };
-  const SOURCE_SHORT = { human: "Human-associated", fromA: "Hypothetical A", equipment: "Equipment itself", fromB: "Is Sample B" };
-  const PLACE_TAGS = { prep: "S · Start", A: "A · Work site", "zone-B": "Zone boundary", B: "B · Sample target" };
+  const SOURCE_SHORT = { human: "Human", fromA: "Site A", equipment: "Equipment", fromB: "Sample B" };
+  const PLACE_TAGS = { prep: "S · Start", A: "A · Work site", "zone-B": "Zone boundary", B: "B · Sample site" };
   const PLACE_SHORT = { prep: "S", A: "A", "zone-B": "Zone", B: "B" };
   const NODE_SHORT = {
     human: "Human", fromA: "Site A", fromB: "Site B", glove: "G1", "tool-1": "T1", "tool-2": "T2",
@@ -77,7 +77,7 @@
   const mark = (sourceId, size = 18) => svg(MARKS[sourceId], size, "0 0 18 18");
   const scenarioGlyph = () => svg('<rect x="1" y="1" width="10" height="10"/>', 12, "0 0 12 12", 'fill="none" stroke-width="1.4" stroke-dasharray="2.4 1.6" style="stroke:var(--scn)"');
   const scenarioBadge = () => h("span", { class: "ev ev-scn" }, scenarioGlyph(), "Scenario");
-  const pill = (present) => h("span", { class: `pill ${present ? "pill-on" : "pill-off"}` }, icon(present ? "linkOn" : "linkOff"), present ? "Modeled path to Sample B" : "No modeled path to Sample B");
+  const pill = (present) => h("span", { class: `pill ${present ? "pill-on" : "pill-off"}` }, icon(present ? "linkOn" : "linkOff"), present ? "Path to Sample B" : "No path");
 
   function emitStep(stepId, placeId) {
     window.dispatchEvent(new CustomEvent("mission:step", { detail: { stepId, placeId } }));
@@ -152,7 +152,8 @@
   function runAction(action, element) {
     if (action === "note-hide") { state.noteHidden = true; renderResult(); $('[data-action="note-show"]')?.focus(); }
     else if (action === "note-show") { state.noteHidden = false; renderResult(); $("#mission-result .note h4")?.focus(); }
-    else if (action === "show-result") $("#mission-result-title").focus();
+    else if (action === "show-result") { $("#mission-result").scrollIntoView({ block: "start" }); $("#mission-result-title").focus(); }
+    else if (action === "timeline") state.timelineOpen = !element.parentElement.open;
     else if (action === "plan") { state.plan = element.dataset.plan; if (element.dataset.eventIndex) state.eventIndex = Number(element.dataset.eventIndex); stopWalk(); updatePlan(element.dataset.focusKey); }
     else if (action === "event") { stopWalk(); state.eventIndex = Number(element.dataset.eventIndex); updatePlan(element.dataset.focusKey); }
     else if (action === "prev") { stopWalk(); state.eventIndex = Math.max(0, state.eventIndex - 1); updatePlan("walk-prev"); }
@@ -231,12 +232,11 @@
         return h("li", { class: `step ${status}`, "data-step-id": step.id }, node,
           h("button", { class: "row", type: "button", "data-mission-step": step.id },
             h("span", { class: "row-t" }, h("span", { class: "sr", text: `Step ${step.order}${status === "is-done" ? ", done" : ""}: ` }), step.title),
-            h("span", { class: "row-m" }, PLACE_TAGS[step.placeId], h("span", { "aria-hidden": "true", text: "·" }),
-              step.precedent ? "Precedent noted" : "Scenario step, no precedent",
+            h("span", { class: "row-m" }, PLACE_TAGS[step.placeId],
               chosen ? [h("span", { "aria-hidden": "true", text: "·" }), h("b", { text: chosen.label })] : null)));
       }
       const decision = step.decision && h("fieldset", { class: "choice" },
-        h("legend", { class: "lbl", text: `Your choice · ${step.decision.legend}` }),
+        h("legend", { class: "lbl", text: "Your choice" }),
         h("div", { class: "opts" }, step.decision.options.map((option) => {
           const key = `${step.decision.key}:${option.value}`;
           return h("label", { class: "opt" },
@@ -255,28 +255,27 @@
           h("div", { class: "act-top" }, h("span", { class: "chip", text: PLACE_TAGS[step.placeId] }), h("span", { class: "lbl", text: `Step ${step.order} of ${total}` })),
           h("h3", { class: "ttl", tabindex: "-1", text: step.title }),
           h("p", { class: "instr", text: step.instruction }),
-          h("p", { class: "why" }, h("b", { text: "Why" }), step.why),
-          decision, precedent,
+          decision,
+          h("details", { class: "more" }, h("summary", { text: "Why, and where this comes from" }), h("p", { class: "why", text: step.why }), precedent),
           h("div", { class: "act-nav" },
             previous ? h("button", { class: "btn btn-q btn-sm", type: "button", "data-mission-step": previous.id }, icon("chevLeft"), "Previous") : null,
             next ? h("button", { class: "btn btn-pri btn-sm", type: "button", "data-mission-step": next.id }, `Next: step ${next.order}`, icon("arrowRight"))
-              : h("button", { class: "btn btn-pri btn-sm", type: "button", "data-action": "show-result" }, "Review what connects to Sample B"))));
+              : h("button", { class: "btn btn-pri btn-sm", type: "button", "data-action": "show-result" }, "See the result"))));
     });
     $("#mission-panel").replaceChildren(
       h("div", { class: "stc-h" },
-        h("span", { class: "lbl", text: "Mission checklist · Scenario" }),
-        h("h1", { class: "h2", id: "mission-title", tabindex: "-1", text: "Build your own sampling sequence" }),
+        h("h1", { class: "h2", id: "mission-title", tabindex: "-1", text: "Mission checklist" }),
         h("div", { class: "stc-tools" },
-          h("button", { class: "btn btn-q btn-sm", type: "button", "data-mission-exit": true }, icon("arrowLeft"), "Back to example plans"),
-          h("button", { class: "btn btn-q btn-sm", type: "button", "data-mission-reset": true, "data-focus-key": "mission-reset" }, icon("reset"), "Reset choices"))),
+          h("button", { class: "btn btn-q btn-sm", type: "button", "data-mission-exit": true }, icon("arrowLeft"), "Example plans"),
+          h("button", { class: "btn btn-q btn-sm", type: "button", "data-mission-reset": true, "data-focus-key": "mission-reset" }, icon("reset"), "Reset"))),
       h("ol", { class: "steps", "aria-label": "Mission checklist steps" }, items));
   }
 
   function summaryText(result) {
     const reaching = SOURCE_ORDER.filter((id) => id !== "fromB" && result.sampleHistory.some((entry) => entry.sourceId === id));
     return reaching.length
-      ? `External sources with a modeled path to Sample B: ${reaching.map((id) => SOURCE_LABELS[id]).join(", ")}.`
-      : "No external source has a modeled path to Sample B in this sequence.";
+      ? `Connected to Sample B: ${reaching.map((id) => SOURCE_LABELS[id].toLowerCase()).join(", ")}.`
+      : "Nothing from outside connects to Sample B in this plan.";
   }
 
   function renderSource(sourceId) {
@@ -292,17 +291,10 @@
         const last = index === nodes.length - 1;
         chain.append(h("li", { class: `cn${last ? " cn-end" : ""}` }, index === 0 ? mark(sourceId, 12) : last ? mark("fromB", 12) : null, label(id)));
       });
-      const created = CleanApproachMission.stepsForPath(mission.steps, entry.path);
-      const meta = h("span", { class: "meta" }, "Created at: ");
-      if (created.startingAssumption) meta.append("a starting assumption");
-      created.steps.forEach((step, index) => {
-        if (index || created.startingAssumption) meta.append(h("span", { "aria-hidden": "true", text: "·" }));
-        meta.append(h("button", { class: "lnk", type: "button", "data-mission-step": step.id, text: `step ${step.order}` }));
-      });
-      rows.push(h("div", { class: "src-b" }, chain, meta));
+      rows.push(h("div", { class: "src-b" }, chain));
     }
     for (const assumption of mission.dependence[sourceId] || []) {
-      rows.push(h("div", { class: "src-b" }, h("span", { class: "dep" }, scenarioGlyph(), "Depends on this assumption"),
+      rows.push(h("div", { class: "src-b" }, h("span", { class: "dep", text: "Depends on an assumption" }),
         h("button", { class: "lnk", type: "button", "data-assumption-link": assumption.id, text: assumption.label })));
     }
     return h("li", { class: `src ${entry ? "is-path" : "no-path"}`, "data-source-id": sourceId, "data-present": String(Boolean(entry)) }, rows);
@@ -315,37 +307,23 @@
       mount.append(
         h("div", { class: "res-h" },
           h("div", { class: "res-t" }, h("h2", { class: "h3", id: "mission-result-title", tabindex: "-1", text: "What connects to Sample B" }),
-            h("span", { class: "lbl", style: "margin-left:auto", text: "Updates after every change" })),
+            ),
           h("p", { class: "sum", "aria-live": "polite" })),
         h("div", { class: "res-b" }));
     }
     const result = mission.result;
     $("#mission-result .sum").textContent = summaryText(result);
-    const humanPresent = result.sampleHistory.some((entry) => entry.sourceId === "human");
-    const viaAssumption = humanPresent && (mission.dependence.human || []).some((item) => item.id === "g2CarriesHuman");
-    const noteBody = viaAssumption
-      ? ["Why is there already a path?", "The model assumes outer glove G2 carries human-associated material, because no data shows otherwise. It is an assumption, not a measurement, and you can switch it."]
-      : ["What does this result mean?", "A modeled path means the contacts you assumed connect a source to Sample B. It is not measured contamination, and the absence of a path is not a finding about a real sample."];
-    const note = state.noteHidden
-      ? h("button", { class: "lnk", type: "button", style: "align-self:flex-start", "data-action": "note-show", text: "What does this result mean?" })
-      : h("div", { class: "note", role: "note" }, icon("info", 18), h("h4", { tabindex: "-1", text: noteBody[0] }), h("p", { text: noteBody[1] }),
-        h("div", { class: "acts" },
-          viaAssumption ? h("button", { class: "btn btn-q btn-sm", type: "button", "data-assumption-link": "g2CarriesHuman", text: "Show the assumption" }) : null,
-          h("button", { class: "btn btn-q btn-sm", type: "button", "data-action": "note-hide", text: "Hide" })));
     const objectLabel = (id) => mission.scenario.objects[id]?.label || id;
     const warnings = result.ruleWarnings.map((warning) => {
       const step = mission.steps.find((item) => item.eventIds.includes(warning.eventId));
       return h("div", { class: "warn", role: "note", "data-rule-warnings": String(result.ruleWarnings.length) }, icon("warn", 18),
-        h("p", {}, h("b", { text: "Warning · work zone. " }), `${objectLabel(warning.objectId)} takes part in a contact inside the work zone. This is a warning; the path stays in the history. `,
-          step ? h("button", { class: "lnk", type: "button", "data-mission-step": step.id, text: `Go to step ${step.order}` }) : null));
+        h("p", {}, h("b", { text: "Work zone. " }), `${objectLabel(warning.objectId)} is used inside the work zone. `,
+          step ? h("button", { class: "lnk", type: "button", "data-mission-step": step.id, text: `Step ${step.order}` }) : null));
     });
     const own = result.sampleHistory.some((entry) => entry.sourceId === "fromB");
-    $("#mission-result .res-b").replaceChildren(note, ...warnings,
-      h("ul", { class: "srcs", "aria-label": "External source groups" }, ["human", "fromA", "equipment"].map(renderSource)),
-      h("div", { class: "own-wrap" }, h("span", { class: "lbl", text: "The sample itself · not an external source" }),
-        h("div", { class: "src src-own", "data-source-id": "fromB", "data-present": String(own) },
-          h("div", { class: "src-h" }, mark("fromB"), h("span", { class: "src-n", text: SOURCE_LABELS.fromB }), h("span", { class: "pill pill-own", text: "Is Sample B" })))),
-      h("p", { class: "res-f", text: "Sequences are compared only by which assumed contacts they contain. Nothing here is graded." }));
+    $("#mission-result .res-b").replaceChildren(...warnings,
+      h("ul", { class: "srcs", "aria-label": "Outside sources" }, ["human", "fromA", "equipment"].map(renderSource)),
+      h("p", { class: "res-f", "data-source-id": "fromB", "data-present": String(own), text: "A path is a chain of contacts you assumed, not measured contamination." }));
   }
 
   function renderSide() {
@@ -361,20 +339,19 @@
           h("input", { type: "checkbox", role: "switch", id: `asm-${assumption.id}`, "data-assumption": assumption.id, "data-focus-key": `assumption:${assumption.id}`,
             "aria-describedby": `asm-${assumption.id}-d`, checked: on }),
           h("span", { class: "trk" }), h("span", { class: "tog-t", text: on ? "On" : "Off" })),
-        h("p", { class: "sw-d", id: `asm-${assumption.id}-d`, text: assumption.text }));
+        h("p", { class: "sr", id: `asm-${assumption.id}-d`, text: assumption.text }));
     });
     $("#mission-side").replaceChildren(
       h("section", { class: "card blk", "aria-labelledby": "asm-title" },
-        h("div", { class: "blk-h" }, h("h2", { class: "h3", id: "asm-title", text: "Assumptions" }), scenarioBadge()), switches),
+        h("div", { class: "blk-h" }, h("h2", { class: "h3", id: "asm-title", text: "What we assume" })), switches),
       h("section", { class: "card blk", "aria-labelledby": "status-title" },
-        h("div", { class: "blk-h" }, h("h2", { class: "h3", id: "status-title", text: "Status" }), h("span", { class: "lbl", text: "Not a result" })),
+        h("div", { class: "blk-h" }, h("h2", { class: "h3", id: "status-title", text: "Records" })),
         h("div", { class: "stat" },
-          h("div", { class: "st", "data-seal": seal || "none" }, icon("seal", 18), h("span", { class: "st-k", text: "Seal status" }), h("span", { class: "st-v", text: seal === "checked" ? "Checked" : "Not checked" })),
-          h("div", { class: "st", "data-witness": String(witness) }, icon("tube", 18), h("span", { class: "st-k", text: "Witness tube" }), h("span", { class: "st-v", text: witness ? "Open" : "Closed" })),
-          h("div", { class: "st", "data-rule-warnings": String(warnings) }, icon("warn", 18), h("span", { class: "st-k", text: "Work-zone warnings" }), h("span", { class: "st-v", text: warnings ? `${warnings} · see result` : "None" })))),
+          h("div", { class: "st", "data-seal": seal || "none" }, icon("seal", 18), h("span", { class: "st-k", text: "Seal surface" }), h("span", { class: "st-v", text: seal === "checked" ? "Checked" : "Not checked" })),
+          h("div", { class: "st", "data-witness": String(witness), "data-rule-warnings": String(warnings) }, icon("tube", 18), h("span", { class: "st-k", text: "Witness tube" }), h("span", { class: "st-v", text: witness ? "Open" : "Closed" })))),
       h("section", { class: "card blk", "aria-labelledby": "nm-title" },
         h("div", { class: "blk-h" }, h("h2", { class: "h3", id: "nm-title", text: "Not modeled" })),
-        h("ul", { class: "nm" }, notModeledItems())));
+        h("ul", { class: "tags" }, CleanApproachMission.NOT_MODELED.map((item) => h("li", { class: "chip", "data-not-modeled": item.id, title: item.reason, text: item.label })))));
   }
 
   function sourceChips(result, sourceIds) {
@@ -388,10 +365,9 @@
 
   function renderBar() {
     $("#mission-bar").replaceChildren(
-      h("div", { class: "rbar-h" }, h("h2", { class: "h3", text: "What connects to Sample B" }),
+      h("div", { class: "rbar-h" }, h("h2", { class: "h3", text: "Connects to Sample B" }),
         h("button", { class: "lnk", type: "button", "data-action": "show-result", text: "Details" })),
-      sourceChips(mission.result, SOURCE_ORDER),
-      h("p", { class: "rline" }, scenarioGlyph(), CleanApproachMission.DISCLAIMER));
+      sourceChips(mission.result, ["human", "fromA", "equipment"]));
   }
 
   /* ---- Example plans ------------------------------------------------------------------------ */
@@ -423,11 +399,11 @@
     const cell = (sourceId, { plan, built, result }) => {
       const entry = result.sampleHistory.find((item) => item.sourceId === sourceId);
       const content = [sourceId === "fromB"
-        ? h("span", { class: entry ? "pill pill-own" : "pill pill-off", text: entry ? "Is Sample B" : "Not collected yet" })
-        : h("span", { class: `pill ${entry ? "pill-on" : "pill-off"}` }, icon(entry ? "linkOn" : "linkOff"), entry ? "Modeled path" : "No modeled path")];
+        ? h("span", { class: entry ? "pill pill-own" : "pill pill-off", text: entry ? "The sample" : "Not collected yet" })
+        : h("span", { class: `pill ${entry ? "pill-on" : "pill-off"}` }, icon(entry ? "linkOn" : "linkOff"), entry ? "Path" : "No path")];
       if (entry && sourceId !== "fromB") {
         const orders = [...new Set(entry.path.map((edge) => edge.eventId))];
-        const meta = h("span", { class: "meta", style: "margin-left:0;white-space:normal;flex-wrap:wrap" }, "Created at: ");
+        const meta = h("span", { class: "meta", style: "margin-left:0;white-space:normal;flex-wrap:wrap" }, "At ");
         orders.forEach((eventId, index) => {
           const eventIndex = built.events.findIndex((event) => event.id === eventId);
           if (index) meta.append(h("span", { "aria-hidden": "true", text: "·" }));
@@ -439,7 +415,7 @@
     };
     const inOneLine = ({ result }) => {
       const names = ["human", "fromA"].filter((id) => result.sampleHistory.some((entry) => entry.sourceId === id)).map((id) => SOURCE_SHORT[id]);
-      return names.length ? names.join(" · ") : "No external source";
+      return names.length ? names.join(" · ") : "Nothing from outside";
     };
     const comparison = h("table", { class: "tbl cmp" },
       h("thead", {}, h("tr", {}, h("th", { scope: "col", text: "Source group" }),
@@ -449,7 +425,7 @@
       h("tbody", {},
         ["human", "fromA", "fromB"].map((sourceId) => h("tr", {},
           h("td", {}, h("div", { class: "cmp-src" }, mark(sourceId), SOURCE_LABELS[sourceId])), plans.map((entry) => cell(sourceId, entry)))),
-        h("tr", {}, h("td", {}, h("span", { class: "lbl", text: "In one line" })),
+        h("tr", {}, h("td", {}, h("span", { class: "lbl", text: "Reaches B" })),
           plans.map((entry) => h("td", { class: selected(entry.plan) ? "is-sel" : null, style: "font-weight:600", text: inOneLine(entry) })))));
 
     const events = plans[0].built.events;
@@ -470,13 +446,10 @@
 
     $("#examples-main").replaceChildren(
       h("div", { class: "vh" },
-        h("div", { class: "hrow", style: "justify-content:space-between" }, h("span", { class: "lbl", text: "Example plans · Scenario" }), scenarioBadge()),
-        h("h1", { class: "h2", id: "examples-title", tabindex: "-1", text: "Compare three prepared sequences" }),
-        h("p", { class: "body muted", text: "Each plan is the same walk with one difference in how Tool T1, Tool T2 and glove G1 are used. Compare what connects to Sample B, then step through the events." })),
+        h("h1", { class: "h2", id: "examples-title", tabindex: "-1", text: "Three example plans" }),
+        h("p", { class: "body muted", text: "Same walk, one difference in how the tool is used." })),
       h("section", { class: "card blk xwrap", "aria-label": "What connects to Sample B in each plan" }, comparison),
-      h("section", { class: "card blk", "aria-labelledby": "timeline-title" },
-        h("div", { class: "blk-h" }, h("h2", { class: "h3", id: "timeline-title", text: "Event timeline" }),
-          h("span", { class: "cap", text: "Contacts live here and in the result, never on the map." })),
+      h("details", { class: "card blk more", open: state.timelineOpen }, h("summary", { class: "h3", "data-action": "timeline", text: "All events, plan by plan" }),
         h("div", { class: "xwrap" }, timeline)));
   }
 
@@ -487,26 +460,26 @@
     const partial = ContactHistoryModel.replay(scenario, state.eventIndex + 1);
     const label = (id) => scenario.sources[id]?.label || scenario.objects[id]?.label || id;
     const contacts = event.contacts.length
-      ? event.contacts.map((contact) => h("li", {}, h("span", { class: "evs-c", text: `${label(contact.from)} → ${label(contact.to)}` }), h("span", { class: "evs-a", text: contact.assumption })))
-      : [h("li", {}, h("span", { class: "evs-a", text: event.type === "document-control" ? "A record only. No path is added or removed." : "Sealing freezes the sample's history. No contact is added." }))];
+      ? event.contacts.map((contact) => h("li", { title: contact.assumption }, h("span", { class: "evs-c", text: `${label(contact.from)} → ${label(contact.to)}` })))
+      : [h("li", {}, h("span", { class: "evs-a", text: event.type === "document-control" ? "A record only." : "The sample is sealed." }))];
     $("#examples-walk").replaceChildren(h("div", { class: "walk" },
-      h("div", { class: "blk-h", style: "margin:0" }, h("h2", { class: "h3", id: "walk-title", text: "Guided walkthrough" }), h("span", { class: "chip", text: plan.label })),
+      h("div", { class: "blk-h", style: "margin:0" }, h("h2", { class: "h3", id: "walk-title", text: "Walkthrough" }), h("span", { class: "chip", text: plan.label })),
       h("div", { class: "vh" },
         h("span", { class: "lbl", text: `Event ${state.eventIndex + 1} of ${total} · ${scenario.places[event.placeId].label}` }),
         h("h3", { class: "ttl", id: "walk-event", tabindex: "-1", "aria-live": "polite", text: event.action })),
       h("ul", { class: "evs", "aria-label": "Contacts assumed in this event" }, contacts),
-      h("div", { class: "vh" }, h("span", { class: "lbl", text: "Paths into Sample B so far" }), sourceChips(partial, ["human", "fromA", "fromB"].filter((id) => id !== "fromB" || partial.sampleHistory.some((entry) => entry.sourceId === "fromB")))),
+      h("div", { class: "vh" }, h("span", { class: "lbl", text: "Connected to Sample B so far" }), sourceChips(partial, ["human", "fromA", "fromB"].filter((id) => id !== "fromB" || partial.sampleHistory.some((entry) => entry.sourceId === "fromB")))),
       h("div", { class: "walk-nav" },
         h("button", { class: "btn btn-q btn-sm", type: "button", "data-action": "prev", "data-focus-key": "walk-prev", disabled: state.eventIndex === 0 }, icon("chevLeft"), "Previous"),
         h("button", { class: "btn btn-q btn-sm", type: "button", "data-action": "next", "data-focus-key": "walk-next", disabled: state.eventIndex === total - 1 }, "Next", icon("chevRight")),
         state.playing
           ? h("button", { class: "btn btn-sec btn-sm", type: "button", "data-action": "stop", "data-focus-key": "walk-toggle" }, icon("stop"), "Stop")
-          : h("button", { class: "btn btn-sec btn-sm", type: "button", "data-action": "walk", "data-focus-key": "walk-toggle" }, icon("play"), "Walk me through it"),
+          : h("button", { class: "btn btn-sec btn-sm", type: "button", "data-action": "walk", "data-focus-key": "walk-toggle" }, icon("play"), "Play"),
         h("button", { class: "btn btn-q btn-sm", type: "button", "data-action": "restart", "data-focus-key": "walk-restart" }, icon("reset"), "Restart")),
-      reduceMotion ? h("p", { class: "cap", text: "Reduced motion is on, so the walkthrough does not advance by itself. Use Next and Previous." }) : null,
+      reduceMotion ? h("p", { class: "cap", text: "Reduced motion is on: use Next and Previous." }) : null,
       state.plan === "omit-glove-contact"
-        ? h("p", { class: "cap", text: "This counterfactual has no checklist equivalent: the checklist always keeps the glove's hold on the tool." })
-        : h("button", { class: "btn btn-sec", type: "button", "data-action": "open-plan" }, "Open this plan in the checklist", icon("arrowRight"))));
+        ? null
+        : h("button", { class: "btn btn-sec", type: "button", "data-action": "open-plan" }, "Try it in the checklist", icon("arrowRight"))));
   }
 
   function startWalk() {

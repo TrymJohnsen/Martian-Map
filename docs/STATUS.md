@@ -1,5 +1,11 @@
 # Current status — Clean Approach
 
+## Simplified interface with the merged map layers (2026-11-14, latest)
+
+`origin/main` (terrain layers, slope, work zones) is merged into this branch and the page was simplified. The map card now has five layer switches (Image, Elevation, Slope, Steep ground, Work zone), one slope threshold and one route line; the work zone is drawn as a dashed ring and steep ground in amber. In the checklist each step shows its instruction and choice, with the reason and the precedent behind "Why, and where this comes from". The result is one sentence and three source rows. Assumptions are three switches; their explanations remain for screen readers. Example plans show the table first and all events behind a disclosure.
+
+Removed from the interface on purpose: the wind and radiation context cards from the map branch (no dataset for Bright Angel; `loadContext` in `map.js` is no longer called), the long layer legends, the evidence-label key, the explanation notes, "Created at" links, and most of the Data page. Sections below that describe those parts are older. `scripts/check_map_browser.cjs` from the map branch targets the earlier page structure and was not updated. Checked in Edge: 50 behaviour checks, no console errors, no horizontal overflow at 1440, 820 and 390 px; `node --test tests/*.cjs` passes 43 tests.
+
 ## Demonstration
 
 The app follows the "Clean Approach · redesign" canvas and has four views behind one header:
