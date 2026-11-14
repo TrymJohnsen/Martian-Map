@@ -162,9 +162,20 @@ function updatePlan() {
     : distanceInsideCircle(data.start_marker,data.survey_marker,target,radius)+distanceInsideCircle(data.survey_marker,target,target,radius);
   $("#route-distance").textContent=(Math.round(total/10)*10).toLocaleString();
   $("#pre-sample-zone").textContent=(Math.round(before/10)*10).toLocaleString();
-  $("#sequence-explanation").textContent=state.sequence==="sample-first"
-    ?"This route reaches the marked target footprint before the survey leg. The geometry shows overlap only; it cannot establish physical contact or transfer."
-    :"The survey-first route crosses the marked target footprint before sampling. This is geometric overlap only; it cannot establish physical contact or transfer.";
+  const contact = ContactPathwayModel.assess({
+    sequence: state.sequence,
+    isolationBoundary: $("#isolation-boundary").checked
+  });
+  $("#pathway-status").textContent=contact.pathwayPresent?"Path present under assumptions":"No path in this graph";
+  $("#pathway-status").classList.toggle("pathway-absent",!contact.pathwayPresent);
+  $("#contact-path").textContent=contact.pathwayPresent
+    ?contact.path.join(" → ")
+    :"No source-to-sample path in this contact graph.";
+  $("#sequence-explanation").textContent=contact.isolationBoundary
+    ?"Under the selected isolation assumption, this modeled glove-to-tool pathway is interrupted in either activity order. Other transfer mechanisms are outside this model."
+    :state.sequence==="sample-first"
+      ?"Sampling comes before the survey, but the same assumed glove-to-tool-to-sample pathway is present. Order alone does not remove it."
+      :"Survey comes before sampling, and the same assumed glove-to-tool-to-sample pathway is present. The model does not infer a higher transfer amount.";
   const values=profileFor(points.slice(0,2));drawProfile(values);draw();
 }
 document.querySelectorAll("[data-layer]").forEach((button)=>button.addEventListener("click",()=>{
@@ -179,6 +190,7 @@ document.querySelectorAll("[data-layer]").forEach((button)=>button.addEventListe
   draw();
 }));
 document.querySelectorAll("[data-sequence]").forEach((button)=>button.addEventListener("click",()=>{state.sequence=button.dataset.sequence;document.querySelectorAll("[data-sequence]").forEach((b)=>{b.classList.toggle("is-selected",b===button);b.setAttribute("aria-pressed",String(b===button));});updatePlan();}));
+$("#isolation-boundary").addEventListener("change",updatePlan);
 canvas.addEventListener("pointerdown",(event)=>{state.dragging=true;state.lastX=event.clientX;state.lastY=event.clientY;canvas.setPointerCapture(event.pointerId);});
 canvas.addEventListener("pointermove",(event)=>{if(!state.dragging)return;if(state.tour){state.tour=false;$("#play-tour").querySelector("span:last-child").textContent="PLAY 18 SEC TOUR";}state.yaw+=(event.clientX-state.lastX)*.008;state.pitch=Math.max(.45,Math.min(1.2,state.pitch+(event.clientY-state.lastY)*.004));state.lastX=event.clientX;state.lastY=event.clientY;draw();});
 canvas.addEventListener("pointerup",()=>{state.dragging=false;});

@@ -2,7 +2,7 @@
 
 ## Goal and scope
 
-Build Clean Approach: a narrow, local planning prototype about sample-contact traceability during a Marswalk. The team has chosen this direction. Current implementation is a static prototype; do not add a backend, auth, or a new frontend framework without a concrete need. Preserve human changes and check `git status` before staging.
+Build Clean Approach: a narrow, local prototype about preserving contact provenance for a Jezero sedimentary sample intended for organic/potential-biosignature analysis. Use [docs/model.md](docs/model.md) as the canonical calculation spec: qualitative directed contact-path reachability only, no transfer amount/probability/risk score. The current CTX target is illustrative and is not the Bright Angel/Sapphire Canyon sample site. Preserve the working terrain app and avoid major visual redesign while the science/model core is being reviewed. Do not add a backend, auth, or a new frontend framework without a concrete need. Preserve human changes and check `git status` before staging.
 
 ## Source of truth and commands
 
@@ -21,6 +21,7 @@ Build Clean Approach: a narrow, local planning prototype about sample-contact tr
 - Do not invent contamination rates, probabilities, safe distances, local wind fields, or claim a route order prevents contamination. Contact paths and EVA protocol changes are hypotheses/scenarios.
 - Perseverance witness tubes are a robotic sampling precedent, not a validated astronaut protocol. The NASA CacheCam image is not co-registered with the CTX scene.
 - Read [docs/science.md](docs/science.md) before changing science copy.
+- Update [docs/model.md](docs/model.md) when changing graph variables or edge meanings. `node --test tests/contact-model.test.cjs` checks logical cases; it does not validate physical transfer.
 - Follow [docs/design.md](docs/design.md) for the current unselected visual studies, accessible interaction, evidence labels and visual treatment. The earlier A/B layouts were rejected; do not treat them as approved direction. Wait for the user's choice between the two current rendered proposals before completing a redesign.
 
 ## Structure and handoffs

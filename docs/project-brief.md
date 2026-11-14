@@ -8,7 +8,7 @@
 - Target a working interactive prototype and a visually strong demo of at most 30 seconds.
 - Three.js and Remotion are candidates; choose tools to fit the work.
 - 3D should explain something in the data rather than serve as decoration.
-- Selected direction: **Clean Approach**, a Marswalk plan that makes potential astronaut-introduced sample-contact pathways visible and keeps a witness/check record traceable. The transfer mechanism is not quantified; a route-order comparison is an illustrative scenario, not a validated mitigation.
+- Selected direction: **Clean Approach**, a Marswalk planning study that makes an assumed direct-contact pathway to a science sample explicit. The current prototype reports qualitative graph reachability only; it does not claim that a route-order change or witness/check control prevents transfer. See [the selected model](model.md).
 
 ## Earlier candidate hypotheses (not current direction)
 

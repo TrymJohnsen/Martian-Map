@@ -1,53 +1,53 @@
-# Science basis: Clean Approach
+# Scientific basis: Clean Approach
 
-## The bounded question
+## Problem formulation
 
-Can an astronaut team make a sample-contact plan easier to audit by recording a witness/check step and avoiding a scenario route that crosses the marked sample footprint before collection?
+**For a hypothetical Jezero sedimentary rock core reserved for later organic-molecule and potential-biosignature analysis, how can a crew preserve contact provenance when Earth-associated material on a glove or tool might reach the core through handling?**
 
-This is a planning and traceability question. The prototype does **not** estimate how much contamination moves, its probability, an airborne plume, or whether a Mars location is safe.
+The sample type and analysis are motivated by Perseverance's Sapphire Canyon sample, a 6.2 cm sedimentary core taken from the Cheyava Falls rock in Bright Angel. NASA reports that SHERLOC detected organic compounds there, and that organic compounds can also form through non-biological processes. The returned sample could support more detailed studies of its molecular and geological context. This is a *science-interpretation* problem: Earth-sourced organics or biological residues may complicate attribution or mask a Martian signal. The current CTX marker is elsewhere in the Jezero landing-area crop; it is a scenario marker, not Sapphire Canyon and not a selected rock. [NASA sample record](https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/), [SHERLOC / Bright Angel research](https://doi.org/10.1038/s41586-025-09413-0).
 
-## What sources support
+This is distinct from **forward planetary protection**: preventing viable Earth organisms from surviving, establishing, or spreading on Mars. Nonviable cells, DNA or organic films can affect sample interpretation without establishing life; conversely, biological establishment is not inferred from the presence of an organic molecule. Mars 2020's biological cleanliness requirements and its returned-sample organic cleanliness requirements address related but distinct objectives. They are robotic mission requirements, not human EVA limits. [NASA Planetary Protection requirements](https://sma.nasa.gov/sma-disciplines/planetary-protection/), [Mars 2020 sample-tube controls](https://doi.org/10.1089/ast.2022.0049).
 
-| Evidence | What the source says | What we use it for |
-|---|---|---|
-| Human suit surfaces can carry biological material | NASA's EVA Swab Kit report describes suit-surface sampling under typical handling. It reports 235 cultured CFU across 26 bacterial and one fungal species on sampled suit exteriors. Its stated next research questions include suit leakage and destination viability/spread. This is ISS/Orion suit evidence, not a Mars sample-transfer experiment. | Supports the documented concern that crew suit surfaces may carry biological material. Does not establish how much could reach a Mars sample. [NASA NTRS 20220003128](https://ntrs.nasa.gov/citations/20220003128) |
-| Human contamination rates and spread remain research questions | MIASMMA describes planned empirical measurements of suit leakage and subsequent Mars GCM dispersal modelling. The record's preliminary model uses literature values; it is not a measured local Jezero plume or route-scale wind forecast. | Explains why the app avoids winds, emission rates, probabilities and distances. [NASA NTRS 20250006358](https://ntrs.nasa.gov/citations/20250006358) |
-| Mars 2020 uses witness tubes and a known-material inventory | Perseverance's sample system uses clean hardware, tracks known residual materials, and carries witness tubes that record the environment within its sampling system. The CacheCam PIA24751 sequence shows a rover inspecting/sealing a witness tube before its first samples; the tube is opened on the surface to witness ambient conditions near sampling. | Provides a real robotic sample-documentation precedent for a clearly labelled illustrative “witness/check” step. It does not validate an astronaut EVA protocol or prove that task order reduces transfer. [JPL Mars 2020 Biological Cleanliness](https://www.jpl.nasa.gov/news/press_kits/mars_2020/landing/mission/spacecraft/biological_cleanliness/), [NASA PIA24751](https://science.nasa.gov/photojournal/witness-tube-in-perseverance-sample-caching-system/) |
-| Orbital terrain shows broad landforms | The MRO/CTX crop is a real 148×148, 20.163 m/pixel DTM/orthophoto pair near the Perseverance landing point. It can show broad relief and let the demo calculate an illustrative route length/elevation profile. It is not detailed enough for small obstacles or operational EVA navigation. | Gives the scene a real Martian surface and makes manually placed route alternatives visibly respond to the terrain. [USGS CTX DTM docs](https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/) |
-| Stereo intersection error has a limited interpretation | Ames Stereo Pipeline defines ray intersection error as the closest separation of rays from the two cameras, in metres. The ASP paper says it is a relative self-consistency diagnostic: low error does not prove DTM accuracy. | Show as a separately labelled processing diagnostic only; never call it a probability or uncertainty map. [ASP `point2dem`](https://stereopipeline.readthedocs.io/en/stable/tools/point2dem.html), [Beyer et al. 2018](https://doi.org/10.1029/2018EA000409) |
+## Mechanisms compared
 
-## Evidence levels in the prototype
+| Mechanism | Evidence and strength | Data/parameters available | Map relevance and decision | Feasibility |
+|---|---|---|---|---|
+| **Direct contact or carry-over through gloves, tools and a sample interface** | NASA's EVA Swab Kit report found human-associated organisms on tested ISS/Orion suit exteriors. An 11-day Ramon Crater analog study found taxa shared between post-EVA gloves and soils, and different microbial compositions at sites near the habitat. Perseverance and Curiosity used detailed hardware cleanliness assays, blanks/witnesses and sample-chain controls. This supports a plausible source/contact concern and careful provenance, but no cited study directly measures human glove-to-Mars-sample transfer. | Source observations exist for Earth suits/analogs; rover sample-chain residues and cleaning were characterized for robotic hardware. Human Mars-EVA transfer fraction, glove/tool material and pressure dependence, contact area, source loading and cleaning effectiveness are absent. | Map shows where a scenario activity occurs, not whether a glove touched the sampling interface. A contact graph can support a decision about documenting shared contacts or an assumed isolation boundary. | **Selected qualitatively.** It is the most bounded mechanism with explicit, testable assumptions. |
+| **Crew/equipment release, transport and deposition** | Human-associated DNA has been detected on some ISS exterior surfaces; the 2026 NTRS presentation is preliminary DNA evidence from seven ISS surface swabs, not viability or Mars deposition. A rover particle-resuspension study combined models and JPL experiments. MIASMMA explicitly proposes Mars-pressure suit tests and later dispersal modeling. | MIASMMA's measurements are described as underway/planned in its public project record; its preliminary model is assumption-based. No measured Mars EVA emission, local deposition rate, or crew-scale Jezero exposure series was found. MEDA measures a rover-local time series; it cannot alone define a local spatial wind field. | Potentially relevant to exposure, but not computable from the CTX raster or by treating historical point measurements as a field. No location or route ranking is supported. | Rejected from this hackathon model; too many unsupported links. |
+| **Activity order / spatial separation** | This is an operational choice, not a physical transfer mechanism. The Ramon Crater study observed temporal/spatial differences but did not test Mars route order or quantify exact transfer. | Without a specified shared object or source/contact state affected by the order, there is no parameter or equation connecting “survey first” to transfer. | Order may change a timeline. It changes a contamination pathway only if it changes an explicit contact/exposure edge. Route length and footprint overlap are geometric context, not transfer. | Keep as a comparison to test this assumption, not as the model itself. |
 
-1. **Documented problem:** suit exteriors can contain human-associated biological material; contamination can compromise life-detection or low-concentration organic measurements. The NASA sources establish the concern, not an astronaut-to-Martian-rock transfer event.
-2. **Reasonable but simplified principle:** keep a clear contact history, use clean/dedicated sample-contact tools, and collect a witness/control record as a proposed protocol element. Mars 2020 demonstrates careful hardware cleanliness and witness tubes in a robotic sample-caching system.
-3. **Hypothesis:** an astronaut route that crosses a marked sample footprint before collection could create additional direct contact opportunities or complicate interpreting a sample. No source here measures this transfer on Mars or quantifies the effect of changing route order.
-4. **Scenario assumption:** the start, sample target, survey waypoint, target footprint radius, path sequence, and any imagined suit/tool contact are manually placed for the demonstration. The footprint is a visual scenario boundary, not a safe distance or microbial transport radius.
+Primary sources: [NASA EVA Swab Kit](https://ntrs.nasa.gov/citations/20220003128); [Danko et al. 2021 spacesuit study](https://ntrs.nasa.gov/citations/20210017721); [Yair et al. 2021 Ramon Crater analog study](https://doi.org/10.3389/fspas.2021.589147); [Blakkolb et al. 2014 Curiosity sample transfer chain](https://pubmed.ncbi.nlm.nih.gov/25085177/); [Mars 2020 sample-tube contamination accounting](https://doi.org/10.1089/ast.2022.0049); [NASA MIASMMA project record](https://ntrs.nasa.gov/citations/20250006358); [NASA ISS exterior DNA preliminary report](https://ntrs.nasa.gov/citations/20260004204); [Mars 2020 rover particle-resuspension model and lab tests](https://ntrs.nasa.gov/citations/20210005882).
 
-## Mechanisms deliberately left out
+## Selected model and interpretation
 
-- No wind vector, MEDA station value, plume animation, particle transport field, contamination concentration, emission rate, or safe standoff distance. General airborne transport is plausible, but the retrieved sources do not support local route ranking at this site.
-- No extrapolation from ISS suit swabs to Mars survival or transfer rates.
-- No claim that collecting a witness tube before/after the sample prevents contamination. It changes only the order and what the illustrative checklist records.
-- No inference that the DTM's NoData cells are terrain hazards, or that its intersection-error raster is measurement uncertainty.
+We model the direct-contact chain as a qualitative directed graph:
 
-## Prior art and differentiation
+**possible Earth-associated material → EVA glove → sample-contact interface/tool → rock core**
 
-Generic Mars route planning, layered mapping, slope display and 3D walkthroughs already exist. The closest examples found in a bounded search were:
+The output is only whether a path exists under the selected scenario assumptions. It has no units and is not a risk score, probability, transferred mass, viable-cell count or recommendation. The source and both contact links are assumptions for the scenario; the evidence supports the possibility of source material on suit/glove surfaces in other settings, not this specific Mars transfer. A hypothetical glove-change/protected-interface boundary removes one modeled edge, but is not a validated crewed-EVA procedure.
 
-- [MOMAR](https://www.momar.si/): multi-layer Marswalk planning, route alternatives, science stops, terrain and 3D rover/astronaut playback; its authors describe it as a prototype, not a safety system.
-- [Tour-de-Mars / MarsWalk](https://github.com/pengvil/Tour-de-Mars): Jezero route and science-stop planning with terrain-derived grid costs, activity and walk-back assumptions.
-- [JMARS](https://jmars.mars.asu.edu/) and [ASTTRO/Mars 2020](https://doi.org/10.1029/2022EA002532): established planetary mapping and rover science/terrain planning tools.
-- [Another 2026 Martian Map challenge project](https://github.com/RISHI-1453/NASA_Space-Apps_Challenge_Martian_Map): broad layered map and route/slope scenario features.
+Changing the two activity orders while keeping the same glove/tool contacts leaves the modeled path unchanged. This is the main technical insight we can currently support: **order alone cannot be claimed to reduce transfer unless a physical pathway is specified and the order changes that pathway.** The map's route/footprint measurements remain secondary context and do not feed the contact graph.
 
-No close contamination-specific astronaut Marswalk planner surfaced in that search. This does not establish uniqueness. A modest possible contribution is to put a documented sample-integrity concern, a user-editable contact/activities sequence, and the provenance/assumption trail in one understandable scene.
+Full variables, edge semantics, assumptions, code checks and the physical-validation gap are in [docs/model.md](model.md).
 
-## Judging criteria: current honest read
+## Why not a quantitative contamination model?
 
-| Criterion | Current case | Weak point / action |
-|---|---|---|
-| Impact | Could help a team notice and document potential sample-contact pathways before an EVA. | No validated contamination reduction is shown. Keep the tool framed as protocol planning and traceability. |
-| Creativity | Puts sample integrity at the centre of a Marswalk map, with a visible activity-order comparison. | Generic route/3D features are not novel by themselves. Keep them secondary. |
-| Validity | Uses real CTX terrain and cited NASA suit/witness-tube evidence, with explicit scenario labels. | No direct Mars astronaut transfer measurements, no local wind model, manually selected route/target. The weakest criterion. Show evidence levels directly in the interface. |
-| Relevance | Connects an approach sequence to a concrete sample-integrity question. | Ensure user choice changes a traceability/contact-path statement, not a made-up risk number. |
-| Presentation | One question, one route-order toggle, one visible target, a source/assumption panel. | State in the opening that the route is illustrative and no contamination amount is predicted. |
+A mass balance requires source loading, contacted area and transfer efficiencies for each interface, plus sample mass and an analytically defined contaminant. None is available for a Mars astronaut glove-to-core sequence. Rover values are hardware- and process-specific. No arbitrary transfer fractions or probability distributions are supplied. An airborne model would additionally require release rates, particle properties, local time/space winds, deposition and survival; MIASMMA is a research plan, not measured Mars EVA output. These omissions are material, not small uncertainty bars.
 
+## Data-to-decision boundary
+
+- **MRO/CTX DTM and orthoimage:** real 20.16 m/cell terrain and surface context; display the area and calculate illustrative route geometry only. They contain no glove contamination or biological transport measurement.
+- **Mars 2020 Perseverance sample records / SHERLOC:** inform the sample type and why organic/biosignature interpretation matters. The referenced Bright Angel sample is not georegistered to the existing CTX crop and supplies no human transfer parameter.
+- **Mars Science Laboratory / Curiosity SAM sample-chain work:** shows how spacecraft-contact residues and a cleaning sequence can affect organic measurements; its numeric values are not transplanted to EVA.
+- **MEDA weather, MOLA/HRSC/THEMIS and wind datasets:** not included in the selected direct-contact equation. A point or global climatology would not fix the missing contact parameters; adding a layer would not make it contamination evidence.
+
+The source-level metadata and limitations are tracked in [docs/data-sources.md](data-sources.md). The existing CTX crop and derivative remain unchanged.
+
+## Scientific limitations
+
+1. No direct human Mars-EVA-to-sample transfer measurement is available here.
+2. The qualitative graph says a path is *possible under assumed contacts*; it cannot validate that the path occurs or that the proposed isolation step prevents transfer.
+3. The activity-order comparison does not change the direct-contact graph when the interfaces are held constant. This argues against claiming a route-order mitigation from current evidence.
+4. A map route is not a contact record. The drawn target, start, survey activity and footprint are illustrative; no traversal, contact, exposure, deposition or safety model is present.
+5. The Bright Angel/Sapphire Canyon science context and the current CTX scene are not co-located. The marker must not be presented as the named Perseverance sample.
+6. Sample contamination control and preventing viable organisms from establishing on Mars are not interchangeable goals.

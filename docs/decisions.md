@@ -2,7 +2,11 @@
 
 ## 2026-11-14 — Project direction: Clean Approach
 
-The team selected the question of astronaut-introduced contamination affecting a science sample. The implementation will focus on contact/activity sequence and traceability, not wind transport. Suit-surface biological material and robotic witness tubes are documented; astronaut-to-Mars-sample transfer and route-order mitigation are not established. The app must not report risk scores or quantitative contamination reduction.
+The team selected the question of preserving a science sample's interpretive integrity when Earth-associated material may contact it. The implementation will focus on contact/activity sequence and traceability, not wind transport. Suit-surface biological material and robotic witness tubes are documented; astronaut-to-Mars-sample transfer and route-order mitigation are not established. The app must not report risk scores or quantitative contamination reduction.
+
+## 2026-11-14 — Model direct-contact reachability qualitatively
+
+The prototype represents a possible Earth-associated source → EVA glove → sample-contact interface → rock core chain as a directed graph. It reports only whether that path exists under explicit scenario assumptions. It does not estimate amount, probability, viability, or efficacy. Activity order is retained as a timeline comparison; with the same contacts it does not change graph reachability. An optional isolation boundary is a hypothetical graph edit, not a crewed-EVA recommendation or validated control. See [the model specification](model.md).
 
 ## 2026-11-14 — Use Jezero CTX crop already fetched by the team
 

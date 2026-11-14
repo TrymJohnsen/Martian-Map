@@ -4,11 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171b1c">
-  <meta name="description" content="Explore an illustrative Marswalk activity sequence on observed Jezero terrain.">
+  <meta name="description" content="Trace an assumed glove-to-tool contact pathway to a Jezero rock sample.">
   <title>Clean Approach — Jezero field study</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/design-overrides.css">
+  <script src="/contact-model.js" defer></script>
   <script src="/app.js" defer></script>
 </head>
 <body>
@@ -22,8 +23,8 @@
     <section class="intro" aria-label="Study question">
       <div class="intro-copy">
         <p class="eyebrow">Jezero · 18.45°N, 77.46°E</p>
-        <h1>How might activity order shape contact history?</h1>
-        <p class="deck">Explore two illustrative Marswalk sequences across the same terrain.</p>
+        <h1>What could reach a Mars sample?</h1>
+        <p class="deck">Trace possible Earth-associated material through glove and tool contact before organic analysis.</p>
       </div>
       <a class="assumptions-link" href="#data-assumptions">Data &amp; assumptions <span aria-hidden="true">↘</span></a>
     </section>
@@ -31,7 +32,7 @@
     <section class="workspace" aria-label="Interactive Marswalk planning prototype">
       <article class="terrain-card" aria-labelledby="area-title">
         <div class="terrain-topline">
-          <div><h2 id="area-title">Jezero approach sector</h2><p class="terrain-caption">Observed CTX surface image <span>·</span> 20.16 m / cell</p></div>
+          <div><h2 id="area-title">Jezero approach sector</h2><p class="terrain-caption">Hypothetical sedimentary core scenario <span>·</span> observed CTX surface <span>·</span> 20.16 m / cell</p></div>
           <span class="illustrative-note">Illustrative activity plan</span>
         </div>
         <div class="scene-wrap">
@@ -60,20 +61,30 @@
           <p class="section-label">Compare activity order</p>
           <h2 id="sequence-heading">Which happens first?</h2>
           <div class="sequence-options" role="group" aria-label="Choose activity order">
-            <button class="sequence-option is-selected" data-sequence="sample-first" aria-pressed="true"><span class="option-copy"><b>Collect sample</b><small>Start → sample → survey</small></span></button>
-            <button class="sequence-option" data-sequence="survey-first" aria-pressed="false"><span class="option-copy"><b>Survey area</b><small>Start → survey → sample</small></span></button>
+            <button class="sequence-option is-selected" data-sequence="sample-first" aria-pressed="true"><span class="option-copy"><b>Collect sample first</b><small>Collect → survey</small></span></button>
+            <button class="sequence-option" data-sequence="survey-first" aria-pressed="false"><span class="option-copy"><b>Survey first</b><small>Survey → collect</small></span></button>
           </div>
-          <div class="route-readout" aria-live="polite"><span class="scenario-stamp">Illustrative sequence</span><p id="sequence-explanation">This route reaches the marked target footprint before the survey leg. The geometry shows overlap only; it cannot establish physical contact or transfer.</p></div>
-          <div class="results-row"><div><span>Drawn route</span><b><span id="route-distance">—</span> m</b></div><div><span>Path inside marked footprint before sampling</span><b><span id="pre-sample-zone">—</span> m</b></div></div>
-          <div class="profile-row"><div><span>Elevation along route to sample</span><span id="profile-range">—</span></div><canvas id="profile" width="420" height="70" aria-label="Illustrative elevation profile from route start to sample"></canvas></div>
-          <p class="metric-caveat">Straight segments sampled on the ~20 m grid. No traversability, mobility, physical contact, transfer or safety model.</p>
+          <div class="route-readout" aria-live="polite"><span class="scenario-stamp">Order changes the timeline</span><p id="sequence-explanation">The same glove-to-tool-to-sample contact pathway is possible in either order under the assumptions below.</p></div>
+          <section class="pathway-model" aria-labelledby="pathway-heading">
+            <div class="pathway-heading"><div><p class="section-label">Qualitative contact model</p><h3 id="pathway-heading">Possible material pathway</h3></div><span id="pathway-status" class="pathway-status" aria-live="polite">PATH PRESENT IN SCENARIO</span></div>
+            <p id="contact-path" class="contact-chain" aria-live="polite">Possible Earth-associated material → EVA glove → sample-contact interface → rock core</p>
+            <label class="isolation-control"><input id="isolation-boundary" type="checkbox"><span><b>Model an isolation step before collection</b><small>Assume a glove change and a protected, dedicated sample-contact interface.</small></span></label>
+            <p class="model-caveat">This checks whether a path exists in the assumed contact graph. It does not calculate transfer, amount, probability, viability or Mars establishment; the isolation step is not a validated EVA procedure.</p>
+          </section>
+          <details class="route-context">
+            <summary>Terrain route context <span>geometry only</span></summary>
+            <div class="results-row"><div><span>Drawn route length</span><b><span id="route-distance">—</span> m</b></div><div><span>Path within marked footprint</span><b><span id="pre-sample-zone">—</span> m</b></div></div>
+            <div class="profile-row"><div><span>Elevation on first drawn leg</span><span id="profile-range">—</span></div><canvas id="profile" width="420" height="70" aria-label="Illustrative elevation profile sampled from the drawn route"></canvas></div>
+            <p class="metric-caveat">Straight segments sampled on the ~20 m CTX grid. The map does not model glove contact, transfer, traversability, mobility or safety.</p>
+          </details>
         </section>
         <details class="source-panel" id="data-assumptions">
           <summary><span>Data &amp; assumptions</span><span class="summary-hint">Sources, measures and limits</span></summary>
-          <div class="source-group"><b>Observed · MRO / CTX stereo product</b><p>148×148 crop · 20.16 m/cell · DTM heights −2615.7 to −2515.6 m relative to the areoid. The one-band ortho shares the grid; physical pixel units are unspecified. The vertical range is about 100 m over 2.98 km. Height display is 1× by default; optional 3× display is explicitly labelled.</p><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product documentation ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_dtm.tif" target="_blank" rel="noreferrer">DTM COG ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_orthoimage.tif" target="_blank" rel="noreferrer">Ortho COG ↗</a><p>295 NoData cells (1.35%) are omitted; no interpolation is applied. No product quality flag is available in this crop.</p></div>
+          <div class="source-group"><b>Science scenario · Perseverance / Mars 2020</b><p>The rationale is a hypothetical Jezero sedimentary rock core reserved for later organic-molecule and potential-biosignature analysis. Perseverance's Sapphire Canyon core came from the Bright Angel sedimentary rock Cheyava Falls; SHERLOC detected organic compounds there, whose origin remains a scientific question. That sample site is not this CTX crop or its illustrative marker.</p><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA sample record ↗</a> · <a href="https://doi.org/10.1038/s41586-025-09413-0" target="_blank" rel="noreferrer">Bright Angel organic/mineral study ↗</a></div>
+          <div class="source-group"><b>Observed terrain context · MRO / CTX</b><p>148×148 crop · 20.16 m/cell · DTM heights −2615.7 to −2515.6 m relative to the areoid. The one-band ortho shares the grid; physical pixel units are unspecified. The vertical range is about 100 m over 2.98 km. This layer positions the illustrative activities; it is not contamination data. Height display is 1× by default; optional 3× display is explicitly labelled.</p><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product documentation ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_dtm.tif" target="_blank" rel="noreferrer">DTM COG ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_orthoimage.tif" target="_blank" rel="noreferrer">Ortho COG ↗</a><p>295 NoData cells (1.35%) are omitted; no interpolation is applied. No product quality flag is available in this crop.</p></div>
           <div class="source-group"><b>Observed · ASP ray separation</b><p>0.023–4.333 m diagnostic from the same CTX stereo processing. Relative ray-separation diagnostic; it is not absolute DTM accuracy or measurement uncertainty.</p><a href="https://stereopipeline.readthedocs.io/en/stable/tools/point2dem.html" target="_blank" rel="noreferrer">Ames Stereo Pipeline definition ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_intersection_error.tif" target="_blank" rel="noreferrer">Ray-separation COG ↗</a></div>
-          <div class="source-group"><b>Scenario · team-set markers and activity order</b><p>Walk start, survey waypoint, target, 141 m footprint radius and activity order are illustrative. Geometric overlap is only a possible contact opportunity. NASA has not measured astronaut-to-Mars-sample transfer or validated route-order mitigation.</p><a href="https://ntrs.nasa.gov/citations/20250006358" target="_blank" rel="noreferrer">MIASMMA research context ↗</a></div>
-          <div class="source-group"><b>Separate mission reference</b><p>Perseverance witness-tube imagery records an environment reference near robotic sampling. It is from another location and is not a crewed-EVA procedure.</p><a href="https://science.nasa.gov/photojournal/witness-tube-in-perseverance-sample-caching-system/" target="_blank" rel="noreferrer">NASA CacheCam record ↗</a></div>
+          <div class="source-group"><b>Mechanism evidence and missing parameters</b><p>NASA EVA suit swabs and an Earth Mars-analog study support possible human-associated material on crew/suit surfaces and gloves. Neither measures glove-to-Mars-sample transfer. MIASMMA describes planned suit-leakage measurements and dispersal modeling, not completed Mars-EVA measurements. Mars 2020 cleanliness limits apply to its robotic sample hardware and are not EVA thresholds.</p><a href="https://ntrs.nasa.gov/citations/20220003128" target="_blank" rel="noreferrer">NASA EVA Swab Kit ↗</a> · <a href="https://doi.org/10.3389/fspas.2021.589147" target="_blank" rel="noreferrer">Ramon Crater analog study ↗</a> · <a href="https://ntrs.nasa.gov/citations/20250006358" target="_blank" rel="noreferrer">MIASMMA status ↗</a> · <a href="https://doi.org/10.1089/ast.2022.0049" target="_blank" rel="noreferrer">Mars 2020 tube controls ↗</a></div>
+          <div class="source-group"><b>Separate robotic precedent · witness controls</b><p>Perseverance witness tubes and drillable blanks monitor contamination in its robotic sample chain. They help interpret returned samples but do not establish a crewed-EVA glove-change or tool-use procedure.</p><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA Mars 2020 sample records ↗</a></div>
         </details>
       </aside>
     </section>
