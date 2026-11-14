@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171b1c">
-  <meta name="description" content="Trace an assumed glove-to-tool contact pathway to a Jezero rock sample.">
-  <title>Clean Approach — Jezero field study</title>
+  <meta name="description" content="Inspect Perseverance's Sapphire Canyon sample site and compare an illustrative Marswalk contact history.">
+  <title>Clean Approach — Bright Angel field study</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/design-overrides.css">
@@ -24,9 +24,9 @@
   <main id="top" class="proposal">
     <section class="intro" aria-label="Study question">
       <div class="intro-copy">
-        <p class="eyebrow">Jezero · 18.45°N, 77.46°E</p>
+        <p class="eyebrow">Jezero · Bright Angel / Neretva Vallis</p>
         <h1>What could reach a Mars sample?</h1>
-        <p class="deck">Trace possible Earth-associated material through glove and tool contact before organic analysis.</p>
+        <p class="deck" id="mission-summary">An astronaut makes a hypothetical earlier surface-survey stop A before visiting the documented Sapphire Canyon sample site B. The possible source at A is a scenario input, so the comparison asks whether its handling history could matter when interpreting B; no composition is claimed for A.</p>
       </div>
       <a class="assumptions-link" href="#data-assumptions">Data &amp; assumptions <span aria-hidden="true">↘</span></a>
     </section>
@@ -34,14 +34,14 @@
     <section class="workspace" aria-label="Interactive Marswalk planning prototype">
       <article class="terrain-card" aria-labelledby="area-title">
         <div class="terrain-topline">
-          <div><h2 id="area-title">Jezero approach sector</h2><p class="terrain-caption">Hypothetical sedimentary core scenario <span>·</span> observed CTX surface <span>·</span> 20.16 m / cell</p></div>
+          <div><h2 id="area-title">Bright Angel · Neretva Vallis · Jezero</h2><p class="terrain-caption">Perseverance sample site <span>·</span> MRO / CTX terrain <span>·</span> 20.40 m / cell</p></div>
           <span class="illustrative-note">Illustrative activity plan</span>
         </div>
         <div class="scene-wrap">
-          <canvas id="terrain" tabindex="0" aria-label="Interactive MRO CTX terrain crop with illustrative activity route, target A and target B"></canvas>
+          <canvas id="terrain" tabindex="0" aria-label="Interactive MRO CTX terrain crop around Bright Angel with a documented sample site and illustrative traverse"></canvas>
           <div class="scene-corner scene-corner-left"><span class="corner-cross">＋</span><span id="coord-readout">Loading coordinates…</span></div>
           <div class="scene-corner scene-corner-right"><span id="north-arrow" class="north-arrow">↑</span><span>N</span></div>
-          <div class="scene-overlay-label"><span>S · start</span><span>A · work site</span><span>B · sample target</span></div>
+          <div class="scene-overlay-label"><span>S · start · illustrative</span><span>A · hypothetical survey</span><span>B · Sapphire Canyon · sample 25</span></div>
           <div id="scene-loading" class="scene-loading">Loading local terrain…</div>
           <div id="scene-error" class="scene-error" hidden>Could not load the bundled terrain sample. See README for the data export step.</div>
         </div>
@@ -59,7 +59,11 @@
         <div class="place-controls" role="group" aria-label="Focus activity location">
           <button data-focus-place="prep">S · Start</button><button data-focus-place="A">A · Illustrative work site</button><button data-focus-place="B">B · Illustrative sample target</button>
         </div>
-        <p class="map-path-key">Solid line = the same illustrative walking route in all plans. Contact histories are listed beside the map; they are not airborne or particle paths.</p>
+        <div class="geo-context" aria-label="Map location evidence">
+          <p><b id="science-target">Sapphire Canyon · Sample 25 · Cheyava Falls · Bright Angel · Sol 1215</b><br><span id="target-coordinate">18.49747°N, 77.30515°E</span> · sample-report site coordinate, not a later rover position. <span id="target-cell-note">Marker is snapped to the nearest valid CTX cell; location accuracy is not reported.</span> <a id="position-source" href="https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_sample_dossier/initial_reports/initial_reports_volume4.pdf#page=120" target="_blank" rel="noreferrer">PDS sample report ↗</a></p>
+          <p><b>A · Hypothetical earlier sample site.</b> Its map point and material are illustrative; no rover observation or mineral finding is assigned there. The solid line is the walking route; contact links in the history panel are not particle paths.</p>
+        </div>
+        <p class="map-path-key">The route stays the same in all plans; the event history shows only the contacts that each plan assumes.</p>
       </article>
 
       <aside class="plan-column">
@@ -70,7 +74,7 @@
           <div class="plan-options" role="group" aria-label="Choose a contact-history plan">
             <button class="plan-option is-selected" data-plan="shared-tool" aria-pressed="true"><b>A · Same tool</b><small>Use T1 at A and B</small></button>
             <button class="plan-option" data-plan="separate-tool" aria-pressed="false"><b>B · Separate tool</b><small>Use T2 at B; glove contacts remain</small></button>
-            <button class="plan-option" data-plan="omit-glove-contact" aria-pressed="false"><b>C · Omit one contact</b><small>Use T2 at B; omit G1 → T2</small></button>
+            <button class="plan-option" data-plan="omit-glove-contact" aria-pressed="false"><b>C · What if this contact could be avoided?</b><small>Counterfactual: omit assumed G1 → T2 at B</small></button>
           </div>
           <div class="route-readout plan-difference" aria-live="polite">
             <span class="scenario-stamp">Recomputed from events</span>
@@ -86,7 +90,7 @@
           </section>
 
           <section class="sample-history" aria-labelledby="sample-history-heading">
-            <div class="event-section-heading"><div><p class="section-label">Select target B on the map or here</p><h3 id="sample-history-heading">Sample B · explanation chain</h3></div><button id="inspect-sample-b" class="plain-button">Inspect B</button></div>
+            <div class="event-section-heading"><div><p class="section-label">Select the mapped Sapphire Canyon marker or here</p><h3 id="sample-history-heading">Sample B · its history</h3></div><button id="inspect-sample-b" class="plain-button">Inspect B</button></div>
             <p class="model-caveat">A path means only that the listed directed contacts connect a scenario source to B. It does not establish material transfer. A control records evidence; it does not erase a path.</p>
             <div id="sample-history" aria-live="polite"></div>
           </section>
@@ -100,15 +104,15 @@
         </section>
         <details class="source-panel" id="data-assumptions">
           <summary><span>Data &amp; assumptions</span><span class="summary-hint">Sources, measures and limits</span></summary>
-          <div class="source-group"><b>Science context · Perseverance / Mars 2020</b><p>NASA documents Sapphire Canyon (sample 25), collected from Cheyava Falls in Bright Angel on Sol 1215. This CTX crop surrounds the landing area and does not include a verified Bright Angel/Sapphire Canyon location. NASA's sample record informs the organic-analysis motivation only; neither activity marker is named after an observed sample or rover position.</p><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA sample record ↗</a> · <a href="https://doi.org/10.1038/s41586-025-09413-0" target="_blank" rel="noreferrer">Bright Angel study ↗</a></div>
-          <div class="source-group"><b>Observed terrain · MRO / CTX</b><p>148×148 crop · 20.16 m/cell · DTM heights −2615.7 to −2515.6 m relative to the areoid. Ortho shares the same grid; physical pixel units are unspecified. The vertical range is about 100 m over 2.98 km. This layer locates illustrative activity markers only; it is not contamination data. Height scale is 1× by default; optional 3× exaggeration is labelled.</p><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product documentation ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_dtm.tif" target="_blank" rel="noreferrer">DTM COG ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_orthoimage.tif" target="_blank" rel="noreferrer">Ortho COG ↗</a><p>295 NoData cells (1.35%) are omitted; no interpolation is applied. No product quality flag is available in this crop.</p></div>
-          <div class="source-group"><b>Observed · ASP ray separation</b><p>0.023–4.333 m diagnostic from the same CTX stereo processing. Relative ray-separation diagnostic; it is not absolute DTM accuracy or measurement uncertainty.</p><a href="https://stereopipeline.readthedocs.io/en/stable/tools/point2dem.html" target="_blank" rel="noreferrer">Ames Stereo Pipeline definition ↗</a> · <a href="https://astrogeo-ard.s3-us-west-2.amazonaws.com/mars/mro/ctx/controlled/usgs/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W/P18_007925_1987_XN_18N282W__P19_008650_1987_XI_18N282W_intersection_error.tif" target="_blank" rel="noreferrer">Ray-separation COG ↗</a></div>
+          <div class="source-group"><b>Science target · Perseverance / Mars 2020</b><p><span id="sample-report-context">NASA lists Sapphire Canyon as sample 25, a 6.2 cm sedimentary core collected from Cheyava Falls in Bright Angel on Sol 1215. Its sample report gives a site coordinate; location uncertainty is not provided. SHERLOC organic detections and mineral associations make sample provenance relevant to later interpretation; they do not establish life.</span> The same PDS report coordinate maps to a valid CTX cell. The target pixel's DTM elevation differs from the dossier's listed elevation; the two should not be treated as a precise vertical match.</p><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA sample record ↗</a> · <a href="https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_sample_dossier/initial_reports/initial_reports_volume4.pdf#page=120" target="_blank" rel="noreferrer">PDS sample report ↗</a> · <a href="https://doi.org/10.1038/s41586-025-09413-0" target="_blank" rel="noreferrer">Bright Angel study ↗</a></div>
+          <div class="source-group"><b>Observed terrain · MRO / CTX · <span id="ctx-product-id">selected STAC item</span></b><p><span id="ctx-product-credit">N02_063242_1988_XN_18N283W + N03_063532_1988_XN_18N283W · MRO/CTX, NASA/USGS · CC0-1.0 · DOI 10.5066/P9JKVWR3</span>. One 175×147 crop at 20.399 m/cell in Mars 2015 ocentric equirectangular CRS (IAU:49910), east longitude, metres. The map's DTM and orthorectified image share the grid; image values are display-only and have no documented physical units. This is location and broad relief context, not contamination data. Height scale is 1× by default; optional 3× exaggeration is labelled.</p><span id="ctx-product-links"><a href="https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms/" target="_blank" rel="noreferrer">USGS product docs ↗</a> · <a id="ctx-dtm-link" href="#" target="_blank" rel="noreferrer">DTM COG ↗</a> · <a id="ctx-ortho-link" href="#" target="_blank" rel="noreferrer">Ortho COG ↗</a> · <a id="ctx-ray-link" href="#" target="_blank" rel="noreferrer">Ray-separation COG ↗</a></span><p>921 of 25,725 pixels (3.58%) are NoData and left blank. The exact reported sample coordinate is on a valid raster cell. ASP ray separation is a relative stereo diagnostic, not DTM accuracy or measurement uncertainty.</p></div>
+          <div class="source-group"><b>Illustrative mission and contact model</b><p>Site A and the traverse are scenario choices, not historic astronaut activities or additional Perseverance observations. The user can investigate whether an explicit contact chain connects possible human-associated material, a possible source at hypothetical A, or B's own geological origin to the sample history. Paths are model logic, not measured transfer; there are no rates, probabilities, safe-plan rankings, or crewed EVA procedure claims.</p></div>
           <div class="source-group"><b>Mechanism evidence and missing parameters</b><p>NASA EVA suit swabs and an Earth Mars-analog study support possible human-associated material on crew/suit surfaces and gloves. Neither measures glove-to-Mars-sample transfer. MIASMMA describes planned suit-leakage measurements and dispersal modeling, not completed Mars-EVA measurements. Mars 2020 cleanliness limits apply to its robotic sample hardware and are not EVA thresholds.</p><a href="https://ntrs.nasa.gov/citations/20220003128" target="_blank" rel="noreferrer">NASA EVA Swab Kit ↗</a> · <a href="https://doi.org/10.3389/fspas.2021.589147" target="_blank" rel="noreferrer">Ramon Crater analog study ↗</a> · <a href="https://ntrs.nasa.gov/citations/20250006358" target="_blank" rel="noreferrer">MIASMMA status ↗</a> · <a href="https://doi.org/10.1089/ast.2022.0049" target="_blank" rel="noreferrer">Mars 2020 tube controls ↗</a></div>
           <div class="source-group"><b>Separate robotic precedent · witness controls</b><p>Perseverance witness tubes and drillable blanks monitor contamination in its robotic sample chain. They help interpret returned samples but do not establish a crewed-EVA glove-change or tool-use procedure.</p><a href="https://science.nasa.gov/mission/mars-2020-perseverance/mars-rock-samples/" target="_blank" rel="noreferrer">NASA Mars 2020 sample records ↗</a></div>
         </details>
       </aside>
     </section>
   </main>
-  <footer class="footer"><span>GitWarriors · independent research prototype</span><span>Not NASA endorsed</span><a href="/data/jezero-demo.json">Data manifest ↗</a></footer>
+  <footer class="footer"><span>GitWarriors · independent research prototype</span><span>Not NASA endorsed</span><a href="/data/bright-angel-demo.json">Data manifest ↗</a></footer>
 </body>
 </html>

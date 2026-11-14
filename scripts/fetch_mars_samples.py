@@ -6,8 +6,10 @@ connection. Raster data are cropped through GDAL's HTTP range reads; the full
 source COG is not saved.
 No credentials or NASA API key are required for this public USGS STAC catalog.
 
-Example (landing-area vicinity; adjust bbox to a selected matching footprint):
-  python scripts/fetch_mars_samples.py --bbox 77.44 18.42 77.49 18.47
+Example (Bright Angel vicinity, using the inspected matching item):
+  .venv/bin/python scripts/fetch_mars_samples.py --bbox 77.28 18.47 77.34 18.52 \\
+    --item-id N02_063242_1988_XN_18N283W__N03_063532_1988_XN_18N283W \\
+    --output-dir data/raw/bright-angel-n02
 """
 
 from __future__ import annotations
@@ -21,7 +23,6 @@ from urllib.request import Request, urlopen
 
 API = "https://stac.astrogeology.usgs.gov/api/search"
 COLLECTION = "mro_ctx_controlled_usgs_dtms"
-OUT = Path("data/raw/jezero")
 
 
 def fetch_json(url: str) -> dict:
@@ -52,10 +53,13 @@ def main() -> int:
     parser.add_argument("--max-items", type=int, default=100)
     parser.add_argument("--max-pixels", type=int, default=2_000_000,
                         help="maximum output raster pixels per layer")
+    parser.add_argument("--output-dir", type=Path, default=Path("data/raw/jezero"),
+                        help="directory for the ignored raster crops and sample-metadata.json")
+    parser.add_argument("--item-id", help="optional exact STAC item ID to inspect after the bbox query")
     args = parser.parse_args()
     west, south, east, north = args.bbox
     if not (-180 <= west < east <= 180 and -90 <= south < north <= 90):
-        parser.error("bbox must be ordered WGS84 coordinates")
+        parser.error("bbox must be ordered Mars east-longitude / planetocentric-latitude coordinates in degrees")
 
     try:
         import numpy as np
@@ -82,7 +86,13 @@ def main() -> int:
     # Select a *single* catalog item with both required assets, so coverage and
     # acquisition geometry can be compared. A quality raster is optional.
     item = None
-    for candidate in items:
+    candidates_to_check = items
+    if args.item_id:
+        candidates_to_check = [candidate for candidate in items if candidate.get("id") == args.item_id]
+        if not candidates_to_check:
+            print(f"Requested STAC item {args.item_id!r} does not intersect the search bbox.", file=sys.stderr)
+            return 1
+    for candidate in candidates_to_check:
         ca = candidate.get("assets", {})
         if raster_asset_keys(ca, "dtm") and raster_asset_keys(ca, "ortho"):
             item = candidate
@@ -96,13 +106,18 @@ def main() -> int:
     candidates = {kind: raster_asset_keys(assets, kind)
                   for kind in ("dtm", "ortho", "intersection_error")}
 
-    OUT.mkdir(parents=True, exist_ok=True)
+    out_dir = args.output_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
     # This is an angular planetocentric Mars ROI. STAC uses GeoJSON-shaped
     # coordinates here, but do not transform it from Earth's EPSG:4326 datum.
     roi_mars_lonlat = {"type": "Polygon", "coordinates": [[[west, south], [east, south], [east, north], [west, north], [west, south]]]}
     summary = {
         "collection": COLLECTION,
         "item_id": item.get("id"),
+        "item_properties": {
+            key: item.get("properties", {}).get(key)
+            for key in ("title", "description", "missions", "instruments", "gsd", "license", "proj:wkt2", "datetime", "start_datetime", "end_datetime")
+        },
         "item_datetime": item.get("properties", {}).get("datetime"),
         "item_start_datetime": item.get("properties", {}).get("start_datetime"),
         "item_end_datetime": item.get("properties", {}).get("end_datetime"),
@@ -152,7 +167,7 @@ def main() -> int:
                     band_nodata.append(raw_nodata)
                 if scale < 1:
                     print(f"Note: {kind} sample was resampled to respect --max-pixels; source resolution is retained in metadata.", file=sys.stderr)
-                path = OUT / f"{item.get('id')}_{kind}.tif"
+                path = out_dir / f"{item.get('id')}_{kind}.tif"
                 profile = src.profile.copy()
                 profile.update(driver="GTiff", height=data.shape[-2], width=data.shape[-1], transform=transform,
                                dtype="float32", nodata=float("nan"), compress="deflate", tiled=True)
@@ -217,14 +232,14 @@ def main() -> int:
                 axis.imshow(layer[0], cmap="gray" if kind == "ortho" else "terrain")
             axis.set_title(kind.replace("_", " "))
             axis.set_axis_off()
-        preview = OUT / f"{item.get('id')}_preview.png"
+        preview = out_dir / f"{item.get('id')}_preview.png"
         figure.savefig(preview, dpi=140)
         plt.close(figure)
         summary["preview_png"] = str(preview)
     except ImportError:
         summary["preview_png"] = None
         print("Install matplotlib in this environment to write the PNG preview.", file=sys.stderr)
-    (OUT / "sample-metadata.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    (out_dir / "sample-metadata.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2))
     return 0
 

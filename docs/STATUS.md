@@ -1,44 +1,45 @@
-# GitWarriors handoff — 14 November 2026
+# GitWarriors handoff — Bright Angel target integration
 
-## Current build
+## Current result
 
-- Clean Approach retains the existing Canvas terrain renderer and default layout A. No framework migration or full redesign was made.
-- The event-history implementation is in `public/scenario.js` and `public/contact-model.js`. It compares three plans with a stable set of source, object and place IDs, ordered events, explicit directional contact assumptions, and event-specific provenance traces. Each plan is freshly replayed; no state is carried over.
-- Plan A uses T1 at both targets. Plan B switches to T2 at B but retains G1→T2. Plan C also uses T2 and omits only G1→T2. In the scenario replay, plan C removes the modeled human-associated and A-origin paths to B; B's own sample origin remains. This is a logical scenario result, not material-transfer evidence or an operational recommendation.
-- A document-control event records a witness entry but does not remove any path. Sealing freezes sample history; an explicit reopen is required before a later contact can affect the sample. An empty initial tool history is explicitly not a sterility finding.
-- The timeline has previous/next and selectable event rows; map buttons/markers focus the corresponding place. Contact provenance is shown in the timeline/history panel, separately from the solid walking route. All three plans use the same S→A→B route (about 4.99 km by grid geometry).
+- The existing Canvas terrain renderer and default layout A remain in use. The corrected metre world scale, ordered contact engine, seal/reopen behavior, NoData gaps and test suite are preserved.
+- The previous MRO/CTX landing-area crop did not cover the actual sample coordinate. A bounded USGS STAC search found several footprints; one overlapping product had NoData at the target. The selected product is `N02_063242_1988_XN_18N283W__N03_063532_1988_XN_18N283W`.
+- The map now uses the PDS Sample Dossier coordinate associated with `M2020-1215-28 Sapphire Canyon` (sample 25; Cheyava Falls, Bright Angel; Sol 1215) for marker B. It transforms to a valid cell `(row 66, col 73)` in the selected raster and lies 6.67 m from its cell centre. The report gives no horizontal accuracy or coordinate datum; the UI calls the map tie nominal and does not imply drill-hole precision.
+- The PDS report lists elevation −2354.236 m; the target CTX cell is −2324.475 m, a 29.76 m difference. Cause is unresolved. The values are not presented as precisely vertically registered, and the discrepancy is not used as an accuracy estimate.
+- DTM, orthoimage and ASP ray-separation diagnostic share a 175×147 grid at 20.399228 m/pixel. NoData is 921/25,725 cells (3.58%) and remains blank. The reported sample coordinate is valid in all three layers. A and start remain illustrative, on valid cells; same S→A→B route is used in all plans.
+- The story is: an astronaut collects a hypothetical sample at A, then visits documented target B; possible A-origin material matters only as an explicit history assumption. No observation or mineral finding is assigned to A.
+- Plan A uses T1 at A and B. B uses T2 but retains G1→T2. C asks “What if this contact could be avoided?” and omits only that assumed G1→T2 link. C is a counterfactual, not a supported or validated EVA action. All outcomes are reachability results, not material transfer or a plan ranking.
+- UI source distinction remains explicit: possible human-associated material, possible material associated with hypothetical A, and B's own geological origin. Sample B's source chain follows linked events. Route is drawn separately from contact paths. PDS sample context appears beside the map marker.
 
-## Terrain correction
+## Mission contribution and limits
 
-The inspected code had a confirmed units mismatch: horizontal position was divided by ~20.16 m/cell into cell units, while vertical displacement remained in metres. The renderer treated both values as the same unit, so a “1×” view exaggerated vertical scale by about 20×. `public/terrain-geometry.js` now uses metre-valued east, north and up coordinates before projection, subtracts a computed median valid elevation as a rendering origin, and applies vertical exaggeration only to z. Camera zoom remains a separate screen transform. The profile uses raster metadata dimensions and keeps NoData as gaps; terrain quads touching NoData remain omitted.
+- MRO/CTX gives an actual Bright Angel vicinity surface image, DTM and a relative stereo diagnostic. It supplies geographic orientation and broad terrain context, but does not calculate contact transfer.
+- Mars 2020/Perseverance gives the named science target and sample-report location, not a second raster. The scene is a focused MRO terrain map with a geospatial Mars 2020 target, not a multi-mission raster stack.
+- The PDS coordinate and STAC product bounds are independently sourced records that overlap. No high-resolution comparison resolves the drill hole. CTX's ~20.4 m posting and the unspecified target accuracy limit exact co-registration.
+- The DTM target-cell elevation differs from the PDS elevation by ~29.8 m. This remains a visible data discrepancy; no cause or uncertainty is inferred.
+- The human source and contact edges remain hypothetical. No transfer rate, probability, particle path, risk value, safe plan or EVA protocol is modeled. MEDA Sol 36 remains separate historical landing-area context and is not used.
 
-## Geographic and science status
+## Verification
 
-- The actual 148×148 MRO/CTX crop covers about 77.43977–77.49012°E, 18.41999–18.47033°N. Its 20.162955 m posting, 100.127 m DTM range and 295-cell NoData mask are unchanged.
-- NASA's Mars 2020 record verifies Sapphire Canyon as sample 25 from Cheyava Falls, Bright Angel, sealed Sol 1215. The current CTX crop does not contain a georeferenced sample position. The June 21 rover coordinate in a NASA map is outside the crop and predates collection; it is not used as the sample location. Start, A and B are still illustrative. MRO/CTX is the only mapped mission layer; Mars 2020 is context only.
-- **MEDA data test retained:** actual PDS Sol 36 derived wind v2.0 and matching ancillary v3.0; 40,543/41,538 valid paired speed/direction rows, 0–16.24 m/s, with empty uncertainty and boom-use fields. It remains a separate historical figure and does not enter this contact model. See [data sources](data-sources.md).
-- No human Mars-EVA source loading, glove/tool transfer measurement, contact frequency, airborne release, transport, deposition or risk/safety value is represented.
+The Python geospatial-export check covers Mars lon/lat conversion, valid-cell selection and NoData rejection, alongside the existing model/geometry checks. JavaScript checks, all three Python tests and the browser run passed on 2026-11-14. Playwright rendered the bundled 175×147 terrain crop at a 1440×900 laptop viewport, loaded the selected product ID, exercised A and C and reported no console errors. Screenshots:
 
-## Verification completed
+- [Overview, 1440×900](../output/playwright/bright-angel-overview-1440x900.png)
+- [Plan A, 1440×900](../output/playwright/bright-angel-plan-a-1440x900.png) · [full page with B history](../output/playwright/bright-angel-plan-a-sample-history-fullpage.png)
+- [Plan C, 1440×900](../output/playwright/bright-angel-plan-c-1440x900.png) · [full page with B history](../output/playwright/bright-angel-plan-c-sample-history-fullpage.png)
+
+These checks verify software behavior and presentation, not physical transfer, position accuracy, absolute terrain accuracy or operational suitability. Run:
 
 ```bash
 node --check public/app.js
-node --check public/contact-model.js
 node --check public/scenario.js
+node --check public/contact-model.js
 node --check public/terrain-geometry.js
 node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
+.venv/bin/python tests/test_geospatial_export.py
 git diff --check
 ```
 
-Both test files pass. They cover source-A→B reachability through shared T1, the remaining glove route with separate T2, removing only G1→T2, control records, seal/reopen behavior, fresh deterministic replay, invalid references/order, equal metre-scale synthetic axes before projection, explicit vertical exaggeration, metadata-based width, datum selection and NoData profile gaps. These tests do not validate physical transfer.
 
-The local static app was inspected with the installed Playwright CLI and cached Chromium at a 1440×900 viewport. The plan selector was changed live from B to C, the resulting source sets and traces updated, two screenshots were captured, and the browser console had no errors or warnings. The server required an approved localhost run on port 4175 because ordinary sandbox binding is denied. See [`output/playwright/`](../output/playwright/).
+## Next useful work
 
-## Open limitations and handoff
-
-- A and B are illustrative positions on a 20 m/cell CTX crop, not two verified science targets. The actual Sapphire Canyon sample is not registered on this map. Georeferencing Mars 2020 context into the same scene is the largest spatial gap.
-- Possible contact edges are scenario inputs. A path means only that a path exists in the declared graph; it is not transfer observed in any NASA dataset. Plan C is not a validated handling procedure.
-- The map now adds geographic orientation to the event history, but it does not yet show a Mars 2020 target co-located with terrain. Its geographic contribution is currently location context and a same-route geometry check; contamination results come from the event assumptions, not terrain values.
-- Existing `.venv`, raster assets, contact graph science framing and MEDA wind figure remain intact.
-
-For the next implementation, select a CTX product whose verified footprint includes a Perseverance target and a coordinate-bearing Mars 2020 record, or keep A/B illustrative and present the multi-mission geospatial limitation prominently. Then review whether the scenario assumptions are useful for a human-EVA design discussion before adding operational guidance.
+Review whether the nominal PDS-to-CTX point placement and the 29.8 m vertical discrepancy need additional source-level investigation before describing the map as precisely georeferenced. The smallest supported improvement is to retain the coordinate uncertainty/elevation caveats beside the visible marker, as this build does. Do not infer a precise drill coordinate or use the contact scenario as operational guidance.

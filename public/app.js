@@ -18,12 +18,31 @@ const params = new URLSearchParams(location.search);
 document.body.dataset.layout = params.get("design") === "field-plate" ? "b" : "a";
 $(".assumptions-link").addEventListener("click", () => { $("#data-assumptions").open = true; });
 
-fetch("/data/jezero-demo.json").then((response) => {
+fetch("/data/bright-angel-demo.json").then((response) => {
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
 }).then((loaded) => {
   data = loaded;
   datumM = TerrainGeometry.medianValidElevation(data.arrays);
+  $("#area-title").textContent = data.area;
+  $(".intro .eyebrow").textContent = "Jezero · Bright Angel / Neretva Vallis";
+  $("#mission-summary").textContent = data.mission_summary;
+  $("#science-target").textContent = `${data.sample_site.label} · ${data.sample_site.feature} · ${data.sample_site.region} · Sol ${data.sample_site.sol}`;
+  $("#target-coordinate").textContent = `${data.sample_site.latitude_north_deg.toFixed(5)}°N, ${data.sample_site.longitude_east_deg.toFixed(5)}°E`;
+  $("#target-cell-note").textContent = `Marker is on the nearest valid ${Math.round(data.raster.pixel_size_m[0])} m cell; the source report gives no location accuracy.`;
+  $("#position-source").href = data.sample_site.position_source_url;
+  $("#position-source").textContent = "PDS sample report ↗";
+  $("#ctx-product-id").textContent = data.product.item_id;
+  $("#ctx-dtm-link").href = data.product.asset_urls.dtm;
+  $("#ctx-ortho-link").href = data.product.asset_urls.ortho;
+  $("#ctx-ray-link").href = data.product.asset_urls.intersection_error;
+  $("#ctx-product-credit").textContent = `${data.product.ctx_inputs.join(" + ")} · MRO/CTX, NASA/USGS · ${data.product.license} · DOI 10.5066/P9JKVWR3`;
+  const placeLabels = { prep: data.scenario_markers.start.label, A: data.scenario_markers.A.label, B: data.scenario_markers.B.label };
+  const focusButtons = new Map($$("[data-focus-place]").map((button) => [button.dataset.focusPlace, button]));
+  for (const [placeId, label] of Object.entries(placeLabels)) focusButtons.get(placeId).textContent = `${placeId === "prep" ? "S" : placeId} · ${label}`;
+  const overlay = $(".scene-overlay-label").children;
+  ["prep", "A", "B"].forEach((placeId, index) => { overlay[index].textContent = `${index === 0 ? "S" : placeId} · ${placeLabels[placeId]}`; });
+  canvas.setAttribute("aria-label", `MRO CTX terrain around Bright Angel with an illustrative route to documented sample site ${data.sample_site.label}`);
   loading.hidden = true;
   const [px, , x0, , py, y0] = data.raster.transform;
   const marsRadiusM = 3396190;
@@ -96,7 +115,9 @@ function cellColor(row, col) {
     return `rgb(${low.map((value, axis) => Math.round(value + (high[axis] - value) * fraction)).join(",")})`;
   }
   const elevation = data.arrays.elevation_m_rounded[index];
-  const fraction = Math.max(0, Math.min(1, (elevation + 2616) / 101));
+  const min = data.raster.elevation_min_m_source;
+  const max = data.raster.elevation_max_m_source;
+  const fraction = Math.max(0, Math.min(1, (elevation - min) / Math.max(1, max - min)));
   const stops = [[29, 48, 43], [77, 103, 67], [161, 157, 99], [218, 195, 145]];
   const position = fraction * (stops.length - 1);
   const stop = Math.min(stops.length - 2, Math.floor(position));
@@ -210,8 +231,8 @@ function sourceLabels(result) {
 
 function updatePlan() {
   if (!data) return;
-  scenario = CleanApproachScenario.build(state.plan);
-  state.eventIndex = scenario.events.length - 1;
+  scenario = CleanApproachScenario.build(state.plan, data);
+  state.eventIndex = Math.min(state.eventIndex, scenario.events.length - 1);
   finalReplay = ContactHistoryModel.replay(scenario);
   $$("[data-plan]").forEach((button) => {
     const selected = button.dataset.plan === state.plan;
@@ -228,7 +249,7 @@ function updatePlan() {
 }
 
 function renderPlanComparison() {
-  const results = CleanApproachScenario.PLANS.map((plan) => ({ plan, result: ContactHistoryModel.replay(CleanApproachScenario.build(plan.id)) }));
+  const results = CleanApproachScenario.PLANS.map((plan) => ({ plan, result: ContactHistoryModel.replay(CleanApproachScenario.build(plan.id, data)) }));
   const currentIndex = results.findIndex(({ plan }) => plan.id === state.plan);
   const current = results[currentIndex];
   const prior = results[Math.max(0, currentIndex - 1)];

@@ -30,7 +30,7 @@ Open the same app with `/?design=terrain` (default) or `/?design=field-plate`. B
 
 ## Terrain geometry and data checks
 
-The checked-in demo derivative is a 148 × 148 crop in Mars 2015 ocentric equirectangular projected coordinates, with east/north axes in metres. Pixel spacing is 20.162955 m in both directions, so the footprint is approximately 2.984 km on each side. Raster columns advance east and rows advance south; the renderer reverses row direction in its north-up projected view. The orthophoto and DTM share the grid and valid-data mask.
+The checked-in Bright Angel demo derivative is a 175 × 147 crop in Mars 2015 ocentric equirectangular projected coordinates, with east/north axes in metres. Pixel spacing is 20.399228 m in both directions. Raster columns advance east and rows advance south; the renderer reverses row direction in its north-up projected view. The orthophoto, DTM and ASP ray-separation diagnostic share the grid and valid-data mask. The PDS sample-report coordinate is a nominal point placement; its datum and horizontal accuracy are unspecified.
 
 Observed DTM heights range from −2615.689 m to −2515.562 m relative to the areoid (about 100.127 m relief). Of 21,904 cells, 295 (1.35%) are NoData. The mesh renderer skips every quad touching a masked corner and does not fill or interpolate missing cells. Raster neighbour differences reach 4.614 m east/west and 3.507 m north/south over a 20.163 m step; these are local sampled slopes, not evidence of large raster spikes.
 

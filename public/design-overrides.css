@@ -136,6 +136,11 @@ body[data-layout="b"] .pathway-model{border-color:#aeb5b0}body[data-layout="b"] 
 body[data-layout="b"] .history-intro,body[data-layout="b"] .plan-option small,body[data-layout="b"] .event-position,body[data-layout="b"] .event-location,body[data-layout="b"] .object-state-notes,body[data-layout="b"] .contact-assumptions,body[data-layout="b"] .empty-history,body[data-layout="b"] .history-state,body[data-layout="b"] .history-paths ol,body[data-layout="b"] .history-paths small{color:#4e5955}
 body[data-layout="b"] .plan-option{color:#202726;border-color:#9ca6a1}body[data-layout="b"] .plan-option:hover{background:#dbdeda}body[data-layout="b"] .plan-option.is-selected{background:#d4d9d5;border-color:#4f625a;box-shadow:inset 2px 0 #835c3b}
 body[data-layout="b"] .event-section,body[data-layout="b"] .sample-history{border-color:#aeb5b0}body[data-layout="b"] .event-section h3,body[data-layout="b"] .sample-history h3,body[data-layout="b"] .current-event h4,body[data-layout="b"] .timeline-item,body[data-layout="b"] .trace-link{color:#25302c}
+
+.geo-context{margin:12px 0 0;padding:9px 0 0;border-top:1px solid rgba(221,226,222,.32);color:#d4dbd7;font:13px/1.45 var(--sans)}
+.geo-context p{margin:0 0 6px}.geo-context b{color:#f0f1ec;font-weight:600}.geo-context a{color:#e8c49f;text-underline-offset:2px}
+#ctx-product-links a{color:#e1c09e;text-decoration:underline;text-underline-offset:3px;font:13px/1.5 var(--sans)}
+body[data-layout="b"] .geo-context{border-color:#c3cac5;color:#4b5752}body[data-layout="b"] .geo-context b{color:#25302c}
 body[data-layout="b"] .event-timeline,body[data-layout="b"] .timeline-item{border-color:#c1c6c2}body[data-layout="b"] .timeline-item[aria-current="true"]{background:#d4d9d5;box-shadow:inset 2px 0 #835c3b}body[data-layout="b"] .timeline-number{color:#76553b}
 body[data-layout="b"] .current-event{background:#dce2df;border-color:#617d78}body[data-layout="b"] .source-chip{color:#68452d;border-color:#9b7a60}body[data-layout="b"] .source-chip-native{color:#35554d;border-color:#718c84}
 body[data-layout="b"] .contact-assumptions li,body[data-layout="b"] .history-paths>li{border-color:#c1c6c2}body[data-layout="b"] .history-paths>li>b{color:#68452d}body[data-layout="b"] .place-controls{border-color:#c1c6c2}body[data-layout="b"] .place-controls button{color:#38453f}body[data-layout="b"] .map-path-key{color:#4e5955}

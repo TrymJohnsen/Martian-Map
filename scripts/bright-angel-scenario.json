@@ -1,0 +1,37 @@
+{
+  "area": "Bright Angel · Neretva Vallis · Jezero",
+  "mission_summary": "An astronaut samples hypothetical site A before visiting the documented Sapphire Canyon site B. Material from A is a scenario input, so the comparison asks whether its handling history could matter when interpreting B; no geology is claimed for A.",
+  "sample_site": {
+    "id": "M2020-1215-28",
+    "label": "Sapphire Canyon · Sample 25",
+    "feature": "Cheyava Falls",
+    "region": "Bright Angel",
+    "sol": 1215,
+    "date": "2024-07-21",
+    "type": "Sedimentary rock core; 6.2 cm",
+    "science_interest": "A sedimentary core collected from a rock where Perseverance detected organic compounds and mineral patterns discussed as potential biosignatures. This is not evidence that life was detected.",
+    "longitude_east_deg": 77.30514915,
+    "latitude_north_deg": 18.49747434,
+    "elevation_m": -2354.235808,
+    "position_source": "PDS Mars 2020 Sample Dossier, Initial Report M2020-1215-28 Sapphire Canyon, page 120; coordinate associated with the sample report (not a later rover waypoint).",
+    "position_source_url": "https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_sample_dossier/initial_reports/initial_reports_volume4.pdf#page=120",
+    "position_accuracy_note": "The report prints latitude north and longitude east to eight decimal places but states no horizontal uncertainty or positional accuracy. Decimal digits are not an accuracy claim. The displayed marker is snapped to the nearest valid CTX cell center.",
+    "coordinate_system_note": "Map conversion uses the CTX product's Mars 2015 sphere / ocentric, east-positive longitude CRS (IAU 49900 geographic; IAU 49910 projected). The PDS sample-report page itself does not identify its coordinate datum or accuracy; this tie is therefore nominal.",
+    "site_basis": "Sampling-site coordinate attached to the named sample report; not the June 2024 rover position."
+  },
+  "scenario_markers": {
+    "start": {
+      "kind": "illustrative_scenario",
+      "label": "Traverse start · illustrative",
+      "row": 140,
+      "col": 5
+    },
+    "A": {
+      "kind": "illustrative_scenario",
+      "label": "Site A · hypothetical sample",
+      "row": 88,
+      "col": 52,
+      "note": "Chosen on valid terrain cells in this crop. No Perseverance observation, named outcrop, mineral finding, or precise field coordinate is assigned to A."
+    }
+  }
+}

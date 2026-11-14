@@ -2,9 +2,9 @@
 
 ## Purpose and boundary
 
-The model records possible contact provenance for two illustrative work sites on the current Jezero MRO/CTX crop. It answers: **under the listed scenario assumptions, which named source nodes have a directed contact path to sample B, and which events created each link?** It does not simulate material movement or determine whether a contact actually transfers anything.
+The model records possible contact provenance for a hypothetical earlier sample site A and a sample at Perseverance's documented Sapphire Canyon site B. It answers: **under the listed scenario assumptions, which named source nodes have a directed contact path to sample B, and which events created each link?** It does not simulate material movement or determine whether a contact actually transfers anything.
 
-The map markers A and B are scenario positions selected on the available raster. Neither is a rover position, a named Perseverance sample, nor a verified geological target. Perseverance's Bright Angel / Cheyava Falls / Sapphire Canyon record motivates the organic-analysis context, but its sample site has not been georeferenced onto this CTX crop. MRO/CTX is the only mapped mission dataset; Mars 2020 contributes sample/science context only.
+The B marker is derived from the latitude/longitude in the PDS sample dossier for `M2020-1215-28 Sapphire Canyon`, then placed on the nearest valid cell of a CTX crop that covers the coordinate. The report gives no horizontal accuracy or coordinate datum, so this is a nominal map tie; the marker is not drill-hole precision. The CTX target-cell elevation also differs from the dossier's listed elevation by about 29.8 m; we do not treat the elevations as a precise vertical match. A and the traverse start remain illustrative. MRO/CTX supplies terrain; Mars 2020/Perseverance supplies an actual sample/science target coordinate and context.
 
 ## Implemented records
 
@@ -29,7 +29,7 @@ Every plan visits the same mapped places in the same order, start → A → B, w
 
 | Plan | Event difference at B | Calculated source groups in B's history |
 |---|---|---|
-| **A · Same tool** | T1 used at A and B; G1 also contacts T1 at both activities. | Possible human-associated material; possible material originating at A; B's own sample origin. A's material reaches B along A surface → T1 → B. |
+| **A · Same tool** | T1 used at A and B; G1 also contacts T1 at both activities. | Possible human-associated material; possible material associated with hypothetical sample A; B's own sample origin. A's material reaches B along A surface → T1 → B. |
 | **B · Separate tool** | T2 used at B, and the explicit G1 → T2 contact remains. | The same three groups. Possible human-associated and A-origin material reach T2 through G1. A separate tool by itself leaves the modeled glove connections. |
 | **C · Omit one contact** | T2 used at B; only the G1 → T2 contact is omitted. | B's own sample origin remains. The human-associated and A-origin paths to B are absent in this graph. The result follows from the omitted edge, not from a general isolation state. |
 
@@ -47,7 +47,7 @@ The activity route is geographic context; it does not create contact links. It i
 
 Camera zoom is applied after those coordinates are formed. At 1×, horizontal and vertical world units are metres at equal scale. The camera's yaw/pitch can foreshorten screen distances; this is perspective, not a different data unit. NoData cells stay absent: terrain quads touching a missing corner are skipped, and profile samples with missing elevation break the line rather than joining around the gap. Raster dimensions and width come from the JSON metadata.
 
-The 148×148 display derivative has 20.162955 m spacing, DTM heights −2615.689 to −2515.562 m relative to the areoid, and 295 NoData cells (1.35%). The local median is a rendering origin only; it does not change stored heights or the stated areoid reference. Optional 3× exaggeration multiplies only the vertical coordinate and is labelled.
+The 175×147 display derivative has 20.399228 m spacing, DTM heights −2376.467 to −1841.575 m relative to the areoid, and 921 NoData cells (3.58%). The PDS sample coordinate maps to cell `(row 66, col 73)`; its transformed coordinate is 6.67 m from the cell centre and the cell is valid. The local median is a rendering origin only; it does not change stored heights or the stated areoid reference. Optional 3× exaggeration multiplies only the vertical coordinate and is labelled.
 
 ## Verification and limits
 
@@ -61,9 +61,9 @@ The tests cover A-origin reachability through shared T1; the remaining glove pat
 
 ## Scientific limits
 
-- The possible human-associated source, target-associated availability and all future crew contacts are illustrative scenario inputs, not observations on Mars.
+- The possible human-associated source, the possible material at hypothetical A and all future crew contacts are illustrative scenario inputs, not observations on Mars.
 - A graph path means possible connectivity under the stated assumptions; it is not a measured transfer, contamination rate, probability, risk score, viable organism, or biological-establishment claim.
-- The actual Perseverance Sapphire Canyon core is from Bright Angel, outside the verified footprint of the present lander-area crop. It is not the map's B marker.
+- The sample-report coordinate for Sapphire Canyon is located in the CTX raster, but the report's coordinate accuracy/datum is unspecified and target-cell elevation does not match the report elevation. The ~20.4 m posting cannot resolve the drill hole or establish exact sub-cell alignment.
 - The route is straight-line map geometry at CTX posting. It does not indicate traversability, mobility, risk, or mitigation efficacy.
 - The profile uses rounded display elevations and retains NoData gaps; it is secondary context, not a precision navigation product.
 

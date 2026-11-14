@@ -1,24 +1,24 @@
 # Demo data contract
 
-The frontend consumes `public/data/jezero-demo.json`, generated from the ignored raw crops by `scripts/build_demo_data.py`. The checked-in file is a small display derivative; original GeoTIFFs, item metadata and full-resolution sources remain under ignored `data/raw/` or their cited NASA/USGS source URLs.
+The frontend consumes `public/data/bright-angel-demo.json`, generated from ignored raw crops by `scripts/build_demo_data.py`. The checked-in file is a small display derivative; original GeoTIFFs, item metadata and full-resolution sources remain under ignored `data/raw/` or their cited NASA/USGS source URLs.
 
 ## Shape and coordinate convention
 
 - Grid dimensions are `width` × `height`; arrays are row-major (`index = row * width + col`).
 - `transform` uses the first six GDAL affine terms `[a,b,c,d,e,f]`: `x=a*col+b*row+c`, `y=d*col+e*row+f`.
 - Coordinates are in the product CRS, Mars 2015 sphere / ocentric / equirectangular (IAU:49910), metres. `x` increases east and `y` increases north; raster rows increase south because `e` is negative.
-- This is a local display grid, not an operational navigation frame. Scenario markers use `{row,col}` and are manually chosen.
+- This is a local display grid, not an operational navigation frame. The B marker is converted from the PDS sample-report coordinate to the nearest valid grid cell; its source does not state accuracy or coordinate datum. S and A use manually selected valid cells and are illustrative.
 
 ## Arrays
 
 - `elevation_m_rounded`: integers rounded to the nearest metre for the display asset; null mask is represented by `valid_mask=0`. Source heights are metres relative to the areoid; the approximate 3–5 m typical vertical precision means the integer encoding is a compact display choice, not added precision.
 - `ortho_gray8_display_only`: 0–255 linear stretch of the actual one-band ortho values between the valid source minimum and maximum. The source product metadata in this sample does not identify band units; never label these bytes reflectance or calibrated radiance.
-- `intersection_error_cm`: scalar ASP camera-ray separation encoded as centimetres for compact rendering (actual product values were 0.0232–4.3329 m). This is a relative stereo diagnostic, not DTM accuracy or uncertainty.
-- `valid_mask`: 1 when all three source assets have a value, 0 for NoData. The source rasters had the same mask: 295/21,904 cells (1.35%). Rendering must omit triangles with any invalid vertex; do not substitute zero elevation.
+- `intersection_error_cm`: scalar ASP camera-ray separation encoded as centimetres for compact rendering (selected product values are 0.0229–8.5508 m). This is a relative stereo diagnostic, not DTM accuracy or uncertainty.
+- `valid_mask`: 1 when all three source assets have a value, 0 for NoData. The source rasters had the same mask: 921/25,725 cells (3.58%). Rendering must omit triangles with any invalid vertex; do not substitute zero elevation.
 
 ## Provenance and assumptions
 
-`product` includes collection, item ID, CTX source observation IDs/times, direct source URLs and credits. `target_marker`, `start_marker`, and `survey_marker` have `kind="illustrative_scenario"`; they are not observed samples or recommended EVA locations. The route footprint radius, sequence, waypoints and any contact interpretation are scenario values. Route distance and elevation changes are derived from the raster at grid scale; no mobility or contamination model is implied.
+`product` includes collection, exact item ID, CTX input IDs, license, source COG URLs and credit. `sample_site` contains the PDS sample dossier's latitude north, longitude east, elevation and source/accuracy note; the reported coordinates are converted with the product's Mars ocentric CRS and placed at the nearest cell center. The PDS report does not identify a coordinate datum or horizontal uncertainty. Its elevation and the target-cell DTM value differ by about 29.8 m and are not asserted to be vertically co-registered precisely. `scenario_markers.start` and `.A` remain explicitly illustrative. Route waypoints and contact interpretations are scenario values. Route distance and elevation values derive from the raster at grid scale; no mobility or contamination model is implied.
 
 Never:
 
@@ -30,7 +30,7 @@ Never:
 
 ## Activity-history scenario contract
 
-`public/scenario.js` supplies the event-history model with a fresh, deterministic scenario for the selected plan. All positions below are raster `row`/`col` coordinates, not longitude/latitude. Current app places are explicitly illustrative and do not assert a Perseverance observation or sample location.
+`public/scenario.js` supplies the event-history model with a fresh, deterministic scenario for the selected plan. Its B place uses the documented sample-report coordinate snapped to a valid raster cell; its A and start places remain illustrative raster `row`/`col` positions. B is a mapped sample-site reference, not a claim that the CTX image resolves the drill hole.
 
 - `places`: stable ID, label, `row`, `col`, and scenario/evidence kind.
 - `sources`: stable ID, label and kind. Current distinct kinds include possible human-associated material, possible material originating at A, and B's own sample origin.

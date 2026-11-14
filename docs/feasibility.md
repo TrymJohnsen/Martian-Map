@@ -2,15 +2,15 @@
 
 ## Question and data boundary
 
-The prototype explores provenance for a hypothetical Jezero sedimentary sample intended for later organic-molecule / potential-biosignature analysis. Perseverance's Bright Angel / Cheyava Falls / Sapphire Canyon record motivates the science question; its sample location is not co-registered to the current CTX crop. The route's start and A/B activity positions are illustrative, not observed rover positions or identified targets. The exact crop extent and mission-data status are in [docs/data-sources.md](data-sources.md).
+The prototype places the PDS-reported Sapphire Canyon / Cheyava Falls sample site in a valid cell of a local MRO/CTX crop at Bright Angel. The report gives latitude north and longitude east but no horizontal accuracy or datum; the point is a nominal cell-level map tie. Site A and the traverse start are illustrative. The crop, marker offset, coordinate conversion and product status are documented in [docs/data-sources.md](data-sources.md).
 
-Only MRO/CTX contributes mapped raster data. Mars 2020/Perseverance contributes sample/science context and a separately documented robotic sampling-control precedent. The prototype does not yet deliver a co-located multi-mission map.
+MRO/CTX supplies terrain and the orthorectified surface image. Mars 2020/Perseverance supplies the scientific sample target and its sample-report coordinate, not an additional raster. A is an explicitly hypothetical earlier sample site; its possible source is part of the scenario, with no geological finding assigned to it. The geographic contribution is now meaningful target context plus route placement, although it does not affect contamination calculations.
 
 ## Mechanism decision
 
 Direct contact is the bounded mechanism: a possible human-associated source may reach a sample through assumed glove/tool/surface contacts. Earth suit and analog evidence, plus rover sample-chain controls, motivate the question but provide no human Mars EVA glove-to-sample transfer measurement. The implementation is a deterministic qualitative event graph, not a physical contamination model.
 
-It compares three plans over the same S→A→B route. A uses T1 at both places; B uses separate T2 at B but retains G1→T2; C uses T2 and omits that one assumed contact. Under the current event assumptions, A and B keep human-associated and A-origin paths to sample B; C removes those paths, with B's own material origin still recorded. This does not rank operational plans or validate the omitted contact as a control. The result is fully determined by the event links.
+It compares three plans over the same S→A→B route. A uses T1 at both places; B uses separate T2 at B but retains G1→T2; C asks “What if this contact could be avoided?” and omits only that assumed link. No cited evidence validates this as an EVA action, so C remains counterfactual. Under the current event assumptions, A and B keep human-associated and A-origin paths to sample B; C removes those paths, with B's own geological origin still recorded. This does not rank operational plans or validate the omitted contact as a control. The result follows from the event links.
 
 Airborne release and deposition remain excluded. MEDA Sol 36 is a real historical wind point series near the landing site, but it is not a local wind field at Bright Angel and supplies no human-source release or sample-deposition measurement. It remains a background figure only; no wind enters the event model. See [the wind feasibility evidence](data-sources.md#meda-wind-feasibility-sample).
 
