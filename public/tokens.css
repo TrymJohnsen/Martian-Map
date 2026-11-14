@@ -1,0 +1,84 @@
+/* Clean Approach design tokens and base styles.
+ * Ported from the "Clean Approach · redesign" canvas (artboard 10, Design system · tokens).
+ * Dark theme first. Every colour that carries meaning also has a shape, a pattern or a word.
+ * Text pairs meet WCAG AA on the card surface (--s1): --tx 14.8:1, --tx2 9.5:1, --tx3 7.0:1.
+ * Floors: body text 14px, labels 12px. Measure at most 62ch. */
+.ca {
+  /* Surfaces and lines */
+  --bg: #111516;        /* page */
+  --s1: #171c1e;        /* cards */
+  --s2: #1e2528;        /* active step, rows */
+  --s3: #283236;        /* chips, selected */
+  --line: #34424a;      /* dividers */
+  --line2: #56666f;     /* control borders */
+  /* Text and focus. Emphasis is light-on-dark, so no hue competes with the source groups. */
+  --tx: #EAEFEF;
+  --tx2: #B7C3C6;
+  --tx3: #9AA8AC;
+  --disabled: #8a989c;  /* 5.2:1 on --s2 */
+  --hi: #FFFFFF;        /* hover on the primary button, map highlight */
+  --focus: #FFFFFF;     /* 3px ring, 2px offset, never removed */
+  --ink: #111516;       /* text on light fills */
+  /* Source groups: colour + shape + name */
+  --human: #E4AB7A;     /* circle */
+  --a: #7CCBC9;         /* diamond */
+  --equip: #B9A8EE;     /* triangle */
+  --bown: #A8CF98;      /* square in a ring: the sample itself, not an outside source */
+  /* Evidence kinds: Observed solid, Derived outlined, Scenario dashed */
+  --obs: #8CB7EA;
+  --obs-ink: #0b1622;
+  --der-tx: #C9DDF4;
+  --scn: #E0D6BF;
+  /* Warnings only. Amber never marks a result. */
+  --warn-bg: #2a2516;
+  --warn-line: #8f7a33;
+  --warn-tx: #F2DFA4;
+  /* Map chrome */
+  --map-bg: #0c0f10;
+  --overlay: rgba(12, 15, 16, .92);
+  --hatch: rgba(234, 239, 239, .55);   /* unknown terrain (NoData), reserved for the map layer */
+  /* Marker colours the terrain canvas draws today (map.js). The map workstream replaces them
+   * with the Scenario/Observed marker shapes; the legend uses these so it matches the canvas. */
+  --map-s: #b7e28b;
+  --map-a: #8fc7c4;
+  --map-route: #e2b082;
+  /* Shape, type and layout */
+  --r: 8px;
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --hdr-h: 56px;
+  --ftr-h: 40px;
+  --gap: 16px;
+
+  background: var(--bg);
+  color: var(--tx);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+}
+html { background: #111516; }
+body.ca { margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+:where(.ca) *, :where(.ca) *::before, :where(.ca) *::after { box-sizing: border-box; }
+:where(.ca) h1, :where(.ca) h2, :where(.ca) h3, :where(.ca) h4, :where(.ca) p, :where(.ca) ul, :where(.ca) ol, :where(.ca) dl, :where(.ca) dd, :where(.ca) figure { margin: 0; padding: 0; }
+:where(.ca) ul, :where(.ca) ol { list-style: none; }
+:where(.ca) fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+:where(.ca) legend { padding: 0; }
+:where(.ca) button, :where(.ca) input { font: inherit; color: inherit; margin: 0; }
+:where(.ca) button { cursor: pointer; background: none; border: 0; padding: 0; text-align: inherit; }
+:where(.ca) a { color: var(--tx); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+:where(.ca) a:hover, :where(.ca) a.is-hover { text-decoration-thickness: 2px; }
+:where(.ca) :focus { outline: none; }
+.ca :focus-visible, .ca .is-focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+:where(.ca) * { transition: background-color .12s, border-color .12s, color .12s; }
+@media (prefers-reduced-motion: reduce) { .ca * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+.ca [hidden] { display: none !important; }
+
+/* Type scale: Display 40/46 · H2 22/29 · Step title 19/25 · H3 16/22 · Body 15/23 · Small 14/21 · Meta 13/18 · Label 12/16 caps */
+.mono { font-family: var(--font-mono); }
+.lbl { font-size: 12px; line-height: 16px; letter-spacing: .07em; text-transform: uppercase; font-weight: 600; color: var(--tx3); }
+.muted { color: var(--tx2); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.h1 { font-size: 40px; line-height: 1.15; font-weight: 600; letter-spacing: -.01em; }
+.h2 { font-size: 22px; line-height: 1.3; font-weight: 600; }
+.h3 { font-size: 16px; line-height: 1.35; font-weight: 600; }
+.body { font-size: 15px; line-height: 1.55; max-width: 62ch; }

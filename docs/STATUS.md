@@ -1,18 +1,36 @@
 # Current status — Clean Approach
 
+## Simplified interface with the merged map layers (2026-11-14, latest)
+
+`origin/main` (terrain layers, slope, work zones) is merged into this branch and the page was simplified. The map card now has five layer switches (Image, Elevation, Slope, Steep ground, Work zone), one slope threshold and one route line; the work zone is drawn as a dashed ring and steep ground in amber. In the checklist each step shows its instruction and choice, with the reason and the precedent behind "Why, and where this comes from". The result is one sentence and three source rows. Assumptions are three switches; their explanations remain for screen readers. Example plans show the table first and all events behind a disclosure.
+
+Removed from the interface on purpose: the wind and radiation context cards from the map branch (no dataset for Bright Angel; `loadContext` in `map.js` is no longer called), the long layer legends, the evidence-label key, the explanation notes, "Created at" links, and most of the Data page. Sections below that describe those parts are older. `scripts/check_map_browser.cjs` from the map branch targets the earlier page structure and was not updated. Checked in Edge: 50 behaviour checks, no console errors, no horizontal overflow at 1440, 820 and 390 px; `node --test tests/*.cjs` passes 43 tests.
+
 ## Demonstration
 
-The prototype now uses one persistent terrain map through three steps: **Mission**, **Plan**, and **Sample history**. Mission distinguishes the PDS-derived nominal Sapphire Canyon target B from hypothetical work site A and gives a short science context. Plan compares T1 reuse with separate T2 use while showing Glove G1 at both activities. Sample history switches between plans and displays paths calculated by the same ordered-event model.
+The app follows the "Clean Approach · redesign" canvas and has four views behind one header:
 
-When the separate-tool model contains the path, the interface says **Different tool. Shared glove history.** It labels the result as possible contact history, not measured contamination. Plan C remains a counterfactual that omits only modeled G1 → T2 at B. The three-step walkthrough has Stop, Restart and manual previous/next controls and uses the live scenario.
+- **Mission intro** (entry page): the question, the primary action **Open the mission checklist**, why Sapphire Canyon matters, the three places with their evidence labels, and the terrain map.
+- **Checklist**: eight steps from the start to sealing. One step is open at a time; four steps carry a choice (glove change, witness tube, sampler, seal check). The map and **What connects to Sample B** stay visible beside the steps, and three assumptions can be switched in the side column next to a "Not a result" status card and the "Not modeled" list. After every change the scenario is rebuilt and replayed.
+- **Example plans**: the three prepared sequences compared in a table, an event timeline for all nine events of each plan, and a walkthrough with Previous, Next, Walk me through it, Stop and Restart.
+- **Data & assumptions**: what is Observed, Derived or Scenario, the coordinate caveats, the cells with no data, the route profile, sources and credits.
 
-- [Mission · 1440×900](../output/playwright/clean-approach-step-1-mission-1440x900.png)
-- [Plan · 1440×900](../output/playwright/clean-approach-step-2-plan-1440x900.png)
-- [Sample history · 1440×900](../output/playwright/clean-approach-step-3-history-1440x900.png)
+With the default choices the human-associated path remains (G2 → tongs → Sample B), because G2 is assumed to carry it. That is intended: the model gives no step the power to protect a sample. A note in the result explains this and links to the assumption.
+
+Screenshots: [intro](../output/playwright/redesign-intro-1440.png) · [checklist](../output/playwright/redesign-checklist-1440.png) · [example plans](../output/playwright/redesign-examples-1440.png) · [data](../output/playwright/redesign-data-1440.png) · tablet [intro](../output/playwright/redesign-intro-820.png), [checklist](../output/playwright/redesign-checklist-820.png) · phone [intro](../output/playwright/redesign-intro-390.png), [checklist](../output/playwright/redesign-checklist-390.png)
+
+## Open points
+
+- **Map markers are not redesigned.** `map.js` was left untouched for the map workstream. The canvas still draws round coloured markers, labels the boundary place with its ID ("zone-B", overlapping "B"), and draws no work-zone ring or step highlight. The legend describes what is drawn today, using the tokens `--map-s`, `--map-a` and `--map-route`.
+- **Phone result.** The design opens the result as a bottom sheet. Here the bottom bar shows the four source groups and "Details" moves to the full result further down the page.
+- **Copy to review.** The two explanation notes in the result, the example-plan intro sentence, and the Data & assumptions notes were written during the build.
+- **Fonts** load from Google Fonts; offline the page falls back to system fonts.
+- `README.md` and `AGENTS.md` still describe the three-step flow and the earlier test command. `public/styles.css` and `public/design-overrides.css` are no longer linked and can be removed once the map branch is merged.
+- The earlier screenshots under `output/playwright/` (`clean-approach-step-*`, `bright-angel-*`, `plan-*`, `proposal-*`) show superseded layouts.
 
 ## Front-end structure
 
-The browser code is split by owner: `public/map.js` (terrain map, layers, route/markers, profile), `public/panel.js` (Mission / Plan / Sample history, event timeline, walkthrough) and a small `public/app.js` (data loading, shared source text). They communicate through `window.CleanApproach` and three events; empty mount points `#layer-panel`, `#context-cards` and `#mission-panel` are ready for new work. See [the module contract](data-contract.md#module-and-event-contract) and [decisions](decisions.md). The user-visible app is unchanged by the split.
+`public/tokens.css` and `public/components.css` hold the design system. `public/panel.js` owns the views, the checklist and the example plans; `public/map.js` owns the terrain canvas inside the shared map card; `public/app.js` loads the data and starts both. They communicate through `window.CleanApproach` and three events. See [the module contract and markup hooks](data-contract.md#module-and-event-contract) and [decisions](decisions.md).
 
 ## Data limits
 
@@ -23,19 +41,19 @@ The browser code is split by owner: `public/map.js` (terrain map, layers, route/
 
 ## Verification
 
-On 2026-11-14, Playwright/Chromium at 1440×900 verified keyboard access to all three steps, tool selection, back navigation with plan retained, plan comparison without stale paths, Plan C's modeled omission, and opening/closing Data & assumptions without losing the active step. The separate-tool result included Glove G1 → Tool T2 → Sample B. The walkthrough start/stop, manual next and restart were exercised. The map, selected markers and computed result were visible together in the history view. Browser console had no errors or warnings after the app loaded.
-
 ```bash
 node --check public/app.js
 node --check public/map.js
 node --check public/panel.js
+node --check public/mission.js
 node --check public/scenario.js
-node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs
+node --check public/contact-model.js
+node --test tests/contact-model.test.cjs tests/terrain-geometry.test.cjs tests/mission-model.test.cjs tests/mission-steps.test.cjs
 .venv/bin/python tests/test_geospatial_export.py
 git diff --check
 ```
 
-On 2026-11-14 the module split was checked in Edge (headless, 1440×900) before and after: 35 states covering all three steps, plan changes, event stepping, trace links, Plan C, canvas marker clicks, drag, zoom, layers, height scale, reset, walkthrough start/stop/auto-advance/manual, the assumptions panel and 820 px and 390 px widths produced identical text, map pixels and screenshots, with no console errors.
+On 2026-11-14 the redesigned app was checked in Edge (headless): 52 checks, no console errors or warnings. They covered the intro as entry with one primary action above the fold; every choice and assumption with the expected source groups, chains and "Created at" links; focus kept on the control just used and moved to the step title when a step opens; the work-zone warning and its link; the explanation note and its hidden state; `mission:step` and `scenario:change` including the `zone-B` place; the example-plan table matching the model; the walkthrough advancing, stopping and stepping manually; opening a plan in the checklist; deep links; the skip link first in the tab order and every control named; no text under 12 px; and no horizontal overflow in any view at 1440, 820 and 390 px. `node --test` passes 36 tests. Token contrast was calculated for 22 text and background pairs; the lowest is 5.2:1 (disabled text). The Python geospatial test was not rerun; no Python or data file changed.
 
 The agreed future video idea remains **“LIFE DETECTED. … It’s you.”** and closes with **“Find Mars. Not ourselves.”** Video production is not included.
 

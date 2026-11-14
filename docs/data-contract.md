@@ -38,8 +38,10 @@ Never:
 - `events`: stable event ID; unique contiguous integer `order` starting at 1; `placeId`; type/action; listed participants; and `contacts`.
 - Each contact has declared `from`/`to` node IDs, explicit `direction` (`forward` or `bidirectional`), and a non-empty assumption. Both directions are represented either by a bidirectional contact or by two separately stated forward links.
 - Event types are `contact`, `seal`, `reopen`, and `document-control`. A seal freezes that sample's current history. A later contact to it requires a preceding explicit reopen. A document-control event records evidence and removes no path.
+- Optional event fields: `integrity` (`"checked"` or `"unchecked"`, on `seal` events only) records whether the sealing surface was examined; `tag` (non-empty string) labels a record such as `photo`, `stow` or `witness-open`. Neither changes an edge.
+- Optional scenario fields: `route`, `zones` and `rules` (see "Scenario fields the map reads" and "Mission scenario interface"). A rule produces warnings only.
 
-The event engine returns each object's current possible source histories plus the ordered edge trace (event ID, place, assumption). Histories are qualitative directed reachability. They contain no transfer quantity, probability, risk score, or physical observation.
+The event engine returns each object's current possible source histories plus the ordered edge trace (event ID, place, assumption). Histories are qualitative directed reachability. They contain no transfer quantity, probability, risk score, or physical observation. It also returns `seals` (`{ [sampleId]: { eventId, order, placeId, integrity } }`), `records` (every document-control event as `{ eventId, order, placeId, tag, participants }`) and `ruleWarnings` (`{ ruleId, zoneId, eventId, order, placeId, objectId }`). These three are status and advice; none adds or removes an edge.
 
 ### Complete minimal example
 
@@ -97,9 +99,10 @@ The front end is a no-build set of classic scripts split by owner, so two people
 | `public/panel.js` | Mission / Plan / Sample history steps, plan selection, event timeline, sample-B paths, walkthrough, mission checklist | `#mission-panel`, everything inside `.step-column`; `public/panel.css` |
 | `public/app.js` | Loads `bright-angel-demo.json`, fills shared source/credit text, starts both modules | none |
 | `scenario.js`, `contact-model.js` | Scenario and replay model (panel side) | none |
+| `mission.js` | Checklist steps, precedents and the "not modeled" list for the mission scenario (panel side) | none |
 | `terrain-geometry.js` | Metre-scale terrain geometry and profile (map side) | none |
 
-Scripts load in this order: model files, `map.js`, `panel.js`, `app.js`. `app.js` calls `map.init` before `panel.init`, so the map's listeners exist before the panel publishes the first scenario.
+Scripts load in this order: model files, `map.js`, `mission.js`, `panel.js`, `app.js`. `app.js` calls `map.init` before `panel.init`, so the map's listeners exist before the panel publishes the first scenario.
 
 ### Shared namespace `window.CleanApproach`
 
@@ -107,22 +110,56 @@ Scripts load in this order: model files, `map.js`, `panel.js`, `app.js`. `app.js
 |---|---|---|
 | `data` | `app.js` | The loaded display derivative. Read-only for every module. |
 | `datumM` | `app.js` | Local elevation datum in metres (median valid elevation), a rendering origin only. |
-| `scenario` | `panel.js` only | The current scenario from `CleanApproachScenario.build`. Replaced on every plan change; do not mutate it from the map. |
+| `scenario` | `panel.js` only | The current scenario: from `CleanApproachScenario.build` while an example plan is shown, from `buildMission` while the mission checklist is open (`scenario.id === "mission"`). Replaced on every plan, choice or assumption change; do not mutate it from the map. |
 | `map`, `panel` | each module | `{ init(context) }`. Do not call another module's internals. |
 
 ### Events (dispatched as `CustomEvent` on `window`)
 
 | Event | Sent by | `detail` | Receiver behaviour |
 |---|---|---|---|
-| `scenario:change` | panel | `{ planId }` | `CleanApproach.scenario` is already updated. The map recomputes route length and profile and redraws. |
-| `mission:step` | panel | `{ stepId, placeId }` | Fired whenever the active event or step changes. `stepId` is the scenario event ID (`null` when only a place is focused); `placeId` is a key of `scenario.places`. The map highlights that place and may move an astronaut marker to it. |
-| `map:place` | map | `{ placeId }` | A place marker or map-side place button was chosen. The panel stops the walkthrough and focuses that place, which answers with `mission:step`. |
+| `scenario:change` | panel | `{ planId }` | `CleanApproach.scenario` is already updated. `planId` is an example plan ID, or `"mission"` while the checklist is open. The map recomputes route length and profile and redraws. |
+| `mission:step` | panel | `{ stepId, placeId }` | Fired whenever the active event or step changes. With an example plan, `stepId` is the scenario event ID. With the mission checklist open, `stepId` is the checklist step ID (`kit-check`, `collect-a`, `stow-t1`, `glove-change`, `witness`, `collect-b`, `seal-b`, `log-b`). It is `null` when only a place is focused. `placeId` is always a key of `scenario.places`, including `zone-B` in mission mode. The map highlights that place and may move an astronaut marker to it. |
+| `map:place` | map | `{ placeId }` | A place marker or map-side place button was chosen. The panel stops the walkthrough and focuses that place (with the checklist open: the first checklist step at that place), which answers with `mission:step`. |
 
 ### Scenario fields the map reads
 
 - `places[id]`: `{ label, row, col, kind }`, as in the activity-history contract above. Place IDs are free; `prep`, `A` and `B` exist today.
-- `route` (optional): ordered array of place IDs the map draws as the walking route. Absent uses place insertion order (currently prep, A, B). Add places such as a zone boundary by listing them here.
-- `zones` (optional): array of `{ id, kind, centerPlaceId, radius_m, label, evidence }`. `kind: "work-zone"` with `evidence: "scenario"` is a planning rule chosen by the team, never an observation. A zone changes what the panel warns about; it removes no contact path.
+- `route` (optional): ordered array of place IDs the map draws as the walking route. Absent means `["prep", "A", "B"]`. The mission scenario sets `["prep", "A", "zone-B", "B"]`.
+- `zones` (optional, drawn by the map as a dashed ring): array of `{ id, kind, centerPlaceId, radius_m, placeIds, label, evidence }`. `kind: "work-zone"` with `evidence: "scenario"` is a planning rule chosen by the team, never an observation. `placeIds` lists the scenario places inside the zone. A zone changes what the panel warns about; it removes no contact path. The mission scenario publishes one zone, `work-zone-B`, radius 50 m around B.
+
+### Mission scenario interface
+
+`CleanApproachScenario.buildMission(mapData, choices, assumptions)` returns a scenario with the fields above plus `rules`, `choices` and `assumptions` (the resolved inputs). Omitted keys take the defaults in `CleanApproachScenario.MISSION_DEFAULTS`.
+
+- `choices`: `gloveSwap` (boolean), `sampler` (`"tongs" | "tool-2" | "tool-1" | "hand"`), `sealSurfaceChecked` (boolean), `witnessOpened` (boolean).
+- `assumptions`: `g2CarriesHuman` (default on), `swapContact` (default off), `equipmentSource` (default off). `CleanApproachScenario.ASSUMPTIONS` holds their labels and explanatory text.
+- `rules`: array of `{ id, kind: "keep-out", zoneId, objectIds, label }`.
+- `CleanApproachMission.steps(scenario)` returns the checklist: `{ id, order, placeId, title, instruction, why, precedent: { label, url } | null, kind, eventIds, decision?: { key, legend, options: [{ value, label }] } }`. Every scenario event ID appears in exactly one step. `CleanApproachMission.stepsForPath(steps, path)` maps a source path to the steps that created it. `NOT_MODELED` lists the mechanisms the panel must show as not modeled.
+
+The meaning of each choice, assumption and status is specified in [model.md](model.md#mission-checklist-scenario).
+
+### Mission panel markup hooks
+
+The page has four views, chosen by `body[data-view]` (`intro`, `checklist`, `examples`, `data`) and by the header tabs (`data-view-link`, also reachable as `#intro`, `#checklist`, `#examples`, `#data`). Every block inside `<main class="app">` lists the views it belongs to in `data-v`; the map card is shared by the first three. `panel.js` renders the checklist into `#mission-panel` (steps), `#mission-result`, `#mission-side` and `#mission-bar` (the compact result below desktop width), and the example plans into `#examples-main` and `#examples-walk`. On a view change it dispatches a window `resize` so `map.js` re-measures its canvas. The mission scenario is published in the intro, checklist and data views; an example plan in the examples view.
+
+The visual language is the design system in `public/tokens.css` (custom properties, base, type scale) and `public/components.css` (components and app layout), ported from the "Clean Approach · redesign" canvas. Add a token or a named component there before using a new value. `map.js` still finds its controls by the same IDs as before (`#terrain`, `[data-layer]`, `#reset-camera`, `#vertical-scale`, `#north-arrow`, `.scene-overlay-label`, `#layer-note`, `#profile`, `#route-distance`, `#profile-range`).
+
+Styling and layout may change freely; the behaviour depends only on these hooks, so keep them when the markup is changed:
+
+| Hook | On | Used for |
+|---|---|---|
+| `data-mission-enter`, `data-mission-exit`, `data-mission-reset` | buttons | Open the checklist view, go back to the example plans, reset choices and assumptions. |
+| `data-view-link="<view>"` | links and buttons | Switch view. |
+| `data-assumption-link="<id>"` | buttons | Move focus to that assumption switch. |
+| `data-action` (`plan`, `event`, `prev`, `next`, `walk`, `stop`, `restart`, `open-plan`, `note-hide`, `note-show`, `show-result`) with `data-plan` / `data-event-index` | buttons | Example-plan selection, walkthrough controls, the explanation note. |
+| `data-step-id` + `aria-current="step"` | each step container | The active step; a choice control must sit inside its step container. |
+| `data-mission-step="<step id>"` | any button | Selects that step (step headers and "created at" links). |
+| `data-choice="<key>"` + `value` | radio inputs | A choice; `"true"`/`"false"` are read as booleans. |
+| `data-assumption="<id>"` | checkbox inputs | An assumption switch. |
+| `data-focus-key` | controls | Restores keyboard focus after the card is re-rendered. |
+| `data-source-id`, `data-present`, `data-seal`, `data-witness`, `data-rule-warnings`, `data-not-modeled` | result items | State for styling and for browser checks. |
+
+Text that must stay visible in any redesign: the scenario disclaimer ("not a validated EVA procedure"), the precedent note on each step ("not validated for Mars EVA"), "Depends on this assumption" on affected sources, and the "Not modeled" list with its reasons.
 
 ### Layer and zone rules
 
