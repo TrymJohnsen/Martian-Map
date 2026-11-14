@@ -29,4 +29,10 @@ The weakest part is validity: existing sources establish suit-surface biogenic m
 - **Derived:** 3D mesh, path length, sampled elevation profile, and geometric path/footprint intersection.
 - **Scenario assumptions:** target coordinate/footprint, start and survey waypoint, routes, action order, contact interpretation, and the proposed EVA witness/check adaptation.
 
+## Multiple-mission challenge fit
+
+The current map layers are not multi-mission: the DTM, ortho and ray-separation image are one MRO/CTX stereo product. Perseverance/Mars 2020 contributes a linked witness-tube method image from a different location, not a second mapped raster. Mars Trek lists potentially relevant regional products from Mars Global Surveyor (MOLA), Mars Express (HRSC) and Mars Odyssey (THEMIS), but none has yet been downloaded, locally aligned or checked against this CTX crop. Curiosity/Mastcam imagery is from Gale and is not a Jezero map layer. Do not claim the challenge's multi-mission mapping element is met until a suitable second-mission spatial layer has been verified and integrated or the scope is explicitly accepted as incomplete.
+
+The scenario's current derived values are approximately 3.30 km total straight-line route / 140 m in the marked footprint before collection for collect-first, and 4.99 km / 350 m for survey-first. They are calculated from manually selected grid positions and a 7-cell (~140 m) illustrative footprint; no terrain-following route or contact mechanism is modelled.
+
 See [docs/science.md](science.md) for evidence and prior art, [docs/data-sources.md](data-sources.md) for product provenance, and [docs/data-contract.md](data-contract.md) for exact meanings.

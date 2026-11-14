@@ -12,6 +12,13 @@ python3 -m http.server 4173 --directory public
 
 Open <http://localhost:4173>. The NASA Photojournal reference image requires browser internet access; the terrain demo data are local.
 
+Two layouts share the same data and interaction:
+
+- [A — terrain first](http://localhost:4173/?layout=a): wide map with a compact decision rail.
+- [B — guided field story](http://localhost:4173/?layout=b): persistent map with area → activity → possible conflict/results → sources.
+
+The page opens in A by default. Use the A/B buttons to switch. Open **Sources & limits** to inspect the observed products, acquisition dates, grid scale, NoData and scenario assumptions. Drag the map to rotate, scroll to zoom, **Reset view** to restore the camera, and use the tour button for optional camera motion. Dragging or clicking the tour button stops it; `R` while the map is focused resets the view. The browser's reduced-motion preference disables the camera tour.
+
 The agent environment used to prepare this prototype does not permit local socket binding, and no headless browser is installed there. The command above is intended for the team's regular Ubuntu machine; check both sequence buttons, the three surface modes and camera controls there.
 
 ## What is real, calculated, and illustrative
@@ -21,6 +28,10 @@ The agent environment used to prepare this prototype does not permit local socke
 - **Illustrative:** target/start/waypoints, target footprint, route order, contact interpretation, and a proposed witness/check step. The witness-tube analogy is robotic and does not establish a crewed EVA protocol.
 
 The data crop's orthoimage and DTM both have 20.16 m/pixel spacing. The intersection-error image is a stereo ray-separation diagnostic, not terrain accuracy or uncertainty. No contamination score, plume, probability, or safe distance is calculated.
+
+## AI assistance
+
+AI assistants were used to help inspect primary-source documentation, implement and revise the static interface and data-export code, and draft the project notes. The team must make the scientific/design decisions and review all citations, scenario markers and generated outputs; no AI-generated contamination or terrain measurement is presented as observed data.
 
 ## Rebuild the small demo data derivative
 
@@ -33,6 +44,7 @@ MPLCONFIGDIR=/tmp/martian-map-mpl .venv/bin/python scripts/build_demo_data.py
 ## Project notes
 
 - [Current status and suggested evening work blocks](docs/STATUS.md)
+- [Design system, alternatives A/B and inspection notes](docs/design.md)
 - [Science basis and closest prior art](docs/science.md)
 - [Data products and actual sample results](docs/data-sources.md)
 - [Data format](docs/data-contract.md)
