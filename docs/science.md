@@ -34,8 +34,8 @@ A mass balance requires source loading, contacted area and transfer efficiencies
 
 ## Data-to-decision boundary
 
-- **MRO/CTX DTM and orthoimage:** real 20.16 m/cell terrain and surface context; display the area and calculate illustrative route geometry only. They contain no glove contamination or biological transport measurement.
-- **Mars 2020 Perseverance sample records / SHERLOC:** inform the sample type and why organic/biosignature interpretation matters. The referenced Bright Angel sample is not georegistered to the existing CTX crop and supplies no human transfer parameter.
+- **MRO/CTX DTM and orthoimage:** real 20.40 m/cell terrain and surface context; display the area and calculate illustrative route geometry only. They contain no glove contamination or biological transport measurement.
+- **Mars 2020 Perseverance sample records / SHERLOC:** inform the sample type and why organic/biosignature interpretation matters. The sample-report coordinate is placed nominally on a valid cell of the current CTX crop (datum and horizontal accuracy unstated); the records supply no human transfer parameter.
 - **Mars Science Laboratory / Curiosity SAM sample-chain work:** shows how spacecraft-contact residues and a cleaning sequence can affect organic measurements; its numeric values are not transplanted to EVA.
 - **MEDA wind sample:** actual Sol 36 derived observations are available as a historical point series near the Perseverance landing point. Sapphire Canyon was collected on Sol 1215; its PDS coordinate maps nominally to the current CTX crop, though the report gives no datum or horizontal accuracy. The illustrative astronaut scenario has no matched date. The series is background only; it does not feed the contact graph or determine transfer. Wind can move aeolian dust/sand at Jezero, but human-associated release, particle transport, deposition onto a sample, and sample impact require additional mechanisms and measured inputs. [Newman et al. 2022](https://doi.org/10.1126/sciadv.abn3783) documents aeolian observations, not astronaut contamination.
 - **MEDA temperature and UV/visible/IR radiation products:** archived, but not used. Temperature would need a defined crew/sample thermal decision and a thermal response model. Optical radiometry would need exposure duration, shielding/dust and material-specific survival or degradation response. These are not RAD-like ionizing-radiation measurements.
@@ -53,7 +53,7 @@ MEDA temperature products include calibrated air temperature (ATS) and calibrate
 2. The qualitative graph says a path is *possible under assumed contacts*; it cannot validate that the path occurs or that omitting an assumed contact prevents physical transfer.
 3. The three outcomes change only where the listed event assumptions change. They do not rank operational plans or prove an intervention effect.
 4. A map route is not a contact record. The drawn start, A/B locations and route are illustrative; no traversal, exposure, deposition or safety model is present.
-5. The Bright Angel/Sapphire Canyon science context and the current CTX scene are not co-located. The marker must not be presented as the named Perseverance sample.
+5. The B marker is a nominal placement of the Sapphire Canyon sample-report coordinate on the CTX grid. The report states no datum or horizontal accuracy and the ~20.4 m posting cannot resolve the drill hole, so the marker must not be presented as the exact sampled spot.
 6. Sample contamination control and preventing viable organisms from establishing on Mars are not interchangeable goals.
 
 ## Sampling precedents
