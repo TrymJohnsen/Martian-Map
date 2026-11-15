@@ -14,6 +14,15 @@ python3 -m http.server 4173 --directory public
 
 Open <http://localhost:4173>.
 
+## Publish on GitHub Pages
+
+The repository includes `.github/workflows/pages.yml`, which publishes the
+contents of `public/` as a static site whenever changes reach `main`. Enable
+**Settings → Pages → Source: GitHub Actions** once for the repository; the
+workflow then deploys automatically without a build step. Project-site URLs
+are supported because all local stylesheets, scripts and data fetches use
+paths relative to `public/index.html`.
+
 ## Explore the three steps
 
 1. **Mission** introduces Bright Angel, documented target area B, hypothetical site A, and the science context.

@@ -60,7 +60,7 @@
       const valid=values.filter((v,i)=>data.arrays.valid_mask[i] && Number.isFinite(v));
       ranges[key]=valid.length ? [Math.min(...valid),Math.max(...valid)] : null;
     }
-    const script=document.createElement('script');script.src='/layers.js';
+    const script=document.createElement('script');script.src='layers.js';
     script.onload=()=>{layers=CA.layers.init({data,onChange:()=>{updateSummary();draw();}});updateSummary();draw();};
     script.onerror=()=>{$('#layer-panel').textContent='Map layers could not be loaded.';};
     document.head.append(script);
@@ -342,7 +342,7 @@
     mount.append(rad);
     const wind=document.createElement('article');wind.className='context-card';mount.prepend(wind);
     try{
-      const response=await fetch('/data/meda-sol-0036-context.json');if(!response.ok)throw Error('HTTP '+response.status);
+      const response=await fetch('data/meda-sol-0036-context.json');if(!response.ok)throw Error('HTTP '+response.status);
       const context=await response.json();
       const title=document.createElement('h3');title.textContent='Wind · historical point observations';wind.append(title);
       const note=document.createElement('p');note.textContent=context.label;wind.append(note);

@@ -10,7 +10,7 @@
   document.body.dataset.layout = "steps";
   $(".assumptions-link").addEventListener("click", () => { $("#data-assumptions").open = true; });
 
-  fetch("/data/bright-angel-demo.json").then((response) => {
+  fetch("data/bright-angel-demo.json").then((response) => {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   }).then((data) => {
